@@ -3,10 +3,10 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import BottomNav from "@/components/bottom-nav";
-import MaxWidthWrapper from "@/components/max-width-wrapper";
-import SideNav from "@/components/side-nav";
-import TopNav from "@/components/top-nav";
+import BottomNav from "@/components/bottom_nav";
+import MaxWidthWrapper from "@/components/max_width_wrapper";
+import SideNav from "@/components/side_nav";
+import TopNav from "@/components/top_nav";
 
 const inter = Inter({ subsets: ["latin"] });
 

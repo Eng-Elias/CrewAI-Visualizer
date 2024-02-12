@@ -1,6 +1,6 @@
 "use client";
 
-import AgentModal from "@/components/modals/agent-modal";
+import AgentModal from "@/components/modals/agent_modal";
 import { agents } from "@/data/data";
 import { Agent } from "@/types/agent";
 import { Icon } from "@iconify/react";

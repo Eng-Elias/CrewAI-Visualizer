@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import useNavigation from "@/hook/use-navigation";
+import useNavigation from "@/hook/use_navigation";
 import { Icon } from "@iconify/react";
 
 const BottomNav = () => {
