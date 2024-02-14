@@ -52,3 +52,78 @@ export const tools = [
   { text: "tool4", value: "tool4" },
   { text: "tool5", value: "tool5" },
 ];
+
+export const missions = [
+  {
+    name: "Mission1",
+    crew: [
+      "Senior Software Engineer",
+      "Software Quality Control Engineer",
+      "Chief Software Quality Control Engineer",
+    ],
+    tasks: [
+      {
+        name: "Task1",
+        description: "description description description description",
+        agent: "Senior Software Engineer",
+      },
+      {
+        name: "Task2",
+        description: "description description description description",
+        agent: "Chief Software Quality Control Engineer",
+      },
+    ],
+    verbose: true,
+    process: "sequential",
+    result:
+      "result result result result result result result result result result result ",
+  },
+  {
+    name: "Mission2",
+    crew: [
+      "Senior Software Engineer",
+      "Software Quality Control Engineer",
+      "Chief Software Quality Control Engineer",
+    ],
+    tasks: [
+      {
+        name: "Task1",
+        description: "description description description description",
+        agent: "Senior Software Engineer",
+      },
+      {
+        name: "Task2",
+        description: "description description description description",
+        agent: "Chief Software Quality Control Engineer",
+      },
+    ],
+    verbose: true,
+    process: "sequential",
+    result:
+      "result result result result result result result result result result result ",
+  },
+  {
+    name: "Mission3",
+    crew: [
+      "Senior Software Engineer",
+      "Software Quality Control Engineer",
+      "Chief Software Quality Control Engineer",
+    ],
+    tasks: [
+      {
+        name: "Task1",
+        description: "description description description description",
+        agent: "Senior Software Engineer",
+      },
+      {
+        name: "Task2",
+        description: "description description description description",
+        agent: "Chief Software Quality Control Engineer",
+      },
+    ],
+    verbose: true,
+    process: "sequential",
+    result:
+      "result result result result result result result result result result result ",
+  },
+];

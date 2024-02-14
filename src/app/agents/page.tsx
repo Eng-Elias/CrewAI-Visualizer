@@ -6,7 +6,7 @@ import { Agent } from "@/types/agent";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 
-const ExplorePage = () => {
+const AgentsPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
@@ -55,4 +55,4 @@ const ExplorePage = () => {
   );
 };
 
-export default ExplorePage;
+export default AgentsPage;
