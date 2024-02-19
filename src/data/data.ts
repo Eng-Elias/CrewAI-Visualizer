@@ -75,8 +75,7 @@ export const missions = [
     ],
     verbose: true,
     process: "sequential",
-    result:
-      "result result result result result result result result result result result ",
+    result: "",
   },
   {
     name: "Mission2",

@@ -19,6 +19,7 @@ import Switch from "../inputs/switch";
 import { Mission } from "@/types/mission";
 import { Collapse, initTE } from "tw-elements";
 import AccordionItem from "../ui/accordion_item";
+import MissionTaskEditor from "../inputs/mission_tasks_editor";
 
 export default function MissionModal(props: {
   mission: Mission | null;
@@ -138,6 +139,7 @@ export default function MissionModal(props: {
                           process: event.value,
                         }));
                       }}
+                      className="dark:text-black"
                     />
                   ) : (
                     <span className="bg-blue-300 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold m-1">
@@ -147,7 +149,16 @@ export default function MissionModal(props: {
                 </div>
                 <div className="mb-4">
                   <label className="font-bold text-lg">Tasks:</label>
-                  {isEdit ? null : (
+                  {isEdit ? (
+                    <div>
+                      <MissionTaskEditor
+                        mission={mission!}
+                        onMissionChange={(mission: Mission) => {
+                          setTempMission(mission);
+                        }}
+                      />
+                    </div>
+                  ) : (
                     <div>
                       {mission?.tasks ? (
                         <div>
@@ -176,59 +187,60 @@ export default function MissionModal(props: {
                     </div>
                   )}
                 </div>
-                {mission?.result ? (
-                  <div>
-                    <label className="font-bold text-lg">Result:</label>
-                    <div className="border-2 rounded p-2">
-                      {mission?.result}
+                {!isEdit && (
+                  <>
+                    <div>
+                      <label className="font-bold text-lg">Result:</label>
+                      {mission?.result && (
+                        <div className="border-2 rounded p-2">
+                          {mission?.result}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ) : (
-                  <div className="my-3">
-                    <button className="mx-auto block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white">
-                      Run
-                    </button>
-                  </div>
+                    <div className="my-3">
+                      <button className="mx-auto block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white">
+                        {mission?.result ? "Re-Run" : "Run"}
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             </TEModalBody>
 
-            {!mission?.result && (
-              <TEModalFooter>
-                {!isEdit && (
+            <TEModalFooter>
+              {!isEdit && (
+                <TERipple rippleColor="light">
+                  <button
+                    type="button"
+                    onClick={() => setEdit(true)}
+                    className="ml-1 inline-block rounded bg-success-600 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                  >
+                    Edit
+                  </button>
+                </TERipple>
+              )}
+              {isEdit && (
+                <>
                   <TERipple rippleColor="light">
                     <button
                       type="button"
-                      onClick={() => setEdit(true)}
-                      className="ml-1 inline-block rounded bg-success-600 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                      className="inline-block rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200"
+                      onClick={() => setEdit(false)}
                     >
-                      Edit
+                      Close
                     </button>
                   </TERipple>
-                )}
-                {isEdit && (
-                  <>
-                    <TERipple rippleColor="light">
-                      <button
-                        type="button"
-                        className="inline-block rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200"
-                        onClick={() => setEdit(false)}
-                      >
-                        Close
-                      </button>
-                    </TERipple>
-                    <TERipple rippleColor="light">
-                      <button
-                        type="button"
-                        className="ml-1 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                      >
-                        Save changes
-                      </button>
-                    </TERipple>
-                  </>
-                )}
-              </TEModalFooter>
-            )}
+                  <TERipple rippleColor="light">
+                    <button
+                      type="button"
+                      className="ml-1 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                    >
+                      Save changes
+                    </button>
+                  </TERipple>
+                </>
+              )}
+            </TEModalFooter>
           </TEModalContent>
         </TEModalDialog>
       </TEModal>
