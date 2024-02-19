@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AgentTool {
+  DUCK_DUCK_GO_SEARCH
+  PUBMED
+  PYTHON_REPL
+  SEMANTIC_SCHOLER
+  STACK_EXCHANGE
+  WIKIDATA
+  WIKIPEDIA
+  YAHOO_FINANCE
+  YUOUTUBE_SEARCH
+}
+
+model Agent {
+  id              Int         @id @default(autoincrement())
+  role            String
+  goal            String
+  backstory       String?
+  tools           AgentTool[] @default([])
+  allowDelegation Boolean     @default(false)
+  verbose         Boolean     @default(false)
+  image           String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  missions AgentInMission[]
+}
+
+enum MissionProcess {
+  SEQUENTIAL
+  HIERARCHICAL
+}
+
+model Mission {
+  id      Int              @id @default(autoincrement())
+  name    String
+  crew    AgentInMission[]
+  tasks   Json
+  verbose Boolean
+  process MissionProcess
+  result  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AgentInMission {
+  agent      Agent    @relation(fields: [agentId], references: [id])
+  agentId    Int // relation scalar field (used in the `@relation` attribute above)
+  mission    Mission  @relation(fields: [missionId], references: [id])
+  missionId  Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+
+  @@id([agentId, missionId])
+}
