@@ -22,7 +22,7 @@ const AgentsPage = () => {
           >
             <img
               className="block h-auto w-full lg:w-48 flex-none bg-cover"
-              src={agent.image}
+              src={agent.image ?? "/sailor.png"}
               alt="Agent"
             />
             <div className="rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col leading-normal w-100">

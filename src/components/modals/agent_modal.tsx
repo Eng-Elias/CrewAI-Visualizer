@@ -1,3 +1,5 @@
+"use client";
+
 import { tools } from "@/data/data";
 import { Agent } from "@/types/agent";
 import { Icon } from "@iconify/react";
@@ -92,7 +94,7 @@ export default function AgentModal(props: {
                     {isEdit ? (
                       <TETextarea
                         rows={4}
-                        value={tempAgent?.backstory}
+                        value={tempAgent?.backstory || ""}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
                             ...prevState!,
@@ -175,7 +177,7 @@ export default function AgentModal(props: {
                     </>
                   ) : (
                     <img
-                      src={agent?.image}
+                      src={agent?.image ?? "/sailor.png"}
                       alt="Software Engineer"
                       className="w-full rounded-lg"
                     />

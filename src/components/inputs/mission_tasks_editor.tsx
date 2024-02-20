@@ -1,3 +1,5 @@
+"use client";
+
 import { Mission } from "@/types/mission";
 import { Task } from "@/types/task";
 import React, { useState } from "react";
@@ -20,7 +22,7 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
     const newTask: Task = {
       name: newTaskName,
       description: newTaskDescription,
-      agent: "",
+      agent: null,
     };
     const updatedTasks = [...mission.tasks, newTask];
     const updatedMission: Mission = { ...mission, tasks: updatedTasks };
@@ -54,7 +56,7 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
           <div className="ml-3">
             <strong>Agent: </strong>
             <span className="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold m-1 sm:w-1/2">
-              {task.agent}
+              {task.agent?.role}
             </span>
           </div>
         </div>
@@ -91,8 +93,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
               data={[
                 { text: "None", value: "None" },
                 ...mission.crew.map((agent) => ({
-                  text: agent,
-                  value: agent,
+                  text: agent.role,
+                  value: agent.id,
                 })),
               ]}
               onValueChange={(event: any) => {

@@ -1,4 +1,5 @@
 import { Agent } from "@/types/agent";
+import { Mission } from "@/types/mission";
 
 export const agents: Array<Agent> = [
   {
@@ -53,76 +54,59 @@ export const tools = [
   { text: "tool5", value: "tool5" },
 ];
 
-export const missions = [
+export const missions: Array<Mission> = [
   {
     name: "Mission1",
-    crew: [
-      "Senior Software Engineer",
-      "Software Quality Control Engineer",
-      "Chief Software Quality Control Engineer",
-    ],
+    crew: agents,
     tasks: [
       {
         name: "Task1",
         description: "description description description description",
-        agent: "Senior Software Engineer",
+        agent: agents[0],
       },
       {
         name: "Task2",
         description: "description description description description",
-        agent: "Chief Software Quality Control Engineer",
       },
     ],
     verbose: true,
-    process: "sequential",
+    process: "SEQUENTIAL",
     result: "",
   },
   {
-    name: "Mission2",
-    crew: [
-      "Senior Software Engineer",
-      "Software Quality Control Engineer",
-      "Chief Software Quality Control Engineer",
-    ],
+    name: "Mission1",
+    crew: agents,
     tasks: [
       {
         name: "Task1",
         description: "description description description description",
-        agent: "Senior Software Engineer",
+        agent: agents[0],
       },
       {
         name: "Task2",
         description: "description description description description",
-        agent: "Chief Software Quality Control Engineer",
       },
     ],
     verbose: true,
-    process: "sequential",
-    result:
-      "result result result result result result result result result result result ",
+    process: "SEQUENTIAL",
+    result: "result",
   },
   {
-    name: "Mission3",
-    crew: [
-      "Senior Software Engineer",
-      "Software Quality Control Engineer",
-      "Chief Software Quality Control Engineer",
-    ],
+    name: "Mission1",
+    crew: agents,
     tasks: [
       {
         name: "Task1",
         description: "description description description description",
-        agent: "Senior Software Engineer",
+        agent: agents[0],
       },
       {
         name: "Task2",
         description: "description description description description",
-        agent: "Chief Software Quality Control Engineer",
       },
     ],
     verbose: true,
-    process: "sequential",
-    result:
-      "result result result result result result result result result result result ",
+    process: "SEQUENTIAL",
+    result: "result",
   },
 ];

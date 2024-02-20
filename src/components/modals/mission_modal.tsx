@@ -38,7 +38,7 @@ export default function MissionModal(props: {
 
   useEffect(() => {
     initTE({ Collapse });
-  });
+  }, []);
 
   return (
     <div>
@@ -86,7 +86,7 @@ export default function MissionModal(props: {
                         value: agent.role,
                       }))}
                       multiple
-                      value={tempMission?.crew ?? []}
+                      value={tempMission?.crew.map((agent) => agent.role) ?? []}
                       onValueChange={(event: any) => {
                         const newValue = event.map((item: any) => item.value);
                         setTempMission((prevState) => ({
@@ -102,7 +102,7 @@ export default function MissionModal(props: {
                           key={i}
                           className="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold m-1 sm:w-1/2"
                         >
-                          {agent}
+                          {agent.role}
                         </div>
                       </>
                     ))
@@ -129,14 +129,14 @@ export default function MissionModal(props: {
                   {isEdit ? (
                     <TESelect
                       data={[
-                        { text: "Sequential", value: "sequential" },
-                        { text: "Hierarchical", value: "hierarchical" },
+                        { text: "SEQUENTIAL", value: "SEQUENTIAL" },
+                        { text: "HIERARCHICAL", value: "HIERARCHICAL" },
                       ]}
                       value={tempMission?.process}
                       onValueChange={(event: any) => {
                         setTempMission((prevState) => ({
                           ...prevState!,
-                          process: event.value,
+                          process: event?.value,
                         }));
                       }}
                       className="dark:text-black"
@@ -172,7 +172,7 @@ export default function MissionModal(props: {
                                 <div className="ml-3">
                                   <strong>Agent: </strong>
                                   <span className="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold m-1 sm:w-1/2">
-                                    {task.agent}
+                                    {task.agent?.role}
                                   </span>
                                 </div>
                               }
