@@ -35,7 +35,7 @@ model Agent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  missions AgentInMission[]
+  missions Mission[]
 }
 
 enum MissionProcess {
@@ -44,24 +44,14 @@ enum MissionProcess {
 }
 
 model Mission {
-  id      Int              @id @default(autoincrement())
+  id      Int            @id @default(autoincrement())
   name    String
-  crew    AgentInMission[]
-  tasks   Json
-  verbose Boolean
-  process MissionProcess
-  result  String
+  crew    Agent[]
+  tasks   Json[]         @default([])
+  verbose Boolean        @default(false)
+  process MissionProcess @default(SEQUENTIAL)
+  result  String         @default("")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model AgentInMission {
-  agent      Agent    @relation(fields: [agentId], references: [id])
-  agentId    Int // relation scalar field (used in the `@relation` attribute above)
-  mission    Mission  @relation(fields: [missionId], references: [id])
-  missionId  Int // relation scalar field (used in the `@relation` attribute above)
-  assignedAt DateTime @default(now())
-
-  @@id([agentId, missionId])
 }

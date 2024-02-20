@@ -9,7 +9,7 @@ export const agents: Array<Agent> = [
 		Your expertise in programming in python. and do your best to
 		produce perfect code
     `,
-    tools: ["tool1", "tool2"],
+    tools: ["DUCK_DUCK_GO_SEARCH", "PYTHON_REPL", "STACK_EXCHANGE"],
     allowDelegation: false,
     verbose: true,
     image:
