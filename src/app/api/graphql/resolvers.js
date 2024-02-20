@@ -1,17 +1,13 @@
 import { Process } from "@/data/consts";
-import { Agent } from "@/types/agent";
-import { CreateMissionInput, Mission } from "@/types/mission";
-import { Task } from "@/types/task";
 import prisma from "@/utils/prisma";
-import { GraphQLResolveInfo } from "graphql";
-import { NextRequest, NextResponse } from "next/server";
+import { runMission } from "./crew_ai";
 
 const resolvers = {
   Query: {
     agents: () => {
       return prisma.agent.findMany();
     },
-    agent: (id: number) => {
+    agent: (id) => {
       return prisma.agent.findFirst({
         where: {
           id: id,
@@ -26,7 +22,7 @@ const resolvers = {
       });
       return missions;
     },
-    mission: (id: number) => {
+    mission: (id) => {
       return prisma.mission.findFirst({
         where: {
           id: id,
@@ -35,42 +31,22 @@ const resolvers = {
     },
   },
   Mutation: {
-    createAgent: async (
-      parent: any,
-      body: Agent,
-      context: { req: NextRequest; res: NextResponse; datasource: any },
-      info: GraphQLResolveInfo
-    ) => {
+    createAgent: async (parent, body, context, info) => {
       const agent = await prisma.agent.create({ data: body });
       return agent;
     },
-    updateAgent: async (
-      parent: any,
-      body: Agent,
-      context: { req: NextRequest; res: NextResponse; datasource: any },
-      info: GraphQLResolveInfo
-    ) => {
+    updateAgent: async (parent, body, context, info) => {
       const updatedAgent = await prisma.agent.update({
         where: { id: body.id },
         data: body,
       });
       return updatedAgent;
     },
-    deleteAgent: async (
-      parent: any,
-      body: { id: number },
-      context: { req: NextRequest; res: NextResponse; datasource: any },
-      info: GraphQLResolveInfo
-    ) => {
+    deleteAgent: async (parent, body, context, info) => {
       await prisma.agent.delete({ where: { id: body.id } });
       return { deleted: true };
     },
-    createMission: async (
-      parent: any,
-      body: CreateMissionInput,
-      context: { req: NextRequest; res: NextResponse; datasource: any },
-      info: GraphQLResolveInfo
-    ) => {
+    createMission: async (parent, body, context, info) => {
       const { name, verbose, process } = body;
       const crew = await prisma.agent.findMany({
         where: {
@@ -79,7 +55,7 @@ const resolvers = {
           },
         },
       });
-      const tasks: Array<Task> = [];
+      const tasks = [];
       for (let task of body.tasks) {
         const agent = await prisma.agent.findFirst({
           where: { id: task.agent },
@@ -102,12 +78,7 @@ const resolvers = {
       mission.id;
       return mission;
     },
-    updateMission: async (
-      parent: any,
-      body: CreateMissionInput,
-      context: { req: NextRequest; res: NextResponse; datasource: any },
-      info: GraphQLResolveInfo
-    ) => {
+    updateMission: async (parent, body, context, info) => {
       const { id, name, verbose, process } = body;
       const crew = await prisma.agent.findMany({
         where: {
@@ -116,7 +87,7 @@ const resolvers = {
           },
         },
       });
-      const tasks: Array<Task> = [];
+      const tasks = [];
       if (body.tasks) {
         for (let task of body.tasks) {
           const agent = await prisma.agent.findFirst({
@@ -146,21 +117,14 @@ const resolvers = {
       });
       return mission;
     },
-    deleteMission: async (
-      parent: any,
-      body: { id: number },
-      context: { req: NextRequest; res: NextResponse; datasource: any },
-      info: GraphQLResolveInfo
-    ) => {
+    deleteMission: async (parent, body, context, info) => {
       await prisma.mission.delete({ where: { id: body.id } });
       return { deleted: true };
     },
-    runMission: async (
-      parent: any,
-      body: { id: number },
-      context: { req: NextRequest; res: NextResponse; datasource: any },
-      info: GraphQLResolveInfo
-    ) => {},
+    runMission: async (parent, body, context, info) => {
+      const result = await runMission(body.id);
+      return result;
+    },
   },
 };
 

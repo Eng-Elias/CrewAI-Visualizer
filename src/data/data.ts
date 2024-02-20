@@ -25,7 +25,7 @@ export const agents: Array<Agent> = [
         You check for missing imports, variable declarations, mismatched brackets and syntax errors.
         You also check for security vulnerabilities, and logic errors.
     `,
-    tools: [],
+    tools: ["DUCK_DUCK_GO_SEARCH", "PYTHON_REPL", "STACK_EXCHANGE"],
     allowDelegation: false,
     verbose: true,
     image:
@@ -38,7 +38,7 @@ export const agents: Array<Agent> = [
         You feel that programmers always do only half the job, so you are
         super dedicate to make high quality code.
     `,
-    tools: [],
+    tools: ["SEMANTIC_SCHOLER", "WIKIDATA", "YUOUTUBE_SEARCH"],
     allowDelegation: false,
     verbose: true,
     image:
@@ -47,26 +47,73 @@ export const agents: Array<Agent> = [
 ];
 
 export const tools = [
-  { text: "tool1", value: "tool1" },
-  { text: "tool2", value: "tool2" },
-  { text: "tool3", value: "tool3" },
-  { text: "tool4", value: "tool4" },
-  { text: "tool5", value: "tool5" },
+  { text: "DUCK_DUCK_GO_SEARCH", value: "DUCK_DUCK_GO_SEARCH" },
+  { text: "PUBMED", value: "PUBMED" },
+  { text: "PYTHON_REPL", value: "PYTHON_REPL" },
+  { text: "SEMANTIC_SCHOLER", value: "SEMANTIC_SCHOLER" },
+  { text: "STACK_EXCHANGE", value: "STACK_EXCHANGE" },
+  { text: "WIKIDATA", value: "WIKIDATA" },
+  { text: "WIKIPEDIA", value: "WIKIPEDIA" },
+  { text: "YAHOO_FINANCE", value: "YAHOO_FINANCE" },
+  { text: "YUOUTUBE_SEARCH", value: "YUOUTUBE_SEARCH" },
 ];
+
+const game = `
+"Chrono Quest: Time Traveler" is a narrative-driven web game where players embark on a thrilling journey through different historical periods to save the fabric of time. As a time-traveling adventurer, players must navigate various eras, from ancient civilizations to futuristic worlds, solving puzzles, interacting with historical figures, and altering events to prevent a catastrophic temporal paradox.
+Players will face diverse challenges, from deciphering ancient codes in the Egyptian pyramids to outsmarting futuristic robots in a dystopian metropolis. Each decision impacts the course of history and the outcome of the game, leading to multiple branching storylines and endings.
+With stunning visuals, immersive storytelling, and dynamic gameplay mechanics, "Chrono Quest: Time Traveler" offers an unforgettable experience that combines elements of adventure, strategy, and puzzle-solving. Dive into the depths of time and rewrite history in this epic web-based adventure game.
+`;
 
 export const missions: Array<Mission> = [
   {
-    name: "Mission1",
+    name: "Game Building",
     crew: agents,
     tasks: [
       {
-        name: "Task1",
-        description: "description description description description",
+        name: "Code Task",
+        description: `
+        You will create a game using python, these are the instructions:
+
+			  Instructions
+			  ------------
+    	  ${game}
+
+			  Your Final answer must be the full python code, only the python code and nothing else.
+        `,
         agent: agents[0],
       },
       {
-        name: "Task2",
-        description: "description description description description",
+        name: "Review Task",
+        description: `
+        You are helping create a game using python, these are the instructions:
+
+			  Instructions
+			  ------------
+        ${game}
+
+        Using the code you got, check for errors. Check for logic errors,
+        syntax errors, missing imports, variable declarations, mismatched brackets,
+        and security vulnerabilities.
+
+        Your Final answer must be the full python code, only the python code and nothing else.
+        `,
+        agent: agents[1],
+      },
+      {
+        name: "Evaluate Task",
+        description: `
+        You are helping create a game using python, these are the instructions:
+
+        Instructions
+        ------------
+        ${game}
+
+        You will look over the code to insure that it is complete and
+        does the job that it is supposed to do.
+
+        Your Final answer must be the full python code, only the python code and nothing else.
+        `,
+        agent: agents[2],
       },
     ],
     verbose: true,
