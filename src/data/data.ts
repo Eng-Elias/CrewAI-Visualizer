@@ -10,7 +10,7 @@ export const agents: Array<Agent> = [
 		Your expertise in programming in python. and do your best to
 		produce perfect code
     `,
-    tools: ["DUCK_DUCK_GO_SEARCH", "PYTHON_REPL", "STACK_EXCHANGE"],
+    tools: ["DUCK_DUCK_GO_SEARCH"],
     allowDelegation: false,
     verbose: true,
     image:
@@ -25,7 +25,7 @@ export const agents: Array<Agent> = [
         You check for missing imports, variable declarations, mismatched brackets and syntax errors.
         You also check for security vulnerabilities, and logic errors.
     `,
-    tools: ["DUCK_DUCK_GO_SEARCH", "PYTHON_REPL", "STACK_EXCHANGE"],
+    tools: ["DUCK_DUCK_GO_SEARCH"],
     allowDelegation: false,
     verbose: true,
     image:
@@ -48,10 +48,7 @@ export const agents: Array<Agent> = [
 
 export const tools = [
   { text: "DUCK_DUCK_GO_SEARCH", value: "DUCK_DUCK_GO_SEARCH" },
-  { text: "PUBMED", value: "PUBMED" },
-  { text: "PYTHON_REPL", value: "PYTHON_REPL" },
   { text: "SEMANTIC_SCHOLER", value: "SEMANTIC_SCHOLER" },
-  { text: "STACK_EXCHANGE", value: "STACK_EXCHANGE" },
   { text: "WIKIDATA", value: "WIKIDATA" },
   { text: "WIKIPEDIA", value: "WIKIPEDIA" },
   { text: "YAHOO_FINANCE", value: "YAHOO_FINANCE" },

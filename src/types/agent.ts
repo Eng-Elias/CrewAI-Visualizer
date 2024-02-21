@@ -1,9 +1,6 @@
 type Tool =
   | "DUCK_DUCK_GO_SEARCH"
-  | "PUBMED"
-  | "PYTHON_REPL"
   | "SEMANTIC_SCHOLER"
-  | "STACK_EXCHANGE"
   | "WIKIDATA"
   | "WIKIPEDIA"
   | "YAHOO_FINANCE"
