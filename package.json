@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@apollo/client": "^3.9.5",
+    "@apollo/experimental-nextjs-app-support": "^0.8.0",
     "@apollo/server": "^4.10.0",
     "@as-integrations/next": "^3.0.0",
+    "@material-tailwind/react": "^2.1.9",
     "@prisma/client": "^5.9.1",
     "graphql": "^16.8.1",
     "next": "14.1.0",

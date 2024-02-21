@@ -179,7 +179,7 @@ export default function AgentModal(props: {
                     <img
                       src={agent?.image ?? "/sailor.png"}
                       alt="Software Engineer"
-                      className="w-full rounded-lg"
+                      className="w-7/12 mx-auto rounded-lg"
                     />
                   )}
                 </div>

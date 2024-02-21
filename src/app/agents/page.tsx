@@ -1,9 +1,11 @@
 "use client";
 
 import AgentModal from "@/components/modals/agent_modal";
-import { agents } from "@/data/data";
 import { Agent } from "@/types/agent";
+import { GET_AGENTS } from "@/utils/graphql_queries";
+import { useQuery } from "@apollo/client";
 import { Icon } from "@iconify/react";
+import { Button } from "@material-tailwind/react";
 import { useState } from "react";
 
 const AgentsPage = () => {
@@ -11,9 +13,26 @@ const AgentsPage = () => {
 
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
 
+  const { loading, error, data } = useQuery(GET_AGENTS);
+
+  console.log({ loading, error, data });
+
+  if (loading) {
+    return (
+      <Button
+        variant="text"
+        loading={true}
+        placeholder={"Loading"}
+        className="text-white"
+      >
+        Loading
+      </Button>
+    );
+  }
+
   return (
     <div className="container m-auto flex flex-wrap flex-col md:flex-row items-center justify-start p-2">
-      {agents.map((agent, i) => (
+      {data.agents.map((agent: Agent, i: number) => (
         <div key={i} className="w-full lg:w-1/2 p-3 relative">
           <div
             className={`flex flex-col ${
