@@ -12,14 +12,12 @@ import {
   TEModalBody,
   TEModalFooter,
   TEInput,
-  TETextarea,
   TESelect,
 } from "tw-elements-react";
 import Switch from "../inputs/switch";
 import { Mission } from "@/types/mission";
-import { Collapse, initTE } from "tw-elements";
-import AccordionItem from "../ui/accordion_item";
 import MissionTaskEditor from "../inputs/mission_tasks_editor";
+import { TasksAccordion } from "../ui/tasks_accordions";
 
 export default function MissionModal(props: {
   mission: Mission | null;
@@ -35,10 +33,6 @@ export default function MissionModal(props: {
   useEffect(() => {
     setTempMission(mission);
   }, [mission]);
-
-  useEffect(() => {
-    initTE({ Collapse });
-  }, []);
 
   return (
     <div>
@@ -162,22 +156,7 @@ export default function MissionModal(props: {
                     <div>
                       {mission?.tasks ? (
                         <div>
-                          {mission.tasks.map((task, i) => (
-                            <AccordionItem
-                              key={i}
-                              id={`task${i}`}
-                              title={task.name}
-                              description={task.description}
-                              moreInfo={
-                                <div className="ml-3">
-                                  <strong>Agent: </strong>
-                                  <span className="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold m-1 sm:w-1/2">
-                                    {task.agent?.role}
-                                  </span>
-                                </div>
-                              }
-                            />
-                          ))}
+                          <TasksAccordion tasks={mission.tasks} />
                         </div>
                       ) : (
                         <div>

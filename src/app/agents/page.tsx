@@ -15,8 +15,6 @@ const AgentsPage = () => {
 
   const { loading, error, data } = useQuery(GET_AGENTS);
 
-  console.log({ loading, error, data });
-
   if (loading) {
     return (
       <Button
