@@ -18,6 +18,7 @@ import {
 } from "tw-elements-react";
 import Switch from "../inputs/switch";
 import TWFileInput from "../inputs/file";
+import { selectTheme } from "@/data/consts";
 
 export default function AgentModal(props: {
   agent: Agent | null;
@@ -120,6 +121,8 @@ export default function AgentModal(props: {
                             tools: newValue,
                           }));
                         }}
+                        className="w-full"
+                        theme={selectTheme}
                       />
                     ) : (
                       agent?.tools.map((tool) => (

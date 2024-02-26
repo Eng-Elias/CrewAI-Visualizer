@@ -18,6 +18,7 @@ import Switch from "../inputs/switch";
 import { Mission } from "@/types/mission";
 import MissionTaskEditor from "../inputs/mission_tasks_editor";
 import { TasksAccordion } from "../ui/tasks_accordions";
+import { Process, selectTheme } from "@/data/consts";
 
 export default function MissionModal(props: {
   mission: Mission | null;
@@ -88,6 +89,7 @@ export default function MissionModal(props: {
                           tools: newValue,
                         }));
                       }}
+                      theme={selectTheme}
                     />
                   ) : (
                     mission?.crew.map((agent, i) => (
@@ -123,8 +125,11 @@ export default function MissionModal(props: {
                   {isEdit ? (
                     <TESelect
                       data={[
-                        { text: "SEQUENTIAL", value: "SEQUENTIAL" },
-                        { text: "HIERARCHICAL", value: "HIERARCHICAL" },
+                        { text: Process.SEQUENTIAL, value: Process.SEQUENTIAL },
+                        {
+                          text: Process.HIERARCHICAL,
+                          value: Process.HIERARCHICAL,
+                        },
                       ]}
                       value={tempMission?.process}
                       onValueChange={(event: any) => {
@@ -134,6 +139,7 @@ export default function MissionModal(props: {
                         }));
                       }}
                       className="dark:text-black"
+                      theme={selectTheme}
                     />
                   ) : (
                     <span className="bg-blue-300 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold m-1">

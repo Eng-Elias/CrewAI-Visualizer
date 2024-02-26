@@ -1,5 +1,6 @@
 "use client";
 
+import { selectTheme } from "@/data/consts";
 import { Mission } from "@/types/mission";
 import { Task } from "@/types/task";
 import React, { useState } from "react";
@@ -89,7 +90,7 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
           <div className="m-2">
             <label>Agent</label>
             <TESelect
-              className="bg-gray-700"
+              className="bg-gray-700 text-white"
               data={[
                 { text: "None", value: "None" },
                 ...mission.crew.map((agent) => ({
@@ -100,6 +101,7 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
               onValueChange={(event: any) => {
                 setNewTaskAgent(event.value);
               }}
+              theme={selectTheme}
             />
           </div>
           <button
