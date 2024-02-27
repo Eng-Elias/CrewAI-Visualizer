@@ -25,7 +25,7 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
       description: newTaskDescription,
       agent: null,
     };
-    const updatedTasks = [...mission.tasks, newTask];
+    const updatedTasks = [...(mission?.tasks ?? []), newTask];
     const updatedMission: Mission = { ...mission, tasks: updatedTasks };
     onMissionChange(updatedMission);
     setNewTaskName("");
@@ -33,7 +33,7 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
   };
 
   const handleRemoveTask = (index: number) => {
-    const updatedTasks = [...mission.tasks];
+    const updatedTasks = [...(mission?.tasks ?? [])];
     updatedTasks.splice(index, 1);
     const updatedMission: Mission = { ...mission, tasks: updatedTasks };
     onMissionChange(updatedMission);
@@ -42,7 +42,7 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
   return (
     <div>
       <h2 className="text-lg font-bold">Mission Tasks</h2>
-      {mission.tasks.map((task, index) => (
+      {mission?.tasks?.map((task, index) => (
         <div key={index} className="mt-4 border-b border-gray-200 pb-4">
           <div className="flex justify-between items-center">
             <h3 className="text-md font-semibold">{task.name}</h3>
@@ -92,8 +92,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
             <TESelect
               className="bg-gray-700 text-white"
               data={[
-                { text: "None", value: "None" },
-                ...mission.crew.map((agent) => ({
+                { text: "None", value: undefined },
+                ...(mission?.crew ?? []).map((agent) => ({
                   text: agent.role,
                   value: agent.id,
                 })),
