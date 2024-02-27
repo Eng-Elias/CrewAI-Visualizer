@@ -14,11 +14,11 @@ import {
   TEInput,
   TESelect,
 } from "tw-elements-react";
-import Switch from "../inputs/switch";
 import { Mission } from "@/types/mission";
 import MissionTaskEditor from "../inputs/mission_tasks_editor";
 import { TasksAccordion } from "../ui/tasks_accordions";
 import { Process, selectTheme } from "@/data/consts";
+import { Switch } from "@material-tailwind/react";
 
 export default function MissionModal(props: {
   mission: Mission | null;
@@ -108,6 +108,8 @@ export default function MissionModal(props: {
                   <label className="font-bold mx-2">Verbose: </label>
                   {isEdit ? (
                     <Switch
+                      crossOrigin={undefined}
+                      color="blue"
                       defaultChecked={tempMission?.verbose}
                       onChange={(event) => {
                         setTempMission((prevState) => ({
@@ -117,7 +119,12 @@ export default function MissionModal(props: {
                       }}
                     />
                   ) : (
-                    <Switch checked={mission?.verbose} disabled={true} />
+                    <Switch
+                      crossOrigin={undefined}
+                      color="blue"
+                      checked={mission?.verbose}
+                      disabled={true}
+                    />
                   )}
                 </div>
                 <div className="mb-4">

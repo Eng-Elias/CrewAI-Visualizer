@@ -16,9 +16,9 @@ import {
   TETextarea,
   TESelect,
 } from "tw-elements-react";
-import Switch from "../inputs/switch";
 import TWFileInput from "../inputs/file";
 import { selectTheme } from "@/data/consts";
+import { Switch } from "@material-tailwind/react";
 
 export default function AgentModal(props: {
   agent: Agent | null;
@@ -139,6 +139,8 @@ export default function AgentModal(props: {
                     <label className="font-bold mx-2">Allow Delegation: </label>
                     {isEdit ? (
                       <Switch
+                        crossOrigin={undefined}
+                        color="blue"
                         defaultChecked={tempAgent?.allowDelegation}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
@@ -149,7 +151,9 @@ export default function AgentModal(props: {
                       />
                     ) : (
                       <Switch
-                        checked={agent?.allowDelegation}
+                        crossOrigin={undefined}
+                        color="blue"
+                        defaultChecked={tempAgent?.allowDelegation}
                         disabled={true}
                       />
                     )}
@@ -158,6 +162,8 @@ export default function AgentModal(props: {
                     <label className="font-bold mx-2">Verbose: </label>
                     {isEdit ? (
                       <Switch
+                        crossOrigin={undefined}
+                        color="blue"
                         defaultChecked={tempAgent?.verbose}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
@@ -167,7 +173,12 @@ export default function AgentModal(props: {
                         }}
                       />
                     ) : (
-                      <Switch checked={agent?.verbose} disabled={true} />
+                      <Switch
+                        crossOrigin={undefined}
+                        color="blue"
+                        defaultChecked={tempAgent?.verbose}
+                        disabled={true}
+                      />
                     )}
                   </div>
                 </div>
