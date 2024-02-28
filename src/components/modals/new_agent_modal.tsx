@@ -16,12 +16,28 @@ import {
   TETextarea,
 } from "tw-elements-react";
 import TWFileInput from "../inputs/file";
-import { Switch } from "@material-tailwind/react";
+import { Button, Switch } from "@material-tailwind/react";
+import { useMutation } from "@apollo/client";
+import { CREATE_AGENT } from "@/utils/graphql_queries";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import { Gothic_A1 } from "next/font/google";
 
-function NewAgentModal(props: { showModal: boolean; setShowModal: Function }) {
-  const { showModal, setShowModal } = props;
+function NewAgentModal(props: {
+  showModal: boolean;
+  setShowModal: Function;
+  onAddNewAdent: Function;
+}) {
+  const { showModal, setShowModal, onAddNewAdent = () => {} } = props;
 
-  const [tempAgent, setTempAgent] = useState<Agent | null>();
+  const [tempAgent, setTempAgent] = useState<Agent>({
+    role: "",
+    goal: "",
+    backstory: "",
+    tools: [],
+    allowDelegation: false,
+    verbose: false,
+  });
 
   const [selectedImage, setSelectedImage] = useState<
     string | ArrayBuffer | null
@@ -39,6 +55,22 @@ function NewAgentModal(props: { showModal: boolean; setShowModal: Function }) {
       reader.readAsDataURL(file);
     }
   };
+
+  const [createAgent] = useMutation(CREATE_AGENT);
+  const [createAgentLoading, setCreateAgentLoading] = useState(false);
+
+  const handleCreateAgent = (agentData: Agent) => {
+    setCreateAgentLoading(true);
+    return createAgent({
+      variables: {
+        ...agentData,
+      },
+    }).finally(() => {
+      setCreateAgentLoading(false);
+    });
+  };
+
+  const ReactSwal = withReactContent(Swal);
 
   return (
     <div>
@@ -166,21 +198,45 @@ function NewAgentModal(props: { showModal: boolean; setShowModal: Function }) {
 
             <TEModalFooter>
               <TERipple rippleColor="light">
-                <button
-                  type="button"
-                  className="inline-block rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200"
+                <Button
+                  color="white"
                   onClick={() => setShowModal(false)}
+                  placeholder={undefined}
                 >
                   Close
-                </button>
+                </Button>
               </TERipple>
               <TERipple rippleColor="light">
-                <button
-                  type="button"
-                  className="ml-1 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                <Button
+                  color="green"
+                  loading={createAgentLoading}
+                  disabled={
+                    !tempAgent.role || !tempAgent.goal || createAgentLoading
+                  }
+                  onClick={() => {
+                    handleCreateAgent(tempAgent)
+                      .then(() => {
+                        setShowModal(false);
+                        ReactSwal.fire({
+                          title: "Smart Agent",
+                          text: "New agent joined to your crew",
+                          icon: "success",
+                        });
+                        onAddNewAdent();
+                      })
+                      .catch((error) => {
+                        ReactSwal.fire({
+                          title: "Error",
+                          text: error,
+                          icon: "error",
+                        });
+                      });
+                  }}
+                  className="mx-1"
+                  placeholder={undefined}
                 >
                   Add
-                </button>
+                </Button>
               </TERipple>
             </TEModalFooter>
           </TEModalContent>

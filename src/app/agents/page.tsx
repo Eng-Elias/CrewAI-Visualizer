@@ -15,7 +15,7 @@ const AgentsPage = () => {
 
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
 
-  const { loading, error, data } = useQuery(GET_AGENTS);
+  const { loading, error, data, refetch } = useQuery(GET_AGENTS);
 
   if (loading) {
     return (
@@ -46,6 +46,9 @@ const AgentsPage = () => {
         <NewAgentModal
           showModal={showNewAgentModal}
           setShowModal={setShowNewAgentModal}
+          onAddNewAdent={() => {
+            refetch();
+          }}
         />
       </div>
       <div className="container m-auto flex flex-wrap flex-col md:flex-row items-center justify-start p-2">
