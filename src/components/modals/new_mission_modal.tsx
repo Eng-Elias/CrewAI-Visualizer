@@ -183,19 +183,6 @@ function NewMissionModal(props: {
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="font-bold text-lg">Result:</label>
-                  {tempMission?.result && (
-                    <div className="border-2 rounded p-2">
-                      {tempMission?.result}
-                    </div>
-                  )}
-                </div>
-                <div className="my-3">
-                  <Button color="blue" placeholder={undefined}>
-                    {tempMission?.result ? "Re-Run" : "Run"}
-                  </Button>
-                </div>
               </div>
             </TEModalBody>
 

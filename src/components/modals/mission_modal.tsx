@@ -19,7 +19,11 @@ import { TasksAccordion } from "../ui/tasks_accordions";
 import { Process, selectTheme } from "@/data/consts";
 import { Button, Switch } from "@material-tailwind/react";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_AGENTS, UPDATE_MISSION } from "@/utils/graphql_queries";
+import {
+  GET_AGENTS,
+  RUN_MISSION,
+  UPDATE_MISSION,
+} from "@/utils/graphql_queries";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import { Agent } from "@/types/agent";
@@ -28,21 +32,27 @@ export default function MissionModal(props: {
   mission: Mission;
   showModal: boolean;
   setShowModal: Function;
-  onUpdateMission: Function;
+  onUpdateMission?: Function;
+  onRunMission?: Function;
 }): JSX.Element {
   const {
     mission,
     showModal,
     setShowModal,
     onUpdateMission = () => {},
+    onRunMission = () => {},
   } = props;
 
   const [isEdit, setEdit] = useState(false);
 
   const [tempMission, setTempMission] = useState<Mission>(mission);
+  const [missionResult, setMissionResult] = useState<String>(
+    mission?.result ?? ""
+  );
 
   useEffect(() => {
     setTempMission(mission);
+    setMissionResult(mission?.result ?? "");
   }, [mission]);
 
   const { loading, error, data: agentsData } = useQuery(GET_AGENTS);
@@ -72,6 +82,20 @@ export default function MissionModal(props: {
   };
 
   const ReactSwal = withReactContent(Swal);
+
+  const [runMission] = useMutation(RUN_MISSION);
+  const [runMissionLoading, setRunMissionLoading] = useState(false);
+
+  const handleRunMission = async () => {
+    setRunMissionLoading(true);
+    return runMission({
+      variables: {
+        id: Number.parseInt(mission.id as string),
+      },
+    }).finally(() => {
+      setRunMissionLoading(false);
+    });
+  };
 
   return (
     <div>
@@ -243,15 +267,53 @@ export default function MissionModal(props: {
                     <div>
                       <label className="font-bold text-lg">Result:</label>
                       {mission?.result && (
-                        <div className="border-2 rounded p-2">
-                          {mission?.result}
+                        <div
+                          className="border-2 rounded p-2"
+                          style={{ whiteSpace: "pre-line" }}
+                        >
+                          {missionResult}
                         </div>
                       )}
                     </div>
                     <div className="my-3">
-                      <Button color="blue" placeholder={undefined}>
+                      <Button
+                        color="blue"
+                        disabled={runMissionLoading}
+                        onClick={() => {
+                          handleRunMission()
+                            .then((missionData) => {
+                              setMissionResult(
+                                missionData.data.runMission.result
+                              );
+                              ReactSwal.fire({
+                                title: "New Mission",
+                                text: "New mission created successfully",
+                                icon: "success",
+                              });
+                              onRunMission();
+                            })
+                            .catch((error) => {
+                              ReactSwal.fire({
+                                title: "Error",
+                                text: error,
+                                icon: "error",
+                              });
+                            });
+                        }}
+                        placeholder={undefined}
+                      >
                         {mission?.result ? "Re-Run" : "Run"}
                       </Button>
+                      {runMissionLoading && (
+                        <Button
+                          variant="text"
+                          loading={true}
+                          placeholder={"Running"}
+                          className="text-white"
+                        >
+                          Running
+                        </Button>
+                      )}
                     </div>
                   </>
                 )}
