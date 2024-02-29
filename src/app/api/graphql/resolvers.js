@@ -54,12 +54,18 @@ const resolvers = {
             in: body.crew,
           },
         },
+        select: {
+          id: true,
+        },
       });
       const tasks = [];
       for (let task of body.tasks) {
-        const agent = await prisma.agent.findFirst({
-          where: { id: task.agent },
-        });
+        let agent = null;
+        if (task.agent) {
+          agent = await prisma.agent.findFirst({
+            where: { id: task.agent },
+          });
+        }
         tasks.push({
           ...task,
           agent,
@@ -70,12 +76,11 @@ const resolvers = {
           name,
           verbose: !!verbose,
           process: process ?? Process.SEQUENTIAL,
-          crew: { create: crew },
+          crew: { connect: crew },
           tasks,
           result: "",
         },
       });
-      mission.id;
       return mission;
     },
     updateMission: async (parent, body, context, info) => {
@@ -90,9 +95,12 @@ const resolvers = {
       const tasks = [];
       if (body.tasks) {
         for (let task of body.tasks) {
-          const agent = await prisma.agent.findFirst({
-            where: { id: task.agent },
-          });
+          let agent = null;
+          if (task.agent) {
+            agent = await prisma.agent.findFirst({
+              where: { id: task.agent },
+            });
+          }
           tasks.push({
             ...task,
             agent,

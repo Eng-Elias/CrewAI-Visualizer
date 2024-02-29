@@ -46,7 +46,7 @@ const AgentsPage = () => {
         <NewAgentModal
           showModal={showNewAgentModal}
           setShowModal={setShowNewAgentModal}
-          onAddNewAdent={() => {
+          onAddNewAgent={() => {
             refetch();
           }}
         />

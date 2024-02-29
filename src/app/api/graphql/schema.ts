@@ -31,7 +31,7 @@ const typeDefs = `#graphql
     type Task {
         name: String!
         description: String!
-        agent: Agent!
+        agent: Agent
     }
 
     input TaskInput {

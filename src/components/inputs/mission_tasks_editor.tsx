@@ -1,29 +1,33 @@
 "use client";
 
 import { selectTheme } from "@/data/consts";
+import { Agent } from "@/types/agent";
 import { Mission } from "@/types/mission";
 import { Task } from "@/types/task";
+import { Button } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { TESelect } from "tw-elements-react";
 
 interface MissionTaskEditorProps {
   mission: Mission;
+  agents: Array<Agent>;
   onMissionChange: (updatedMission: Mission) => void;
 }
 
 const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
   mission,
+  agents = [],
   onMissionChange,
 }) => {
   const [newTaskName, setNewTaskName] = useState("");
-  const [newTaskAgent, setNewTaskAgent] = useState("");
+  const [newTaskAgent, setNewTaskAgent] = useState<Agent | null>(null);
   const [newTaskDescription, setNewTaskDescription] = useState("");
 
   const handleAddTask = () => {
     const newTask: Task = {
       name: newTaskName,
       description: newTaskDescription,
-      agent: null,
+      agent: newTaskAgent,
     };
     const updatedTasks = [...(mission?.tasks ?? []), newTask];
     const updatedMission: Mission = { ...mission, tasks: updatedTasks };
@@ -57,7 +61,7 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
           <div className="ml-3">
             <strong>Agent: </strong>
             <span className="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold m-1 sm:w-1/2">
-              {task.agent?.role}
+              {task.agent?.role ?? "No Agent"}
             </span>
           </div>
         </div>
@@ -92,24 +96,30 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
             <TESelect
               className="bg-gray-700 text-white"
               data={[
-                { text: "None", value: undefined },
+                { text: "None", value: -1 },
                 ...(mission?.crew ?? []).map((agent) => ({
                   text: agent.role,
                   value: agent.id,
                 })),
               ]}
               onValueChange={(event: any) => {
-                setNewTaskAgent(event.value);
+                if (event.value) {
+                  const agent =
+                    agents.find((a) => a.id === event.value) ?? null;
+                  setNewTaskAgent(agent);
+                }
               }}
               theme={selectTheme}
             />
           </div>
-          <button
+          <Button
+            color="green"
+            disabled={!newTaskName || !newTaskDescription}
             onClick={handleAddTask}
-            className="bg-success-600 text-white rounded px-4 py-1 ml-2"
+            placeholder={undefined}
           >
             Add Task
-          </button>
+          </Button>
         </div>
       </div>
     </div>

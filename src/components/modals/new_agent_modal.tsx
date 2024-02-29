@@ -21,14 +21,17 @@ import { useMutation } from "@apollo/client";
 import { CREATE_AGENT } from "@/utils/graphql_queries";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { Gothic_A1 } from "next/font/google";
 
 function NewAgentModal(props: {
   showModal: boolean;
   setShowModal: Function;
-  onAddNewAdent: Function;
+  onAddNewAgent: Function;
 }) {
-  const { showModal, setShowModal, onAddNewAdent = () => {} } = props;
+  const {
+    showModal,
+    setShowModal,
+    onAddNewAgent: onAddNewAdent = () => {},
+  } = props;
 
   const [tempAgent, setTempAgent] = useState<Agent>({
     role: "",

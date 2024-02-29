@@ -160,6 +160,7 @@ export default function MissionModal(props: {
                     <div>
                       <MissionTaskEditor
                         mission={mission!}
+                        agents={mission?.crew!}
                         onMissionChange={(mission: Mission) => {
                           setTempMission(mission);
                         }}

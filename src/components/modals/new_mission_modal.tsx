@@ -15,18 +15,20 @@ import {
   TESelect,
 } from "tw-elements-react";
 import MissionTaskEditor from "../inputs/mission_tasks_editor";
-import { useQuery } from "@apollo/client";
-import { GET_AGENTS } from "@/utils/graphql_queries";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_MISSION, GET_AGENTS } from "@/utils/graphql_queries";
 import { Agent } from "@/types/agent";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
 function NewMissionModal(props: {
   showModal: boolean;
   setShowModal: Function;
+  onAddNewMission: Function;
 }): JSX.Element {
-  const { showModal, setShowModal } = props;
+  const { showModal, setShowModal, onAddNewMission = () => {} } = props;
 
-  const [tempMission, setTempMission] = useState<Mission | null>({
-    id: -1,
+  const [tempMission, setTempMission] = useState<Mission>({
     name: "",
     crew: [],
     tasks: [],
@@ -36,6 +38,30 @@ function NewMissionModal(props: {
   });
 
   const { loading, error, data: agentsData } = useQuery(GET_AGENTS);
+
+  const [createMission] = useMutation(CREATE_MISSION);
+  const [createMissionLoading, setCreateMissionLoading] = useState(false);
+
+  const handleCreateMission = (missionData: Mission) => {
+    setCreateMissionLoading(true);
+    return createMission({
+      variables: {
+        ...missionData,
+        // TODO: Check why Prisma Schema (id Int) return String.
+        crew: missionData.crew
+          .filter((agent) => Number.parseInt(agent?.id as string))
+          .map((agent) => Number.parseInt(agent.id as string)),
+        tasks: missionData.tasks.map((task) => ({
+          ...task,
+          agent: Number.parseInt(task.agent?.id as string),
+        })),
+      },
+    }).finally(() => {
+      setCreateMissionLoading(false);
+    });
+  };
+
+  const ReactSwal = withReactContent(Swal);
 
   return (
     <div>
@@ -144,6 +170,7 @@ function NewMissionModal(props: {
                   <div>
                     <MissionTaskEditor
                       mission={tempMission!}
+                      agents={agentsData?.agents}
                       onMissionChange={(mission: Mission) => {
                         setTempMission(mission);
                       }}
@@ -168,21 +195,43 @@ function NewMissionModal(props: {
 
             <TEModalFooter>
               <TERipple rippleColor="light">
-                <button
-                  type="button"
-                  className="inline-block rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200"
+                <Button
+                  color="white"
                   onClick={() => setShowModal(false)}
+                  placeholder={undefined}
                 >
                   Close
-                </button>
+                </Button>
               </TERipple>
               <TERipple rippleColor="light">
-                <button
-                  type="button"
-                  className="ml-1 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                <Button
+                  color="green"
+                  loading={createMissionLoading}
+                  disabled={!tempMission.name || createMissionLoading}
+                  onClick={() => {
+                    handleCreateMission(tempMission)
+                      .then(() => {
+                        setShowModal(false);
+                        ReactSwal.fire({
+                          title: "New Mission",
+                          text: "New mission created successfully",
+                          icon: "success",
+                        });
+                        onAddNewMission();
+                      })
+                      .catch((error) => {
+                        ReactSwal.fire({
+                          title: "Error",
+                          text: error,
+                          icon: "error",
+                        });
+                      });
+                  }}
+                  className="mx-1"
+                  placeholder={undefined}
                 >
-                  Save changes
-                </button>
+                  Add
+                </Button>
               </TERipple>
             </TEModalFooter>
           </TEModalContent>

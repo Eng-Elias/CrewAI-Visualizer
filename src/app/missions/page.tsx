@@ -16,7 +16,7 @@ const MissionsPage = () => {
 
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
 
-  const { loading, error, data } = useQuery(GET_MISSIONS);
+  const { loading, error, data, refetch } = useQuery(GET_MISSIONS);
 
   if (loading) {
     return (
@@ -47,6 +47,9 @@ const MissionsPage = () => {
         <NewMissionModal
           showModal={showNewMissionModal}
           setShowModal={setShowNewMissionModal}
+          onAddNewMission={() => {
+            refetch();
+          }}
         />
       </div>
       <div className="container m-auto flex flex-wrap flex-col md:flex-row items-center justify-start p-2">

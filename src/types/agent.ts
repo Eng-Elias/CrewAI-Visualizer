@@ -7,7 +7,7 @@ type Tool =
   | "YUOUTUBE_SEARCH";
 
 export type Agent = {
-  id?: number;
+  id?: number | string;
   role: string;
   goal: string;
   backstory?: string | null;

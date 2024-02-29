@@ -29,7 +29,7 @@ export function TasksAccordion({ tasks }: { tasks: Array<Task> }) {
           <AccordionBody className="pt-0 text-base font-normal">
             <div className="mb-3">
               <span className="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold m-1 sm:w-1/2">
-                {task.agent?.role}
+                {task.agent?.role ?? "No Agent"}
               </span>
             </div>
             <div>{task.description}</div>
