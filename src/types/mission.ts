@@ -4,7 +4,7 @@ import { Task, TaskInput } from "./task";
 type ProcessType = "SEQUENTIAL" | "HIERARCHICAL";
 
 export type Mission = {
-  id?: number;
+  id?: number | string;
   name: string;
   crew: Array<Agent>;
   tasks: Array<Task>;

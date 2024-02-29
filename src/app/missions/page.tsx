@@ -14,7 +14,7 @@ const MissionsPage = () => {
   const [showMissionModal, setShowMissionModal] = useState(false);
   const [showNewMissionModal, setShowNewMissionModal] = useState(false);
 
-  const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
+  const [selectedMission, setSelectedMission] = useState<Mission>();
 
   const { loading, error, data, refetch } = useQuery(GET_MISSIONS);
 
@@ -67,9 +67,12 @@ const MissionsPage = () => {
           </div>
         ))}
         <MissionModal
-          mission={selectedMission}
+          mission={selectedMission!}
           showModal={showMissionModal}
           setShowModal={setShowMissionModal}
+          onUpdateMission={() => {
+            refetch();
+          }}
         />
       </div>
     </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { agents, tools } from "@/data/data";
 import { Icon } from "@iconify/react";
 import React, { useEffect, useState } from "react";
 import {
@@ -18,22 +17,61 @@ import { Mission } from "@/types/mission";
 import MissionTaskEditor from "../inputs/mission_tasks_editor";
 import { TasksAccordion } from "../ui/tasks_accordions";
 import { Process, selectTheme } from "@/data/consts";
-import { Switch } from "@material-tailwind/react";
+import { Button, Switch } from "@material-tailwind/react";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_AGENTS, UPDATE_MISSION } from "@/utils/graphql_queries";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import { Agent } from "@/types/agent";
 
 export default function MissionModal(props: {
-  mission: Mission | null;
+  mission: Mission;
   showModal: boolean;
   setShowModal: Function;
+  onUpdateMission: Function;
 }): JSX.Element {
-  const { mission, showModal, setShowModal } = props;
+  const {
+    mission,
+    showModal,
+    setShowModal,
+    onUpdateMission = () => {},
+  } = props;
 
   const [isEdit, setEdit] = useState(false);
 
-  const [tempMission, setTempMission] = useState<Mission | null>(mission);
+  const [tempMission, setTempMission] = useState<Mission>(mission);
 
   useEffect(() => {
     setTempMission(mission);
   }, [mission]);
+
+  const { loading, error, data: agentsData } = useQuery(GET_AGENTS);
+
+  const [updateMission] = useMutation(UPDATE_MISSION);
+  const [updateMissionLoading, setUpdateMissionLoading] = useState(false);
+
+  const handleUpdateMission = async (missionData: Mission) => {
+    setUpdateMissionLoading(true);
+    return updateMission({
+      variables: {
+        ...missionData,
+        // TODO: Check why Prisma Schema (id Int) return String.
+        id: Number.parseInt(missionData.id as string),
+        crew: missionData.crew
+          .filter((agent) => Number.parseInt(agent?.id as string))
+          .map((agent) => Number.parseInt(agent.id as string)),
+        tasks: missionData.tasks.map((task) => ({
+          name: task.name,
+          description: task.description,
+          agent: Number.parseInt(task.agent?.id as string),
+        })),
+      },
+    }).finally(() => {
+      setUpdateMissionLoading(false);
+    });
+  };
+
+  const ReactSwal = withReactContent(Swal);
 
   return (
     <div>
@@ -44,14 +82,12 @@ export default function MissionModal(props: {
               <h1 className="text-xl font-medium leading-normal">
                 {mission?.name}
               </h1>
-              <button
-                type="button"
-                className="box-content rounded-none border-none hover:no-underline hover:opacity-75 focus:opacity-100 focus:shadow-none focus:outline-none"
+              <Button
                 onClick={() => setShowModal(false)}
-                aria-label="Close"
+                placeholder={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
-              </button>
+              </Button>
             </TEModalHeader>
             <TEModalBody>
               <div>
@@ -75,22 +111,35 @@ export default function MissionModal(props: {
                   <span className="font-bold mr-2 text-lg">Crew (Agents):</span>
                   <br />
                   {isEdit ? (
-                    <TESelect
-                      data={agents.map((agent) => ({
-                        text: agent.role,
-                        value: agent.role,
-                      }))}
-                      multiple
-                      value={tempMission?.crew.map((agent) => agent.role) ?? []}
-                      onValueChange={(event: any) => {
-                        const newValue = event.map((item: any) => item.value);
-                        setTempMission((prevState) => ({
-                          ...prevState!,
-                          tools: newValue,
-                        }));
-                      }}
-                      theme={selectTheme}
-                    />
+                    loading ? (
+                      <Button
+                        variant="text"
+                        loading={true}
+                        placeholder={"Loading"}
+                        className="text-white"
+                      >
+                        Loading
+                      </Button>
+                    ) : (
+                      <TESelect
+                        data={agentsData.agents.map((agent: Agent) => ({
+                          text: agent.role,
+                          value: agent.id,
+                        }))}
+                        multiple
+                        onValueChange={(event: any) => {
+                          const newValue = event.map((item: any) => item.value);
+                          const newCrew = agentsData.agents.filter(
+                            (agent: Agent) => newValue.includes(agent.id)
+                          );
+                          setTempMission((prevState) => ({
+                            ...prevState!,
+                            crew: newCrew,
+                          }));
+                        }}
+                        theme={selectTheme}
+                      />
+                    )
                   ) : (
                     mission?.crew.map((agent, i) => (
                       <>
@@ -191,45 +240,68 @@ export default function MissionModal(props: {
                       )}
                     </div>
                     <div className="my-3">
-                      <button className="mx-auto block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white">
+                      <Button color="blue" placeholder={undefined}>
                         {mission?.result ? "Re-Run" : "Run"}
-                      </button>
+                      </Button>
                     </div>
                   </>
                 )}
               </div>
             </TEModalBody>
 
+            {/* Update Mission */}
             <TEModalFooter>
               {!isEdit && (
                 <TERipple rippleColor="light">
-                  <button
-                    type="button"
+                  <Button
+                    color="green"
                     onClick={() => setEdit(true)}
-                    className="ml-1 inline-block rounded bg-success-600 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                    placeholder={undefined}
                   >
                     Edit
-                  </button>
+                  </Button>
                 </TERipple>
               )}
               {isEdit && (
                 <>
                   <TERipple rippleColor="light">
-                    <button
-                      type="button"
-                      className="inline-block rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200"
-                      onClick={() => setEdit(false)}
+                    <Button
+                      color="white"
+                      onClick={() => setShowModal(false)}
+                      placeholder={undefined}
                     >
-                      Close
-                    </button>
+                      Cancel
+                    </Button>
                   </TERipple>
                   <TERipple rippleColor="light">
-                    <button
-                      type="button"
-                      className="ml-1 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                    <Button
+                      color="green"
+                      loading={updateMissionLoading}
+                      disabled={!tempMission.name || updateMissionLoading}
+                      onClick={() => {
+                        handleUpdateMission(tempMission)
+                          .then(() => {
+                            setShowModal(false);
+                            ReactSwal.fire({
+                              title: "Update Mission",
+                              text: "Mission updated successfully",
+                              icon: "success",
+                            });
+                            onUpdateMission();
+                          })
+                          .catch((error) => {
+                            ReactSwal.fire({
+                              title: "Error",
+                              text: error,
+                              icon: "error",
+                            });
+                          });
+                      }}
+                      className="mx-1"
+                      placeholder={undefined}
                     >
-                      Save changes
-                    </button>
+                      Save Changes
+                    </Button>
                   </TERipple>
                 </>
               )}
