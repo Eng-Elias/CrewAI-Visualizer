@@ -13,7 +13,7 @@ const AgentsPage = () => {
   const [showAgentModal, setShowAgentModal] = useState(false);
   const [showNewAgentModal, setShowNewAgentModal] = useState(false);
 
-  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [selectedAgent, setSelectedAgent] = useState<Agent>();
 
   const { loading, error, data, refetch } = useQuery(GET_AGENTS);
 
@@ -86,9 +86,12 @@ const AgentsPage = () => {
           </div>
         ))}
         <AgentModal
-          agent={selectedAgent}
+          agent={selectedAgent!}
           showModal={showAgentModal}
           setShowModal={setShowAgentModal}
+          onUpdateAgent={() => {
+            refetch();
+          }}
         />
       </div>
     </div>

@@ -62,7 +62,7 @@ function NewAgentModal(props: {
   const [createAgent] = useMutation(CREATE_AGENT);
   const [createAgentLoading, setCreateAgentLoading] = useState(false);
 
-  const handleCreateAgent = (agentData: Agent) => {
+  const handleCreateAgent = async (agentData: Agent) => {
     setCreateAgentLoading(true);
     return createAgent({
       variables: {

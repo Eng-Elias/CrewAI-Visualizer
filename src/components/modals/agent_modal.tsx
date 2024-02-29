@@ -18,22 +18,61 @@ import {
 } from "tw-elements-react";
 import TWFileInput from "../inputs/file";
 import { selectTheme } from "@/data/consts";
-import { Switch } from "@material-tailwind/react";
+import { Button, Switch } from "@material-tailwind/react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { UPDATE_AGENT } from "@/utils/graphql_queries";
+import { useMutation } from "@apollo/client";
 
 export default function AgentModal(props: {
-  agent: Agent | null;
+  agent: Agent;
   showModal: boolean;
   setShowModal: Function;
+  onUpdateAgent: Function;
 }): JSX.Element {
-  const { agent, showModal, setShowModal } = props;
+  const { agent, showModal, setShowModal, onUpdateAgent = () => {} } = props;
 
   const [isEdit, setEdit] = useState(false);
 
-  const [tempAgent, setTempAgent] = useState<Agent | null>(agent);
+  const [tempAgent, setTempAgent] = useState<Agent>(agent);
 
   useEffect(() => {
     setTempAgent(agent);
   }, [agent]);
+
+  const [selectedImage, setSelectedImage] = useState<
+    string | ArrayBuffer | null
+  >(null);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event?.target?.files?.[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setSelectedImage(reader.result);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const [updateAgent] = useMutation(UPDATE_AGENT);
+  const [updateAgentLoading, setUpdateAgentLoading] = useState(false);
+
+  const handleUpdateAgent = async (agentData: Agent) => {
+    setUpdateAgentLoading(true);
+    return updateAgent({
+      variables: {
+        ...agentData,
+        id: Number.parseInt(agentData.id as string),
+      },
+    }).finally(() => {
+      setUpdateAgentLoading(false);
+    });
+  };
+
+  const ReactSwal = withReactContent(Swal);
 
   return (
     <div>
@@ -187,7 +226,18 @@ export default function AgentModal(props: {
                   {isEdit ? (
                     <>
                       <label className="font-bold mx-2">Agent Image: </label>
-                      <TWFileInput accept="image/*" />
+                      <TWFileInput
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                      {selectedImage && (
+                        <img
+                          // @ts-ignore
+                          src={selectedImage}
+                          alt="Agent Image"
+                          className="mx-auto my-3 max-w-72 h-auto"
+                        />
+                      )}
                     </>
                   ) : (
                     <img
@@ -203,33 +253,57 @@ export default function AgentModal(props: {
             <TEModalFooter>
               {!isEdit && (
                 <TERipple rippleColor="light">
-                  <button
-                    type="button"
+                  <Button
+                    color="green"
                     onClick={() => setEdit(true)}
-                    className="ml-1 inline-block rounded bg-success-600 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                    placeholder={undefined}
                   >
                     Edit
-                  </button>
+                  </Button>
                 </TERipple>
               )}
               {isEdit && (
                 <>
                   <TERipple rippleColor="light">
-                    <button
-                      type="button"
-                      className="inline-block rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200"
+                    <Button
+                      color="white"
                       onClick={() => setEdit(false)}
+                      placeholder={undefined}
                     >
-                      Close
-                    </button>
+                      Cancel
+                    </Button>
                   </TERipple>
                   <TERipple rippleColor="light">
-                    <button
-                      type="button"
-                      className="ml-1 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                    <Button
+                      color="blue"
+                      loading={updateAgentLoading}
+                      disabled={
+                        !tempAgent.role || !tempAgent.goal || updateAgentLoading
+                      }
+                      onClick={() => {
+                        handleUpdateAgent(tempAgent)
+                          .then(() => {
+                            setShowModal(false);
+                            ReactSwal.fire({
+                              title: "Updated",
+                              text: "Agent updated successfully",
+                              icon: "success",
+                            });
+                            onUpdateAgent();
+                          })
+                          .catch((error) => {
+                            ReactSwal.fire({
+                              title: "Error",
+                              text: error,
+                              icon: "error",
+                            });
+                          });
+                      }}
+                      className="mx-1"
+                      placeholder={undefined}
                     >
-                      Save changes
-                    </button>
+                      Save Changes
+                    </Button>
                   </TERipple>
                 </>
               )}
