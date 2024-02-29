@@ -127,14 +127,23 @@ export default function MissionModal(props: {
                           value: agent.id,
                         }))}
                         multiple
+                        value={tempMission.crew.map((agent) => agent.id!)}
                         onValueChange={(event: any) => {
                           const newValue = event.map((item: any) => item.value);
                           const newCrew = agentsData.agents.filter(
                             (agent: Agent) => newValue.includes(agent.id)
                           );
+                          const newTasks = tempMission.tasks.map((task) => ({
+                            ...task,
+                            agent:
+                              newCrew.find(
+                                (agent: Agent) => agent.id === task.agent?.id
+                              ) ?? null,
+                          }));
                           setTempMission((prevState) => ({
                             ...prevState!,
                             crew: newCrew,
+                            tasks: newTasks,
                           }));
                         }}
                         theme={selectTheme}
@@ -208,8 +217,8 @@ export default function MissionModal(props: {
                   {isEdit ? (
                     <div>
                       <MissionTaskEditor
-                        mission={mission!}
-                        agents={mission?.crew!}
+                        mission={tempMission!}
+                        agents={tempMission?.crew!}
                         onMissionChange={(mission: Mission) => {
                           setTempMission(mission);
                         }}
@@ -267,7 +276,7 @@ export default function MissionModal(props: {
                   <TERipple rippleColor="light">
                     <Button
                       color="white"
-                      onClick={() => setShowModal(false)}
+                      onClick={() => setEdit(false)}
                       placeholder={undefined}
                     >
                       Cancel
@@ -282,6 +291,7 @@ export default function MissionModal(props: {
                         handleUpdateMission(tempMission)
                           .then(() => {
                             setShowModal(false);
+                            setEdit(false);
                             ReactSwal.fire({
                               title: "Update Mission",
                               text: "Mission updated successfully",

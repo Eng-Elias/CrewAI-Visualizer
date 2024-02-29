@@ -62,9 +62,7 @@ const resolvers = {
       for (let task of body.tasks) {
         let agent = null;
         if (task.agent) {
-          agent = await prisma.agent.findFirst({
-            where: { id: task.agent },
-          });
+          agent = crew.find((a) => a.id === task.agent) ?? null;
         }
         tasks.push({
           ...task,
@@ -97,9 +95,7 @@ const resolvers = {
         for (let task of body.tasks) {
           let agent = null;
           if (task.agent) {
-            agent = await prisma.agent.findFirst({
-              where: { id: task.agent },
-            });
+            agent = crew.find((a) => a.id === task.agent) ?? null;
           }
           tasks.push({
             ...task,

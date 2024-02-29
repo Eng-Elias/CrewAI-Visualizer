@@ -119,9 +119,17 @@ function NewMissionModal(props: {
                         const newCrew = agentsData.agents.filter(
                           (agent: Agent) => newValue.includes(agent.id)
                         );
+                        const newTasks = tempMission.tasks.map((task) => ({
+                          ...task,
+                          agent:
+                            newCrew.find(
+                              (agent: Agent) => agent.id === task.agent?.id
+                            ) ?? null,
+                        }));
                         setTempMission((prevState) => ({
                           ...prevState!,
                           crew: newCrew,
+                          tasks: newTasks,
                         }));
                       }}
                       theme={selectTheme}
