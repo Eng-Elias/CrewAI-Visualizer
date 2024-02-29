@@ -42,7 +42,7 @@ function NewMissionModal(props: {
   const [createMission] = useMutation(CREATE_MISSION);
   const [createMissionLoading, setCreateMissionLoading] = useState(false);
 
-  const handleCreateMission = (missionData: Mission) => {
+  const handleCreateMission = async (missionData: Mission) => {
     setCreateMissionLoading(true);
     return createMission({
       variables: {
@@ -72,14 +72,12 @@ function NewMissionModal(props: {
               <h1 className="text-xl font-medium leading-normal">
                 Create New Mission
               </h1>
-              <button
-                type="button"
-                className="box-content rounded-none border-none hover:no-underline hover:opacity-75 focus:opacity-100 focus:shadow-none focus:outline-none"
+              <Button
                 onClick={() => setShowModal(false)}
-                aria-label="Close"
+                placeholder={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
-              </button>
+              </Button>
             </TEModalHeader>
             <TEModalBody>
               <div>
@@ -186,9 +184,9 @@ function NewMissionModal(props: {
                   )}
                 </div>
                 <div className="my-3">
-                  <button className="mx-auto block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white">
+                  <Button color="blue" placeholder={undefined}>
                     {tempMission?.result ? "Re-Run" : "Run"}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </TEModalBody>

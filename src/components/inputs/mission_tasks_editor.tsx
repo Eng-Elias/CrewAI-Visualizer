@@ -50,12 +50,13 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
         <div key={index} className="mt-4 border-b border-gray-200 pb-4">
           <div className="flex justify-between items-center">
             <h3 className="text-md font-semibold">{task.name}</h3>
-            <button
+            <Button
               onClick={() => handleRemoveTask(index)}
               className="text-red-500"
+              placeholder={undefined}
             >
               Remove
-            </button>
+            </Button>
           </div>
           <div className="text-sm text-gray-300 my-2">{task.description}</div>
           <div className="ml-3">

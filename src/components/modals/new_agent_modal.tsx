@@ -84,14 +84,12 @@ function NewAgentModal(props: {
               <h1 className="text-xl font-medium leading-normal">
                 Add new agent to you Crew
               </h1>
-              <button
-                type="button"
-                className="box-content rounded-none border-none hover:no-underline hover:opacity-75 focus:opacity-100 focus:shadow-none focus:outline-none"
+              <Button
                 onClick={() => setShowModal(false)}
-                aria-label="Close"
+                placeholder={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
-              </button>
+              </Button>
             </TEModalHeader>
             <TEModalBody>
               <div className="sm:flex">
