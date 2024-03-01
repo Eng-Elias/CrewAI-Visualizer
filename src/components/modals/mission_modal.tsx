@@ -264,17 +264,6 @@ export default function MissionModal(props: {
                 </div>
                 {!isEdit && (
                   <>
-                    <div>
-                      <label className="font-bold text-lg">Result:</label>
-                      {mission?.result && (
-                        <div
-                          className="border-2 rounded p-2"
-                          style={{ whiteSpace: "pre-line" }}
-                        >
-                          {missionResult}
-                        </div>
-                      )}
-                    </div>
                     <div className="my-3">
                       <Button
                         color="blue"
@@ -313,6 +302,17 @@ export default function MissionModal(props: {
                         >
                           Running
                         </Button>
+                      )}
+                    </div>
+                    <div>
+                      <label className="font-bold text-lg">Result:</label>
+                      {mission?.result && (
+                        <div
+                          className="border-2 rounded p-2"
+                          style={{ whiteSpace: "pre-line" }}
+                        >
+                          {missionResult}
+                        </div>
                       )}
                     </div>
                   </>
