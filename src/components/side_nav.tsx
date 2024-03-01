@@ -46,7 +46,7 @@ const SideNav = () => {
             isAgentsActive ? "font-bold" : ""
           }`}
         >
-          Agents
+          Crew
         </span>
       </Link>
     </div>

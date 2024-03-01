@@ -1,7 +1,5 @@
+import { HeroSection } from "@/components/ui/hero";
+
 export default function Home() {
-  return (
-    <div>
-      <h1>Welcome to CrewAI Visualizer</h1>
-    </div>
-  );
+  return <HeroSection />;
 }

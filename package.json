@@ -16,6 +16,7 @@
     "@as-integrations/next": "^3.0.0",
     "@material-tailwind/react": "^2.1.9",
     "@prisma/client": "^5.9.1",
+    "framer-motion": "^11.0.8",
     "graphql": "^16.8.1",
     "next": "14.1.0",
     "node-calls-python": "^1.8.2",
