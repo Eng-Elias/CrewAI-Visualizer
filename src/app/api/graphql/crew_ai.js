@@ -4,13 +4,10 @@ const nodecallspython = require("node-calls-python");
 
 const py = nodecallspython.interpreter;
 
-py.addImportPath(
-  "E:\\Crew AI\\TheProject\\crew-ai-visualizer\\src\\app\\api\\graphql\\venv\\Lib\\site-packages"
-);
+py.addImportPath(process.env.PYTHON_SITE_PACKAGES);
 
 export function runMission(id) {
-  const crewaiPath =
-    "E:\\Crew AI\\TheProject\\crew-ai-visualizer\\src\\app\\api\\graphql\\crew_ai.py";
+  const crewaiPath = process.env.CREW_AI_PY_FILE;
   return py
     .import(crewaiPath)
     .then(async function (pymodule) {
