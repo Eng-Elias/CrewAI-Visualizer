@@ -57,11 +57,11 @@ const AgentsPage = () => {
             <div
               className={`flex flex-col ${
                 i % 2 == 0 ? "lg:flex-row" : "lg:flex-row-reverse"
-              } rounded overflow-hidden h-auto min-h-40 border`}
+              } rounded overflow-hidden h-auto min-h-52 border`}
             >
               <img
-                className="block h-auto max-w-72 w-full lg:w-48 flex-none bg-cover"
-                src={agent.image ?? "/sailor.png"}
+                className="block max-w-72 w-full lg:w-48 flex-none bg-cover"
+                src={agent.image ?? "/agents_images/sailor.png"}
                 alt="Agent"
               />
               <div className="rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col leading-normal w-100">
@@ -90,6 +90,9 @@ const AgentsPage = () => {
           showModal={showAgentModal}
           setShowModal={setShowAgentModal}
           onUpdateAgent={() => {
+            refetch();
+          }}
+          onUploadImage={() => {
             refetch();
           }}
         />

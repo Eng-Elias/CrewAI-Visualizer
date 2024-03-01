@@ -29,8 +29,15 @@ export default function AgentModal(props: {
   showModal: boolean;
   setShowModal: Function;
   onUpdateAgent: Function;
+  onUploadImage: Function;
 }): JSX.Element {
-  const { agent, showModal, setShowModal, onUpdateAgent = () => {} } = props;
+  const {
+    agent,
+    showModal,
+    setShowModal,
+    onUpdateAgent = () => {},
+    onUploadImage = () => {},
+  } = props;
 
   const [isEdit, setEdit] = useState(false);
 
@@ -39,6 +46,8 @@ export default function AgentModal(props: {
   useEffect(() => {
     setTempAgent(agent);
   }, [agent]);
+
+  const [imageFile, setImageFile] = useState<Blob>();
 
   const [selectedImage, setSelectedImage] = useState<
     string | ArrayBuffer | null
@@ -53,7 +62,60 @@ export default function AgentModal(props: {
     };
 
     if (file) {
+      setImageFile(file);
       reader.readAsDataURL(file);
+    }
+  };
+
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const handleUploadImage = async () => {
+    setUploadLoading(true);
+    if (imageFile) {
+      const body = new FormData();
+      body.append("agent_id", agent.id as string);
+      body.append("image", imageFile);
+      const response = await fetch("/api/upload_agent_image", {
+        method: "POST",
+        body,
+      });
+      if (response.ok) {
+        response
+          .json()
+          .then((data) => {
+            if (data.success) {
+              setTempAgent({ ...tempAgent, image: data.url });
+              ReactSwal.fire({
+                title: "Finished",
+                text: "Agent image updated successfully",
+                icon: "success",
+              });
+              onUploadImage();
+            } else {
+              ReactSwal.fire({
+                title: "Error",
+                text: data.error,
+                icon: "error",
+              });
+            }
+          })
+          .catch((error) => {
+            ReactSwal.fire({
+              title: "Error",
+              text: error,
+              icon: "error",
+            });
+          })
+          .finally(() => {
+            setUploadLoading(false);
+          });
+      } else {
+        ReactSwal.fire({
+          title: "Error",
+          text: "An error occurred, try again.",
+          icon: "error",
+        });
+        setUploadLoading(false);
+      }
     }
   };
 
@@ -228,6 +290,20 @@ export default function AgentModal(props: {
                         accept="image/*"
                         onChange={handleImageChange}
                       />
+                      <div className="text-center py-1">
+                        <Button
+                          onClick={() => {
+                            handleUploadImage();
+                          }}
+                          loading={uploadLoading}
+                          disabled={uploadLoading || !selectedImage}
+                          color="blue"
+                          className="mx-auto"
+                          placeholder={undefined}
+                        >
+                          Upload
+                        </Button>
+                      </div>
                       {selectedImage && (
                         <img
                           // @ts-ignore
@@ -239,8 +315,8 @@ export default function AgentModal(props: {
                     </>
                   ) : (
                     <img
-                      src={agent?.image ?? "/sailor.png"}
-                      alt="Software Engineer"
+                      src={tempAgent?.image ?? "/agents_images/sailor.png"}
+                      alt="Agent Image"
                       className="w-7/12 mx-auto rounded-lg"
                     />
                   )}

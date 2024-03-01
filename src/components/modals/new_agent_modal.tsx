@@ -15,7 +15,6 @@ import {
   TESelect,
   TETextarea,
 } from "tw-elements-react";
-import TWFileInput from "../inputs/file";
 import { Button, Switch } from "@material-tailwind/react";
 import { useMutation } from "@apollo/client";
 import { CREATE_AGENT } from "@/utils/graphql_queries";
@@ -93,7 +92,7 @@ function NewAgentModal(props: {
             </TEModalHeader>
             <TEModalBody>
               <div className="sm:flex">
-                <div className="sm:w-1/2">
+                <div className="sm:w-1/2 mx-auto">
                   <div className="mb-4">
                     <label className="font-bold text-lg">Role:</label>
                     <TEInput
@@ -180,19 +179,6 @@ function NewAgentModal(props: {
                       }}
                     />
                   </div>
-                </div>
-
-                <div className="m-4 sm:w-1/2">
-                  <label className="font-bold mx-2">Agent Image: </label>
-                  <TWFileInput accept="image/*" onChange={handleImageChange} />
-                  {selectedImage && (
-                    <img
-                      // @ts-ignore
-                      src={selectedImage}
-                      alt="Agent Image"
-                      className="mx-auto my-3 max-w-72 h-auto"
-                    />
-                  )}
                 </div>
               </div>
             </TEModalBody>
