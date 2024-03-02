@@ -76,6 +76,9 @@ const MissionsPage = () => {
           onRunMission={() => {
             refetch();
           }}
+          onDeleteMission={() => {
+            refetch();
+          }}
         />
       </div>
     </div>

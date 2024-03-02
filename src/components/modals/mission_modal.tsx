@@ -20,6 +20,7 @@ import { Process, selectTheme } from "@/data/consts";
 import { Button, Switch } from "@material-tailwind/react";
 import { useMutation, useQuery } from "@apollo/client";
 import {
+  DELETE_MISSION,
   GET_AGENTS,
   RUN_MISSION,
   UPDATE_MISSION,
@@ -34,6 +35,7 @@ export default function MissionModal(props: {
   setShowModal: Function;
   onUpdateMission?: Function;
   onRunMission?: Function;
+  onDeleteMission?: Function;
 }): JSX.Element {
   const {
     mission,
@@ -41,6 +43,7 @@ export default function MissionModal(props: {
     setShowModal,
     onUpdateMission = () => {},
     onRunMission = () => {},
+    onDeleteMission = () => {},
   } = props;
 
   const [isEdit, setEdit] = useState(false);
@@ -94,6 +97,20 @@ export default function MissionModal(props: {
       },
     }).finally(() => {
       setRunMissionLoading(false);
+    });
+  };
+
+  const [deleteMission] = useMutation(DELETE_MISSION);
+  const [deleteMissionLoading, setDeleteMissionLoading] = useState(false);
+
+  const handleDeleteMission = async () => {
+    setDeleteMissionLoading(true);
+    return deleteMission({
+      variables: {
+        id: Number.parseInt(mission.id as string),
+      },
+    }).finally(() => {
+      setDeleteMissionLoading(false);
     });
   };
 
@@ -323,15 +340,52 @@ export default function MissionModal(props: {
             {/* Update Mission */}
             <TEModalFooter>
               {!isEdit && (
-                <TERipple rippleColor="light">
-                  <Button
-                    color="green"
-                    onClick={() => setEdit(true)}
-                    placeholder={undefined}
-                  >
-                    Edit
-                  </Button>
-                </TERipple>
+                <>
+                  <TERipple rippleColor="light">
+                    <Button
+                      color="red"
+                      className="mx-1"
+                      loading={deleteMissionLoading}
+                      onClick={() => {
+                        ReactSwal.fire({
+                          title: "Pay Attention",
+                          text: "Are you sure you want to delete this mission?",
+                          icon: "error",
+                        })
+                          .then(() => {
+                            handleDeleteMission().then(() => {
+                              setShowModal(false);
+                              onDeleteMission();
+                              ReactSwal.fire({
+                                title: "Deleted",
+                                text: "Mission deleted successfully",
+                                icon: "success",
+                              });
+                            });
+                          })
+                          .catch((error) => {
+                            ReactSwal.fire({
+                              title: "Error",
+                              text: error,
+                              icon: "warning",
+                            });
+                          });
+                      }}
+                      placeholder={undefined}
+                    >
+                      Delete
+                    </Button>
+                  </TERipple>
+                  <TERipple rippleColor="light">
+                    <Button
+                      color="green"
+                      onClick={() => setEdit(true)}
+                      placeholder={undefined}
+                    >
+                      Edit
+                    </Button>
+                  </TERipple>
+                </>
               )}
               {isEdit && (
                 <>
