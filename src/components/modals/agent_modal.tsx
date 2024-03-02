@@ -21,15 +21,16 @@ import { selectTheme } from "@/data/consts";
 import { Button, Switch } from "@material-tailwind/react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { UPDATE_AGENT } from "@/utils/graphql_queries";
+import { DELETE_AGENT, UPDATE_AGENT } from "@/utils/graphql_queries";
 import { useMutation } from "@apollo/client";
 
 export default function AgentModal(props: {
   agent: Agent;
   showModal: boolean;
   setShowModal: Function;
-  onUpdateAgent: Function;
-  onUploadImage: Function;
+  onUpdateAgent?: Function;
+  onUploadImage?: Function;
+  onDeleteAgent?: Function;
 }): JSX.Element {
   const {
     agent,
@@ -37,6 +38,7 @@ export default function AgentModal(props: {
     setShowModal,
     onUpdateAgent = () => {},
     onUploadImage = () => {},
+    onDeleteAgent = () => {},
   } = props;
 
   const [isEdit, setEdit] = useState(false);
@@ -131,6 +133,20 @@ export default function AgentModal(props: {
       },
     }).finally(() => {
       setUpdateAgentLoading(false);
+    });
+  };
+
+  const [deleteAgent] = useMutation(DELETE_AGENT);
+  const [deleteAgentLoading, setDeleteAgentLoading] = useState(false);
+
+  const handleDeleteAgent = async () => {
+    setDeleteAgentLoading(true);
+    return deleteAgent({
+      variables: {
+        id: Number.parseInt(agent.id as string),
+      },
+    }).finally(() => {
+      setDeleteAgentLoading(false);
     });
   };
 
@@ -326,15 +342,52 @@ export default function AgentModal(props: {
 
             <TEModalFooter>
               {!isEdit && (
-                <TERipple rippleColor="light">
-                  <Button
-                    color="green"
-                    onClick={() => setEdit(true)}
-                    placeholder={undefined}
-                  >
-                    Edit
-                  </Button>
-                </TERipple>
+                <>
+                  <TERipple rippleColor="light">
+                    <Button
+                      color="red"
+                      className="mx-1"
+                      loading={deleteAgentLoading}
+                      onClick={() => {
+                        ReactSwal.fire({
+                          title: "Pay Attention",
+                          text: "Are you sure you want to delete this agent?",
+                          icon: "error",
+                        })
+                          .then(() => {
+                            handleDeleteAgent().then(() => {
+                              setShowModal(false);
+                              onDeleteAgent();
+                              ReactSwal.fire({
+                                title: "Deleted",
+                                text: "Agent deleted successfully",
+                                icon: "success",
+                              });
+                            });
+                          })
+                          .catch((error) => {
+                            ReactSwal.fire({
+                              title: "Error",
+                              text: error,
+                              icon: "warning",
+                            });
+                          });
+                      }}
+                      placeholder={undefined}
+                    >
+                      Delete
+                    </Button>
+                  </TERipple>
+                  <TERipple rippleColor="light">
+                    <Button
+                      color="green"
+                      onClick={() => setEdit(true)}
+                      placeholder={undefined}
+                    >
+                      Edit
+                    </Button>
+                  </TERipple>
+                </>
               )}
               {isEdit && (
                 <>

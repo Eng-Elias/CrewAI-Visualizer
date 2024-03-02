@@ -95,6 +95,9 @@ const AgentsPage = () => {
           onUploadImage={() => {
             refetch();
           }}
+          onDeleteAgent={() => {
+            refetch();
+          }}
         />
       </div>
     </div>
