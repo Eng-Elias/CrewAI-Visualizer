@@ -15,6 +15,7 @@ export function TasksAccordion({ tasks }: { tasks: Array<Task> }) {
     <div>
       {tasks.map((task, i) => (
         <Accordion
+          key={i}
           open={open === i}
           className="mb-2 rounded-lg border border-blue-gray-100 px-4"
           placeholder={undefined}
