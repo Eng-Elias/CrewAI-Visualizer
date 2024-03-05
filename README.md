@@ -21,7 +21,7 @@ To get started with the CrewAI Simplified App, follow these simple steps:
 
    ```bash
    git clone https://github.com/Eng-Elias/CrewAI-Visualizer.git
-   cd crewai-simplified-app
+   cd CrewAI-Visualizer
    npm install
    ```
 

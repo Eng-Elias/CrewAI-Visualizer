@@ -2,7 +2,6 @@
 
 import MissionModal from "@/components/modals/mission_modal";
 import NewMissionModal from "@/components/modals/new_mission_modal";
-import { missions } from "@/data/data";
 import { Mission } from "@/types/mission";
 import { GET_MISSIONS } from "@/utils/graphql_queries";
 import { useQuery } from "@apollo/client";
