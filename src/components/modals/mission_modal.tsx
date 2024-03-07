@@ -17,7 +17,7 @@ import { Mission } from "@/types/mission";
 import MissionTaskEditor from "../inputs/mission_tasks_editor";
 import { TasksAccordion } from "../ui/tasks_accordions";
 import { Process, selectTheme } from "@/data/consts";
-import { Button, Switch } from "@material-tailwind/react";
+import { Alert, Button, Switch } from "@material-tailwind/react";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   DELETE_MISSION,
@@ -58,7 +58,11 @@ export default function MissionModal(props: {
     setMissionResult(mission?.result ?? "");
   }, [mission]);
 
-  const { loading, error, data: agentsData } = useQuery(GET_AGENTS);
+  const {
+    loading,
+    error: agentsError,
+    data: agentsData,
+  } = useQuery(GET_AGENTS);
 
   const [updateMission] = useMutation(UPDATE_MISSION);
   const [updateMissionLoading, setUpdateMissionLoading] = useState(false);
@@ -151,6 +155,24 @@ export default function MissionModal(props: {
                 <div className="mb-4">
                   <span className="font-bold mr-2 text-lg">Crew (Agents):</span>
                   <br />
+                  {agentsError && (
+                    <>
+                      <div className="w-full my-1">
+                        <Alert
+                          color="yellow"
+                          icon={
+                            <Icon
+                              icon="material-symbols:warning-outline"
+                              fontSize={26}
+                            />
+                          }
+                          className="w-fit"
+                        >
+                          {agentsError?.message ?? "An error occurred."}
+                        </Alert>
+                      </div>
+                    </>
+                  )}
                   {isEdit ? (
                     loading ? (
                       <Button
@@ -163,17 +185,20 @@ export default function MissionModal(props: {
                       </Button>
                     ) : (
                       <TESelect
-                        data={agentsData.agents.map((agent: Agent) => ({
-                          text: agent.role,
-                          value: agent.id,
-                        }))}
+                        data={
+                          agentsData?.agents.map((agent: Agent) => ({
+                            text: agent.role,
+                            value: agent.id,
+                          })) ?? []
+                        }
                         multiple
                         value={tempMission.crew.map((agent) => agent.id!)}
                         onValueChange={(event: any) => {
                           const newValue = event.map((item: any) => item.value);
-                          const newCrew = agentsData.agents.filter(
-                            (agent: Agent) => newValue.includes(agent.id)
-                          );
+                          const newCrew =
+                            agentsData?.agents.filter((agent: Agent) =>
+                              newValue.includes(agent.id)
+                            ) ?? [];
                           const newTasks = tempMission.tasks.map((task) => ({
                             ...task,
                             agent:

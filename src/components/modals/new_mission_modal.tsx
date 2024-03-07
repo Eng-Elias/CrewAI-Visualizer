@@ -1,7 +1,7 @@
 import { Process, selectTheme } from "@/data/consts";
 import { Mission } from "@/types/mission";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Button, Switch } from "@material-tailwind/react";
+import { Alert, Button, Switch } from "@material-tailwind/react";
 import React, { useState } from "react";
 import {
   TEInput,
@@ -37,7 +37,11 @@ function NewMissionModal(props: {
     result: "",
   });
 
-  const { loading, error, data: agentsData } = useQuery(GET_AGENTS);
+  const {
+    loading,
+    error: agentsError,
+    data: agentsData,
+  } = useQuery(GET_AGENTS);
 
   const [createMission] = useMutation(CREATE_MISSION);
   const [createMissionLoading, setCreateMissionLoading] = useState(false);
@@ -98,6 +102,24 @@ function NewMissionModal(props: {
                 <div className="mb-4">
                   <span className="font-bold mr-2 text-lg">Crew (Agents):</span>
                   <br />
+                  {agentsError && (
+                    <>
+                      <div className="w-full my-1">
+                        <Alert
+                          color="yellow"
+                          icon={
+                            <Icon
+                              icon="material-symbols:warning-outline"
+                              fontSize={26}
+                            />
+                          }
+                          className="w-fit"
+                        >
+                          {agentsError?.message ?? "An error occurred."}
+                        </Alert>
+                      </div>
+                    </>
+                  )}
                   {loading ? (
                     <Button
                       variant="text"
@@ -109,16 +131,19 @@ function NewMissionModal(props: {
                     </Button>
                   ) : (
                     <TESelect
-                      data={agentsData.agents.map((agent: Agent) => ({
-                        text: agent.role,
-                        value: agent.id,
-                      }))}
+                      data={
+                        agentsData?.agents.map((agent: Agent) => ({
+                          text: agent.role,
+                          value: agent.id,
+                        })) ?? []
+                      }
                       multiple
                       onValueChange={(event: any) => {
                         const newValue = event.map((item: any) => item.value);
-                        const newCrew = agentsData.agents.filter(
-                          (agent: Agent) => newValue.includes(agent.id)
-                        );
+                        const newCrew =
+                          agentsData?.agents.filter((agent: Agent) =>
+                            newValue.includes(agent.id)
+                          ) ?? [];
                         const newTasks = tempMission.tasks.map((task) => ({
                           ...task,
                           agent:

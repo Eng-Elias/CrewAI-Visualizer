@@ -6,7 +6,7 @@ import { Agent } from "@/types/agent";
 import { GET_AGENTS } from "@/utils/graphql_queries";
 import { useQuery } from "@apollo/client";
 import { Icon } from "@iconify/react";
-import { Button, IconButton } from "@material-tailwind/react";
+import { Alert, Button, IconButton } from "@material-tailwind/react";
 import { useState } from "react";
 
 const AgentsPage = () => {
@@ -52,7 +52,20 @@ const AgentsPage = () => {
         />
       </div>
       <div className="container m-auto flex flex-wrap flex-col md:flex-row items-center justify-start p-2">
-        {data.agents.map((agent: Agent, i: number) => (
+        {error && (
+          <div className="w-full">
+            <Alert
+              color="yellow"
+              icon={
+                <Icon icon="material-symbols:warning-outline" fontSize={26} />
+              }
+              className="w-fit"
+            >
+              {error?.message ?? "An error occurred."}
+            </Alert>
+          </div>
+        )}
+        {data?.agents.map((agent: Agent, i: number) => (
           <div key={i} className="w-full lg:w-1/2 p-3 relative">
             <div
               className={`flex flex-col ${
