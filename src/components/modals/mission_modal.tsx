@@ -317,8 +317,8 @@ export default function MissionModal(props: {
                                 missionData.data.runMission.result
                               );
                               ReactSwal.fire({
-                                title: "New Mission",
-                                text: "New mission created successfully",
+                                title: "Finished",
+                                text: "Mission finished successfully",
                                 icon: "success",
                               });
                               onRunMission();
