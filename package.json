@@ -22,6 +22,7 @@
     "node-calls-python": "^1.8.2",
     "react": "^18",
     "react-dom": "^18",
+    "sharp": "^0.33.2",
     "sweetalert2": "^11.10.5",
     "sweetalert2-react-content": "^5.0.7",
     "tw-elements": "^1.1.0",
