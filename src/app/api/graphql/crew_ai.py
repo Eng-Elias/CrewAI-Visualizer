@@ -74,6 +74,12 @@ def run_mission(mission):
         )
 
         result = crew.kickoff()
-        return result
+        return {
+            "result": result
+        }
     except Exception as e:
         print(e)
+        return ({
+            "error": True,
+            "message": str(e)
+        })

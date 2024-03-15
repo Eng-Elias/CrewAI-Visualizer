@@ -6,7 +6,7 @@ import { Mission } from "@/types/mission";
 import { GET_MISSIONS } from "@/utils/graphql_queries";
 import { useQuery } from "@apollo/client";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Button, IconButton } from "@material-tailwind/react";
+import { Alert, Button, IconButton } from "@material-tailwind/react";
 import { useState } from "react";
 
 const MissionsPage = () => {
@@ -27,6 +27,20 @@ const MissionsPage = () => {
       >
         Loading
       </Button>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full">
+        <Alert
+          color="yellow"
+          icon={<Icon icon="material-symbols:warning-outline" fontSize={26} />}
+          className="w-fit"
+        >
+          {error?.message ?? "An error occurred."}
+        </Alert>
+      </div>
     );
   }
 

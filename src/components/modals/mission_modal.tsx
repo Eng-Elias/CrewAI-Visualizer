@@ -292,7 +292,7 @@ export default function MissionModal(props: {
                     </div>
                   ) : (
                     <div>
-                      {mission?.tasks ? (
+                      {mission?.tasks.length > 0 ? (
                         <div>
                           <TasksAccordion tasks={mission.tasks} />
                         </div>
@@ -309,7 +309,9 @@ export default function MissionModal(props: {
                     <div className="my-3">
                       <Button
                         color="blue"
-                        disabled={runMissionLoading}
+                        disabled={
+                          runMissionLoading || mission?.tasks.length === 0
+                        }
                         onClick={() => {
                           handleRunMission()
                             .then((missionData) => {

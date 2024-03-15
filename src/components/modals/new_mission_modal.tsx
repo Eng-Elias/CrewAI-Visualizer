@@ -196,18 +196,6 @@ function NewMissionModal(props: {
                     theme={selectTheme}
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="font-bold text-lg">Tasks:</label>
-                  <div>
-                    <MissionTaskEditor
-                      mission={tempMission!}
-                      agents={agentsData?.agents}
-                      onMissionChange={(mission: Mission) => {
-                        setTempMission(mission);
-                      }}
-                    />
-                  </div>
-                </div>
               </div>
             </TEModalBody>
 

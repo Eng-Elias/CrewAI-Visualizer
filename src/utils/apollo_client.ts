@@ -22,6 +22,7 @@ export function makeApolloClient() {
 
   return new NextSSRApolloClient({
     cache: new NextSSRInMemoryCache(),
+    queryDeduplication: false,
     link:
       typeof window === "undefined"
         ? ApolloLink.from([

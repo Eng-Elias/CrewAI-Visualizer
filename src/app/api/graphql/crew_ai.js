@@ -16,7 +16,14 @@ export function runMission(id) {
         include: { crew: true },
       });
       if (mission) {
-        const result = await py.call(pymodule, "run_mission", mission);
+        const { result, error, message } = await py.call(
+          pymodule,
+          "run_mission",
+          mission
+        );
+        if (error) {
+          throw new Error(message);
+        }
         const missionWithResult = prisma.mission.update({
           where: { id },
           data: { result },
