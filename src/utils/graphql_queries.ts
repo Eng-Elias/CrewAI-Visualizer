@@ -259,23 +259,9 @@ export const DELETE_MISSION = gql`
 export const RUN_MISSION = gql`
   mutation RunMission($id: Int!) {
     runMission(id: $id) {
-      id
-      name
-      crew {
-        id
-        role
-      }
-      tasks {
-        name
-        description
-        agent {
-          id
-          role
-        }
-      }
-      verbose
-      process
       result
+      error
+      message
     }
   }
 `;

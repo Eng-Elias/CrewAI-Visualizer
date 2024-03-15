@@ -21,14 +21,13 @@ export function runMission(id) {
           "run_mission",
           mission
         );
-        if (error) {
-          throw new Error(message);
+        if (!error) {
+          await prisma.mission.update({
+            where: { id },
+            data: { result },
+          });
         }
-        const missionWithResult = prisma.mission.update({
-          where: { id },
-          data: { result },
-        });
-        return missionWithResult;
+        return { result, error, message };
       } else {
         throw Error("Mission doest not exist");
       }

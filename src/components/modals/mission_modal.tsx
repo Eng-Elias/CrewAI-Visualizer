@@ -315,15 +315,23 @@ export default function MissionModal(props: {
                         onClick={() => {
                           handleRunMission()
                             .then((missionData) => {
-                              setMissionResult(
-                                missionData.data.runMission.result
-                              );
-                              ReactSwal.fire({
-                                title: "Finished",
-                                text: "Mission finished successfully",
-                                icon: "success",
-                              });
-                              onRunMission();
+                              const { result, error, message } =
+                                missionData.data.runMission;
+                              if (!error) {
+                                setMissionResult(result);
+                                ReactSwal.fire({
+                                  title: "Finished",
+                                  text: "Mission finished successfully",
+                                  icon: "success",
+                                });
+                                onRunMission();
+                              } else {
+                                ReactSwal.fire({
+                                  title: "Error",
+                                  text: message,
+                                  icon: "error",
+                                });
+                              }
                             })
                             .catch((error) => {
                               ReactSwal.fire({

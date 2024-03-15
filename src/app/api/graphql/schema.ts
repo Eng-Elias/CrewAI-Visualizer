@@ -50,6 +50,12 @@ const typeDefs = `#graphql
         result: String
     }
 
+    type RunMissionResult {
+        result: String
+        error: Boolean
+        message: String
+    }
+
     enum MissionProcess {
         SEQUENTIAL
         HIERARCHICAL
@@ -103,7 +109,7 @@ const typeDefs = `#graphql
 
         deleteMission(id: Int!): DeleteOutput
 
-        runMission(id: Int!): Mission
+        runMission(id: Int!): RunMissionResult
     }
 `;
 

@@ -16,7 +16,7 @@ load_dotenv()
 
 process_type = {
     "SEQUENTIAL": Process.sequential,
-    "HIERARTICAL": Process.hierarchical,
+    "HIERARCHICAL": Process.hierarchical,
 }
 
 tool_dict = {
@@ -74,12 +74,7 @@ def run_mission(mission):
         )
 
         result = crew.kickoff()
-        return {
-            "result": result
-        }
+        return {"result": result}
     except Exception as e:
         print(e)
-        return ({
-            "error": True,
-            "message": str(e)
-        })
+        return {"error": True, "message": str(e)}
