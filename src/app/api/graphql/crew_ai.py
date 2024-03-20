@@ -47,6 +47,8 @@ def run_mission(mission):
                 verbose=agent["verbose"],
                 tools=[tool_dict[tool] for tool in agent["tools"]],
                 llm=llm,
+                max_rpm=60 / len(mission["crew"]),
+                memory=agent.get("memory", False),
             )
             for agent in mission["crew"]
         ]
@@ -61,6 +63,7 @@ def run_mission(mission):
                     if task["agent"]
                     else None
                 ),
+                expected_output=task["expected_output"],
             )
             for task in mission["tasks"]
         ]
