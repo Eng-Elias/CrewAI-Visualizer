@@ -14,5 +14,6 @@ export type Agent = {
   tools: Array<Tool>;
   allowDelegation: boolean;
   verbose: boolean;
+  memory?: boolean;
   image?: string | null;
 };

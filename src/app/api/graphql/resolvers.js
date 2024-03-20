@@ -58,24 +58,13 @@ const resolvers = {
           id: true,
         },
       });
-      const tasks = [];
-      for (let task of body.tasks) {
-        let agent = null;
-        if (task.agent) {
-          agent = crew.find((a) => a.id === task.agent) ?? null;
-        }
-        tasks.push({
-          ...task,
-          agent,
-        });
-      }
       const mission = await prisma.mission.create({
         data: {
           name,
           verbose: !!verbose,
           process: process ?? Process.SEQUENTIAL,
           crew: { connect: crew },
-          tasks,
+          tasks: [],
           result: "",
         },
       });

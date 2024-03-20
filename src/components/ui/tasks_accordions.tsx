@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionHeader,
   AccordionBody,
+  Typography,
 } from "@material-tailwind/react";
 import { Task } from "@/types/task";
 
@@ -33,7 +34,19 @@ export function TasksAccordion({ tasks }: { tasks: Array<Task> }) {
                 {task.agent?.role ?? "No Agent"}
               </span>
             </div>
-            <div>{task.description}</div>
+            <div>
+              <Typography variant="lead" placeholder={undefined}>
+                {task.description}
+              </Typography>
+            </div>
+            <div>
+              <Typography variant="h3" placeholder={undefined}>
+                Expected Output
+              </Typography>
+              <Typography variant="paragraph" placeholder={undefined}>
+                {task.expected_output}
+              </Typography>
+            </div>
           </AccordionBody>
         </Accordion>
       ))}

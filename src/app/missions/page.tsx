@@ -65,6 +65,19 @@ const MissionsPage = () => {
           }}
         />
       </div>
+      {data?.missions.length === 0 && (
+        <div className="w-full">
+          <Alert
+            color="cyan"
+            icon={
+              <Icon icon="material-symbols:warning-outline" fontSize={26} />
+            }
+            className="w-fit"
+          >
+            No missions, Try to add one.
+          </Alert>
+        </div>
+      )}
       <div className="container m-auto flex flex-wrap flex-col md:flex-row items-center justify-start p-2">
         {data?.missions.map((mission: Mission, i: number) => (
           <div key={i} className=" w-full lg:w-1/2 p-3">

@@ -16,6 +16,7 @@ const typeDefs = `#graphql
         tools: [AgentTool!]!
         allowDelegation: Boolean!
         verbose: Boolean!
+        memory: Boolean
         image: String
         missions: [Mission!]
     }
@@ -31,12 +32,14 @@ const typeDefs = `#graphql
     type Task {
         name: String!
         description: String!
+        expected_output: String!
         agent: Agent
     }
 
     input TaskInput {
         name: String!
         description: String!
+        expected_output: String!
         agent: Int
     }
 
@@ -74,8 +77,9 @@ const typeDefs = `#graphql
             goal: String!
             backstory: String
             tools: [AgentTool!] = []
-            allowDelegation: Boolean = false
-            verbose: Boolean = false
+            allowDelegation: Boolean
+            verbose: Boolean
+            memory: Boolean
         ): Agent!
 
         updateAgent(
@@ -86,6 +90,7 @@ const typeDefs = `#graphql
             tools: [AgentTool!]
             allowDelegation: Boolean
             verbose: Boolean
+            memory: Boolean
         ): Agent!
 
         deleteAgent(id: Int!): DeleteOutput
@@ -93,7 +98,6 @@ const typeDefs = `#graphql
         createMission(
             name: String!
             crew: [Int!] = []
-            tasks: [TaskInput!] = []
             verbose: Boolean = false
             process: MissionProcess =  "SEQUENTIAL"
         ): Mission!

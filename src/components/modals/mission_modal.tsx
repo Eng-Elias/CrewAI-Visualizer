@@ -10,14 +10,13 @@ import {
   TEModalHeader,
   TEModalBody,
   TEModalFooter,
-  TEInput,
   TESelect,
 } from "tw-elements-react";
 import { Mission } from "@/types/mission";
 import MissionTaskEditor from "../inputs/mission_tasks_editor";
 import { TasksAccordion } from "../ui/tasks_accordions";
 import { Process, selectTheme } from "@/data/consts";
-import { Alert, Button, Switch } from "@material-tailwind/react";
+import { Alert, Button, Input, Switch } from "@material-tailwind/react";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   DELETE_MISSION,
@@ -139,9 +138,10 @@ export default function MissionModal(props: {
                 {isEdit && (
                   <div className="mb-4">
                     <label className="font-bold text-lg">Name:</label>
-                    <TEInput
-                      type="text"
-                      className="mt-2"
+                    <Input
+                      label="Name"
+                      color="blue"
+                      className="text-white"
                       value={tempMission?.name}
                       onChange={(event) => {
                         setTempMission((prevState) => ({
@@ -149,6 +149,7 @@ export default function MissionModal(props: {
                           name: event.target.value,
                         }));
                       }}
+                      crossOrigin={undefined}
                     />
                   </div>
                 )}

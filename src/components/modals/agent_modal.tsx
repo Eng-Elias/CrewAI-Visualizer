@@ -12,13 +12,11 @@ import {
   TEModalHeader,
   TEModalBody,
   TEModalFooter,
-  TEInput,
-  TETextarea,
   TESelect,
 } from "tw-elements-react";
 import TWFileInput from "../inputs/file";
 import { selectTheme } from "@/data/consts";
-import { Button, Switch } from "@material-tailwind/react";
+import { Button, Input, Switch, Textarea } from "@material-tailwind/react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { DELETE_AGENT, UPDATE_AGENT } from "@/utils/graphql_queries";
@@ -174,9 +172,10 @@ export default function AgentModal(props: {
                   {isEdit && (
                     <div className="mb-4">
                       <label className="font-bold text-lg">Role:</label>
-                      <TEInput
-                        type="text"
-                        className="mt-2"
+                      <Input
+                        label="Role"
+                        color="blue"
+                        className="text-white"
                         value={tempAgent?.role}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
@@ -184,15 +183,17 @@ export default function AgentModal(props: {
                             role: event.target.value,
                           }));
                         }}
+                        crossOrigin={undefined}
                       />
                     </div>
                   )}
                   <div className="mb-4">
                     <label className="font-bold text-lg">Goal:</label>
                     {isEdit ? (
-                      <TEInput
-                        type="text"
-                        className="mt-2"
+                      <Input
+                        label="Goal"
+                        color="blue"
+                        className="text-white"
                         value={tempAgent?.goal}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
@@ -200,6 +201,7 @@ export default function AgentModal(props: {
                             goal: event.target.value,
                           }));
                         }}
+                        crossOrigin={undefined}
                       />
                     ) : (
                       <div>{agent?.goal}</div>
@@ -208,8 +210,9 @@ export default function AgentModal(props: {
                   <div className="mb-4">
                     <label className="font-bold text-lg">Backstory:</label>
                     {isEdit ? (
-                      <TETextarea
-                        rows={4}
+                      <Textarea
+                        label="Backstory"
+                        resize={true}
                         value={tempAgent?.backstory || ""}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
@@ -292,6 +295,29 @@ export default function AgentModal(props: {
                         crossOrigin={undefined}
                         color="blue"
                         defaultChecked={tempAgent?.verbose}
+                        disabled={true}
+                      />
+                    )}
+                  </div>
+                  <div className="flex items-center mb-4">
+                    <label className="font-bold mx-2">Memory: </label>
+                    {isEdit ? (
+                      <Switch
+                        crossOrigin={undefined}
+                        color="blue"
+                        defaultChecked={tempAgent?.memory}
+                        onChange={(event) => {
+                          setTempAgent((prevState) => ({
+                            ...prevState!,
+                            memory: !!event.target.value,
+                          }));
+                        }}
+                      />
+                    ) : (
+                      <Switch
+                        crossOrigin={undefined}
+                        color="blue"
+                        defaultChecked={tempAgent?.memory}
                         disabled={true}
                       />
                     )}
@@ -411,6 +437,7 @@ export default function AgentModal(props: {
                         handleUpdateAgent(tempAgent)
                           .then(() => {
                             setShowModal(false);
+                            setEdit(false);
                             ReactSwal.fire({
                               title: "Updated",
                               text: "Agent updated successfully",

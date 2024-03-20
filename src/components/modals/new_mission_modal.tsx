@@ -1,10 +1,9 @@
 import { Process, selectTheme } from "@/data/consts";
 import { Mission } from "@/types/mission";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Alert, Button, Switch } from "@material-tailwind/react";
+import { Alert, Button, Input, Switch } from "@material-tailwind/react";
 import React, { useState } from "react";
 import {
-  TEInput,
   TEModal,
   TEModalBody,
   TEModalContent,
@@ -14,7 +13,6 @@ import {
   TERipple,
   TESelect,
 } from "tw-elements-react";
-import MissionTaskEditor from "../inputs/mission_tasks_editor";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_MISSION, GET_AGENTS } from "@/utils/graphql_queries";
 import { Agent } from "@/types/agent";
@@ -87,9 +85,10 @@ function NewMissionModal(props: {
               <div>
                 <div className="mb-4">
                   <label className="font-bold text-lg">Name:</label>
-                  <TEInput
-                    type="text"
-                    className="mt-2"
+                  <Input
+                    label="Name"
+                    color="blue"
+                    className="text-white"
                     value={tempMission?.name}
                     onChange={(event) => {
                       setTempMission((prevState) => ({
@@ -97,6 +96,7 @@ function NewMissionModal(props: {
                         name: event.target.value,
                       }));
                     }}
+                    crossOrigin={undefined}
                   />
                 </div>
                 <div className="mb-4">

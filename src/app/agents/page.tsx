@@ -65,6 +65,19 @@ const AgentsPage = () => {
             </Alert>
           </div>
         )}
+        {data?.agents.length === 0 && (
+          <div className="w-full">
+            <Alert
+              color="cyan"
+              icon={
+                <Icon icon="material-symbols:warning-outline" fontSize={26} />
+              }
+              className="w-fit"
+            >
+              No Agents, Try to add one.
+            </Alert>
+          </div>
+        )}
         {data?.agents.map((agent: Agent, i: number) => (
           <div key={i} className="w-full lg:w-1/2 p-3 relative">
             <div
