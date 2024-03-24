@@ -53,7 +53,8 @@ export const tools = [
   { text: "WIKIPEDIA", value: "WIKIPEDIA" },
   { text: "YAHOO_FINANCE", value: "YAHOO_FINANCE" },
   { text: "YUOUTUBE_SEARCH", value: "YUOUTUBE_SEARCH" },
-  { text: "CodeDocsSearchTool", value: "CodeDocsSearchTool" },
+  { text: "ARXIV", value: "ARXIV" },
+  { text: "PUBMED", value: "PUBMED" },
 ];
 
 const game = `

@@ -74,9 +74,9 @@ jsonpatch==1.33
 jsonpointer==2.4
 kubernetes==29.0.0
 lancedb==0.5.7
-langchain==0.1.12
-langchain-community==0.0.28
-langchain-core==0.1.32
+langchain==0.1.13
+langchain-community==0.0.29
+langchain-core==0.1.33
 langchain-experimental==0.0.52
 langchain-google-genai==0.0.9
 langchain-openai==0.0.5

@@ -79,6 +79,7 @@ export default function MissionModal(props: {
         tasks: missionData.tasks.map((task) => ({
           name: task.name,
           description: task.description,
+          expected_output: task.expected_output,
           agent: Number.parseInt(task.agent?.id as string),
         })),
       },
@@ -359,14 +360,12 @@ export default function MissionModal(props: {
                     </div>
                     <div>
                       <label className="font-bold text-lg">Result:</label>
-                      {mission?.result && (
-                        <div
-                          className="border-2 rounded p-2"
-                          style={{ whiteSpace: "pre-line" }}
-                        >
-                          {missionResult}
-                        </div>
-                      )}
+                      <div
+                        className="border-2 rounded p-2"
+                        style={{ whiteSpace: "pre-line" }}
+                      >
+                        {missionResult}
+                      </div>
                     </div>
                   </>
                 )}

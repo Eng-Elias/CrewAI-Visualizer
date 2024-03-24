@@ -4,7 +4,9 @@ type Tool =
   | "WIKIDATA"
   | "WIKIPEDIA"
   | "YAHOO_FINANCE"
-  | "YUOUTUBE_SEARCH";
+  | "YUOUTUBE_SEARCH"
+  | "ARXIV"
+  | "PUBMED";
 
 export type Agent = {
   id?: number | string;

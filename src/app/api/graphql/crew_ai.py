@@ -3,13 +3,15 @@ import os
 from textwrap import dedent
 from crewai import Agent, Task, Crew, Process
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
 from langchain_community.tools.semanticscholar.tool import SemanticScholarQueryRun
 from langchain_community.tools.wikidata.tool import WikidataAPIWrapper, WikidataQueryRun
-from langchain_community.tools import WikipediaQueryRun
-from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
+from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
 from langchain_community.tools.yahoo_finance_news import YahooFinanceNewsTool
-from langchain_community.tools import YouTubeSearchTool
+from langchain_community.tools.youtube.search import YouTubeSearchTool
+from langchain_community.tools.arxiv.tool import ArxivQueryRun
+from langchain_community.tools.pubmed.tool import PubmedQueryRun
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,6 +28,8 @@ tool_dict = {
     "WIKIPEDIA": WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper()),
     "YAHOO_FINANCE": YahooFinanceNewsTool(),
     "YUOUTUBE_SEARCH": YouTubeSearchTool(),
+    "ARXIV": ArxivQueryRun(),
+    "PUBMED": PubmedQueryRun(),
 }
 
 

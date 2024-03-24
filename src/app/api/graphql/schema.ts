@@ -6,6 +6,8 @@ const typeDefs = `#graphql
         WIKIPEDIA
         YAHOO_FINANCE
         YUOUTUBE_SEARCH
+        ARXIV
+        PUBMED
     }
 
     type Agent {
@@ -98,7 +100,7 @@ const typeDefs = `#graphql
         createMission(
             name: String!
             crew: [Int!] = []
-            verbose: Boolean = false
+            verbose: Boolean
             process: MissionProcess =  "SEQUENTIAL"
         ): Mission!
 
