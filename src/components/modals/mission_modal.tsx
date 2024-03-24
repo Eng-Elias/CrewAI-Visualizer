@@ -130,6 +130,8 @@ export default function MissionModal(props: {
               <Button
                 onClick={() => setShowModal(false)}
                 placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
               </Button>
@@ -151,6 +153,8 @@ export default function MissionModal(props: {
                         }));
                       }}
                       crossOrigin={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                 )}
@@ -182,6 +186,8 @@ export default function MissionModal(props: {
                         loading={true}
                         placeholder={"Loading"}
                         className="text-white"
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       >
                         Loading
                       </Button>
@@ -243,6 +249,8 @@ export default function MissionModal(props: {
                           verbose: !!event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   ) : (
                     <Switch
@@ -250,6 +258,8 @@ export default function MissionModal(props: {
                       color="blue"
                       checked={mission?.verbose}
                       disabled={true}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   )}
                 </div>
@@ -344,6 +354,8 @@ export default function MissionModal(props: {
                             });
                         }}
                         placeholder={undefined}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       >
                         {mission?.result ? "Re-Run" : "Run"}
                       </Button>
@@ -353,6 +365,8 @@ export default function MissionModal(props: {
                           loading={true}
                           placeholder={"Running"}
                           className="text-white"
+                          onPointerEnterCapture={undefined}
+                          onPointerLeaveCapture={undefined}
                         >
                           Running
                         </Button>
@@ -407,6 +421,8 @@ export default function MissionModal(props: {
                           });
                       }}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Delete
                     </Button>
@@ -416,6 +432,8 @@ export default function MissionModal(props: {
                       color="green"
                       onClick={() => setEdit(true)}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Edit
                     </Button>
@@ -429,6 +447,8 @@ export default function MissionModal(props: {
                       color="white"
                       onClick={() => setEdit(false)}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Cancel
                     </Button>
@@ -460,6 +480,8 @@ export default function MissionModal(props: {
                       }}
                       className="mx-1"
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Save Changes
                     </Button>

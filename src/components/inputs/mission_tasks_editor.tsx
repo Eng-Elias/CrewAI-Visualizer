@@ -56,6 +56,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
               onClick={() => handleRemoveTask(index)}
               className="text-red-500"
               placeholder={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Remove
             </Button>
@@ -80,8 +82,9 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
               color="green"
               value={newTaskName}
               onChange={(e) => setNewTaskName(e.target.value)}
-              // className="border border-gray-300 text-black rounded px-3 py-1"
               crossOrigin={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             />
           </div>
           <div className="my-2">
@@ -91,6 +94,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
               resize={true}
               value={newTaskDescription}
               onChange={(e) => setNewTaskDescription(e.target.value)}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             />
           </div>
           <div>
@@ -100,6 +105,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
               resize={true}
               value={newTaskExpectedOutput}
               onChange={(e) => setNewTaskExpectedOutput(e.target.value)}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             />
           </div>
           <div className="m-2">
@@ -128,6 +135,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
             disabled={!newTaskName || !newTaskDescription}
             onClick={handleAddTask}
             placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
           >
             Add Task
           </Button>

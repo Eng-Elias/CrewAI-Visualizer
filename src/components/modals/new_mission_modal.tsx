@@ -77,6 +77,8 @@ function NewMissionModal(props: {
               <Button
                 onClick={() => setShowModal(false)}
                 placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
               </Button>
@@ -97,6 +99,8 @@ function NewMissionModal(props: {
                       }));
                     }}
                     crossOrigin={undefined}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
                   />
                 </div>
                 <div className="mb-4">
@@ -126,6 +130,8 @@ function NewMissionModal(props: {
                       loading={true}
                       placeholder={"Loading"}
                       className="text-white"
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Loading
                     </Button>
@@ -173,6 +179,8 @@ function NewMissionModal(props: {
                         verbose: !!event.target.value,
                       }));
                     }}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
                   />
                 </div>
                 <div className="mb-4">
@@ -205,6 +213,8 @@ function NewMissionModal(props: {
                   color="white"
                   onClick={() => setShowModal(false)}
                   placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Close
                 </Button>
@@ -235,6 +245,8 @@ function NewMissionModal(props: {
                   }}
                   className="mx-1"
                   placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Add
                 </Button>

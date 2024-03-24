@@ -67,6 +67,8 @@ function NewAgentModal(props: {
               <Button
                 onClick={() => setShowModal(false)}
                 placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
               </Button>
@@ -88,6 +90,8 @@ function NewAgentModal(props: {
                         }));
                       }}
                       crossOrigin={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="mb-4">
@@ -104,6 +108,8 @@ function NewAgentModal(props: {
                         }));
                       }}
                       crossOrigin={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="mb-4">
@@ -120,6 +126,8 @@ function NewAgentModal(props: {
                           backstory: event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="flex flex-wrap mb-4">
@@ -151,6 +159,8 @@ function NewAgentModal(props: {
                           allowDelegation: !!event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="flex items-center mb-4">
@@ -165,6 +175,8 @@ function NewAgentModal(props: {
                           verbose: !!event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="flex items-center mb-4">
@@ -179,6 +191,8 @@ function NewAgentModal(props: {
                           memory: !!event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                 </div>
@@ -191,6 +205,8 @@ function NewAgentModal(props: {
                   color="white"
                   onClick={() => setShowModal(false)}
                   placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Close
                 </Button>
@@ -223,6 +239,8 @@ function NewAgentModal(props: {
                   }}
                   className="mx-1"
                   placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Add
                 </Button>

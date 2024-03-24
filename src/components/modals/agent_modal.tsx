@@ -162,6 +162,8 @@ export default function AgentModal(props: {
               <Button
                 onClick={() => setShowModal(false)}
                 placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
               </Button>
@@ -184,6 +186,8 @@ export default function AgentModal(props: {
                           }));
                         }}
                         crossOrigin={undefined}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     </div>
                   )}
@@ -202,6 +206,8 @@ export default function AgentModal(props: {
                           }));
                         }}
                         crossOrigin={undefined}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <div>{agent?.goal}</div>
@@ -222,6 +228,8 @@ export default function AgentModal(props: {
                             backstory: event.target.value,
                           }));
                         }}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <div>{agent?.backstory}</div>
@@ -268,6 +276,8 @@ export default function AgentModal(props: {
                             allowDelegation: !!event.target.value,
                           }));
                         }}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <Switch
@@ -275,6 +285,8 @@ export default function AgentModal(props: {
                         color="blue"
                         checked={agent?.allowDelegation}
                         disabled={true}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     )}
                   </div>
@@ -291,6 +303,8 @@ export default function AgentModal(props: {
                             verbose: !!event.target.value,
                           }));
                         }}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <Switch
@@ -298,6 +312,8 @@ export default function AgentModal(props: {
                         color="blue"
                         checked={agent?.verbose}
                         disabled={true}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     )}
                   </div>
@@ -314,6 +330,8 @@ export default function AgentModal(props: {
                             memory: !!event.target.value,
                           }));
                         }}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <Switch
@@ -321,6 +339,8 @@ export default function AgentModal(props: {
                         color="blue"
                         checked={agent?.memory}
                         disabled={true}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     )}
                   </div>
@@ -344,6 +364,8 @@ export default function AgentModal(props: {
                           color="blue"
                           className="mx-auto"
                           placeholder={undefined}
+                          onPointerEnterCapture={undefined}
+                          onPointerLeaveCapture={undefined}
                         >
                           Upload
                         </Button>
@@ -402,6 +424,8 @@ export default function AgentModal(props: {
                           });
                       }}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Delete
                     </Button>
@@ -411,6 +435,8 @@ export default function AgentModal(props: {
                       color="green"
                       onClick={() => setEdit(true)}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Edit
                     </Button>
@@ -424,6 +450,8 @@ export default function AgentModal(props: {
                       color="white"
                       onClick={() => setEdit(false)}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Cancel
                     </Button>
@@ -457,6 +485,8 @@ export default function AgentModal(props: {
                       }}
                       className="mx-1"
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Save Changes
                     </Button>

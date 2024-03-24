@@ -24,6 +24,8 @@ const AgentsPage = () => {
         loading={true}
         placeholder={"Loading"}
         className="text-white"
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
       >
         Loading
       </Button>
@@ -40,6 +42,8 @@ const AgentsPage = () => {
           onClick={() => {
             setShowNewAgentModal(true);
           }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
         >
           <Icon icon="mdi:add-bold" width="30" height="30" />
         </IconButton>
@@ -86,7 +90,7 @@ const AgentsPage = () => {
               } rounded overflow-hidden h-auto min-h-52 border`}
             >
               <img
-                className="block max-w-72 w-full lg:w-48 flex-none bg-cover"
+                className="block max-w-72 w-full lg:w-48 flex-none bg-cover mx-auto"
                 src={agent.image ?? "/agents_images/sailor.png"}
                 alt="Agent"
               />

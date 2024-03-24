@@ -24,6 +24,8 @@ const MissionsPage = () => {
         loading={true}
         placeholder={"Loading"}
         className="text-white"
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
       >
         Loading
       </Button>
@@ -54,6 +56,8 @@ const MissionsPage = () => {
           onClick={() => {
             setShowNewMissionModal(true);
           }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
         >
           <Icon icon="mdi:add-bold" width="30" height="30" />
         </IconButton>
