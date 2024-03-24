@@ -15,7 +15,7 @@ This application provides a simplified user interface for leveraging the power o
 
 ## Getting Started
 
-To get started with the CrewAI Simplified App, follow these simple steps:
+To get started with the CrewAI Simplified App, install [PostgreSQL](https://www.postgresql.org/download/), setup PostgreSQL user and password and follow these simple steps:
 
 1. **Installation**: Clone the repository and install dependencies using npm or yarn:
 
@@ -56,7 +56,7 @@ To get started with the CrewAI Simplified App, follow these simple steps:
    Just rename .env.template to .env and set your values:
 
    ```plaintext
-   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/         crew_ai_visualizer?schema=public"
+   DATABASE_URL="postgresql://<user>:<password>@localhost:5432/crew_ai_visualizer?schema=public"
 
    GEMINI_API_KEY=""
 
@@ -65,23 +65,37 @@ To get started with the CrewAI Simplified App, follow these simple steps:
    CREW_AI_PY_FILE="<the path of my crew_ai.py file in on your system. you can find it in src/app/api/graphql/crew_ai.py>"
    ```
 
-4. **Start the Development Server**: Run the following command to start the development server:
+4. **DB Migrations**: Run the following commands to apply database migrations:
+
+   ```bash
+   npx prisma generate
+   npx prisma migrate deploy
+   ```
+
+5. **Start the Development Server**: Run the following command to start the development server:
 
    ```bash
    npm run dev
    ```
 
-5. **Access the App**: Once the development server is running, access the app in your browser at `http://localhost:3000`.
+   OR build the project and run the production server:
+
+   ```bash
+   npm run build
+   npm start
+   ```
+
+6. **Access the App**: Once the development server is running, access the app in your browser at `http://localhost:3000`.
 
 ## Usage
 
 1. **Create a New Crew**: By adding agents.
 
-2. **Customize Agents**: Fill in the information for each agent, including role, goal, backstory, tools, allow_deligation, and verbose.
+2. **Customize Agents**: Fill in the information for each agent, including role, goal, backstory, tools, allow_deligation, verbose and memory.
 
-3. **Define Missions**: Fill mission information including name, crew, verbose, process and add tasks with their details (name, description, agent).
+3. **Define Missions**: Fill mission information including name, crew, verbose, process and add tasks with their details (name, description, agent, expected_output).
 
-4. **Execute Mission**: Once your mission is set up, execute it to start the execution process.
+4. **Execute Mission**: Once your mission is set up, run it to start the execution process.
 
 5. **View Results**: View the output of completed missions within the app.
 
@@ -98,14 +112,34 @@ We welcome contributions to the CrewAI Simplified App. If you'd like to contribu
 
 This app is built using TypeScript, Prisma, GraphQL, Next.js, and node-calls-python to execute Python code from Node.js and get the result in addition to use Gemini as LLM.
 
-## License
+## Updates
 
-This application is open-source and is released under the MIT License. See the [LICENSE](LICENSE) file for details.
+### Version 0.1
+
+- Initial version.
+
+### Version 0.2
+
+- Features:
+  - Update crewai package and add more fields to agents and tasks.
+  - Add more tools:
+    - ARXIV to search in scientific articles of many domains.
+    - PubMed to answer questions about medicine, health, and biomedical topic.
+- Improvement:
+  - Update python and npm packages.
+  - Some UI enhancements.
+  - Enhance README.md.
 
 ## To Do
 
+- [ ] Build simpler version to simplify installing and using CrewAI Visualizer by normal users.
+- [ ] Integrate [crewai[tools]](https://docs.crewai.com/core-concepts/Tools/) by adding tools settings to allow configuring API keys and uploading files.
 - [ ] Add more tools for agents either from LangChain community or create new useful tools.
 - [ ] Add more LLM options like ChatGPT and local LLMs.
+
+## License
+
+This application is open-source and is released under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
