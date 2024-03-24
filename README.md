@@ -17,6 +17,14 @@ This application provides a simplified user interface for leveraging the power o
 
 To get started with the CrewAI Simplified App, install [PostgreSQL](https://www.postgresql.org/download/), setup PostgreSQL user and password and follow these simple steps:
 
+For non-developers:
+
+1. **Setup the project**: clone or download the project then run `setup_win.bat` for Windows users or `setup_linux_mac.sh` for Linux or MacOS users.
+
+2. **Start the project**: run `start_win.bat` for Windows users or `start_linux_mac.sh` for Linux or MacOS users. ✔Finish!
+
+For developers:
+
 1. **Installation**: Clone the repository and install dependencies using npm or yarn:
 
    ```bash
@@ -128,6 +136,7 @@ This app is built using TypeScript, Prisma, GraphQL, Next.js, and node-calls-pyt
 - Improvement:
   - Update python and npm packages.
   - Some UI enhancements.
+  - Add .bat and .sh files to setup and start the project easily for normal users.
   - Enhance README.md.
 
 ## To Do
