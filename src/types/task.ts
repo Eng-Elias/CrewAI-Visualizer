@@ -9,5 +9,6 @@ export type TaskInput = {
 export type Task = {
   name: string;
   description: string;
+  expected_output: string;
   agent?: Agent | null;
 };

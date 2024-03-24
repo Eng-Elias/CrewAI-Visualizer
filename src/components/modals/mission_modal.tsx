@@ -10,14 +10,13 @@ import {
   TEModalHeader,
   TEModalBody,
   TEModalFooter,
-  TEInput,
   TESelect,
 } from "tw-elements-react";
 import { Mission } from "@/types/mission";
 import MissionTaskEditor from "../inputs/mission_tasks_editor";
 import { TasksAccordion } from "../ui/tasks_accordions";
 import { Process, selectTheme } from "@/data/consts";
-import { Alert, Button, Switch } from "@material-tailwind/react";
+import { Alert, Button, Input, Switch } from "@material-tailwind/react";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   DELETE_MISSION,
@@ -80,6 +79,7 @@ export default function MissionModal(props: {
         tasks: missionData.tasks.map((task) => ({
           name: task.name,
           description: task.description,
+          expected_output: task.expected_output,
           agent: Number.parseInt(task.agent?.id as string),
         })),
       },
@@ -130,6 +130,8 @@ export default function MissionModal(props: {
               <Button
                 onClick={() => setShowModal(false)}
                 placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
               </Button>
@@ -139,9 +141,10 @@ export default function MissionModal(props: {
                 {isEdit && (
                   <div className="mb-4">
                     <label className="font-bold text-lg">Name:</label>
-                    <TEInput
-                      type="text"
-                      className="mt-2"
+                    <Input
+                      label="Name"
+                      color="blue"
+                      className="text-white"
                       value={tempMission?.name}
                       onChange={(event) => {
                         setTempMission((prevState) => ({
@@ -149,6 +152,9 @@ export default function MissionModal(props: {
                           name: event.target.value,
                         }));
                       }}
+                      crossOrigin={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                 )}
@@ -180,6 +186,8 @@ export default function MissionModal(props: {
                         loading={true}
                         placeholder={"Loading"}
                         className="text-white"
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       >
                         Loading
                       </Button>
@@ -241,6 +249,8 @@ export default function MissionModal(props: {
                           verbose: !!event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   ) : (
                     <Switch
@@ -248,6 +258,8 @@ export default function MissionModal(props: {
                       color="blue"
                       checked={mission?.verbose}
                       disabled={true}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   )}
                 </div>
@@ -342,6 +354,8 @@ export default function MissionModal(props: {
                             });
                         }}
                         placeholder={undefined}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       >
                         {mission?.result ? "Re-Run" : "Run"}
                       </Button>
@@ -351,6 +365,8 @@ export default function MissionModal(props: {
                           loading={true}
                           placeholder={"Running"}
                           className="text-white"
+                          onPointerEnterCapture={undefined}
+                          onPointerLeaveCapture={undefined}
                         >
                           Running
                         </Button>
@@ -358,14 +374,12 @@ export default function MissionModal(props: {
                     </div>
                     <div>
                       <label className="font-bold text-lg">Result:</label>
-                      {mission?.result && (
-                        <div
-                          className="border-2 rounded p-2"
-                          style={{ whiteSpace: "pre-line" }}
-                        >
-                          {missionResult}
-                        </div>
-                      )}
+                      <div
+                        className="border-2 rounded p-2"
+                        style={{ whiteSpace: "pre-line" }}
+                      >
+                        {missionResult}
+                      </div>
                     </div>
                   </>
                 )}
@@ -407,6 +421,8 @@ export default function MissionModal(props: {
                           });
                       }}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Delete
                     </Button>
@@ -416,6 +432,8 @@ export default function MissionModal(props: {
                       color="green"
                       onClick={() => setEdit(true)}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Edit
                     </Button>
@@ -429,6 +447,8 @@ export default function MissionModal(props: {
                       color="white"
                       onClick={() => setEdit(false)}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Cancel
                     </Button>
@@ -460,6 +480,8 @@ export default function MissionModal(props: {
                       }}
                       className="mx-1"
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Save Changes
                     </Button>

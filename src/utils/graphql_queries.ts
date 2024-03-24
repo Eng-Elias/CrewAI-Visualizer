@@ -10,6 +10,7 @@ export const GET_AGENTS = gql`
       tools
       allowDelegation
       verbose
+      memory
       image
     }
   }
@@ -25,6 +26,7 @@ export const GET_AGENT_BY_ID = gql`
       tools
       allowDelegation
       verbose
+      memory
       image
       missions {
         id
@@ -42,6 +44,7 @@ export const CREATE_AGENT = gql`
     $tools: [AgentTool!]
     $allowDelegation: Boolean!
     $verbose: Boolean!
+    $memory: Boolean
   ) {
     createAgent(
       role: $role
@@ -50,6 +53,7 @@ export const CREATE_AGENT = gql`
       tools: $tools
       allowDelegation: $allowDelegation
       verbose: $verbose
+      memory: $memory
     ) {
       id
       role
@@ -58,6 +62,7 @@ export const CREATE_AGENT = gql`
       tools
       allowDelegation
       verbose
+      memory
       image
     }
   }
@@ -72,6 +77,7 @@ export const UPDATE_AGENT = gql`
     $tools: [AgentTool!]
     $allowDelegation: Boolean
     $verbose: Boolean
+    $memory: Boolean
   ) {
     updateAgent(
       id: $id
@@ -81,6 +87,7 @@ export const UPDATE_AGENT = gql`
       tools: $tools
       allowDelegation: $allowDelegation
       verbose: $verbose
+      memory: $memory
     ) {
       id
       role
@@ -89,6 +96,7 @@ export const UPDATE_AGENT = gql`
       tools
       allowDelegation
       verbose
+      memory
       image
     }
   }
@@ -115,11 +123,13 @@ export const GET_MISSIONS = gql`
         tools
         allowDelegation
         verbose
+        memory
         image
       }
       tasks {
         name
         description
+        expected_output
         agent {
           id
           role
@@ -145,11 +155,13 @@ export const GET_MISSION_BY_ID = gql`
         tools
         allowDelegation
         verbose
+        memory
         image
       }
       tasks {
         name
         description
+        expected_output
         agent {
           id
           role
@@ -166,14 +178,12 @@ export const CREATE_MISSION = gql`
   mutation CreateMission(
     $name: String!
     $crew: [Int!]
-    $tasks: [TaskInput!]
     $verbose: Boolean
     $process: MissionProcess
   ) {
     createMission(
       name: $name
       crew: $crew
-      tasks: $tasks
       verbose: $verbose
       process: $process
     ) {
@@ -187,11 +197,13 @@ export const CREATE_MISSION = gql`
         tools
         allowDelegation
         verbose
+        memory
         image
       }
       tasks {
         name
         description
+        expected_output
         agent {
           id
           role
@@ -231,11 +243,13 @@ export const UPDATE_MISSION = gql`
         tools
         allowDelegation
         verbose
+        memory
         image
       }
       tasks {
         name
         description
+        expected_output
         agent {
           id
           role

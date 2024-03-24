@@ -53,6 +53,8 @@ export const tools = [
   { text: "WIKIPEDIA", value: "WIKIPEDIA" },
   { text: "YAHOO_FINANCE", value: "YAHOO_FINANCE" },
   { text: "YUOUTUBE_SEARCH", value: "YUOUTUBE_SEARCH" },
+  { text: "ARXIV", value: "ARXIV" },
+  { text: "PUBMED", value: "PUBMED" },
 ];
 
 const game = `
@@ -74,9 +76,9 @@ export const missions: Array<Mission> = [
 			  Instructions
 			  ------------
     	  ${game}
-
-			  Your Final answer must be the full python code, only the python code and nothing else.
         `,
+        expected_output:
+          "Your Final answer must be the full python code, only the python code and nothing else.",
         agent: agents[0],
       },
       {
@@ -91,9 +93,9 @@ export const missions: Array<Mission> = [
         Using the code you got, check for errors. Check for logic errors,
         syntax errors, missing imports, variable declarations, mismatched brackets,
         and security vulnerabilities.
-
-        Your Final answer must be the full python code, only the python code and nothing else.
         `,
+        expected_output:
+          "Your Final answer must be the full python code, only the python code and nothing else.",
         agent: agents[1],
       },
       {
@@ -107,9 +109,9 @@ export const missions: Array<Mission> = [
 
         You will look over the code to insure that it is complete and
         does the job that it is supposed to do.
-
-        Your Final answer must be the full python code, only the python code and nothing else.
         `,
+        expected_output:
+          "Your Final answer must be the full python code, only the python code and nothing else.",
         agent: agents[2],
       },
     ],
@@ -124,11 +126,13 @@ export const missions: Array<Mission> = [
       {
         name: "Task1",
         description: "description description description description",
+        expected_output: "Expected Output",
         agent: agents[0],
       },
       {
         name: "Task2",
         description: "description description description description",
+        expected_output: "Expected Output",
       },
     ],
     verbose: true,
@@ -142,11 +146,13 @@ export const missions: Array<Mission> = [
       {
         name: "Task1",
         description: "description description description description",
+        expected_output: "Expected Output",
         agent: agents[0],
       },
       {
         name: "Task2",
         description: "description description description description",
+        expected_output: "Expected Output",
       },
     ],
     verbose: true,

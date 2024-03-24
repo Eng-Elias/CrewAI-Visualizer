@@ -1,10 +1,9 @@
 import { Process, selectTheme } from "@/data/consts";
 import { Mission } from "@/types/mission";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Alert, Button, Switch } from "@material-tailwind/react";
+import { Alert, Button, Input, Switch } from "@material-tailwind/react";
 import React, { useState } from "react";
 import {
-  TEInput,
   TEModal,
   TEModalBody,
   TEModalContent,
@@ -14,7 +13,6 @@ import {
   TERipple,
   TESelect,
 } from "tw-elements-react";
-import MissionTaskEditor from "../inputs/mission_tasks_editor";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_MISSION, GET_AGENTS } from "@/utils/graphql_queries";
 import { Agent } from "@/types/agent";
@@ -79,6 +77,8 @@ function NewMissionModal(props: {
               <Button
                 onClick={() => setShowModal(false)}
                 placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
               </Button>
@@ -87,9 +87,10 @@ function NewMissionModal(props: {
               <div>
                 <div className="mb-4">
                   <label className="font-bold text-lg">Name:</label>
-                  <TEInput
-                    type="text"
-                    className="mt-2"
+                  <Input
+                    label="Name"
+                    color="blue"
+                    className="text-white"
                     value={tempMission?.name}
                     onChange={(event) => {
                       setTempMission((prevState) => ({
@@ -97,6 +98,9 @@ function NewMissionModal(props: {
                         name: event.target.value,
                       }));
                     }}
+                    crossOrigin={undefined}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
                   />
                 </div>
                 <div className="mb-4">
@@ -126,6 +130,8 @@ function NewMissionModal(props: {
                       loading={true}
                       placeholder={"Loading"}
                       className="text-white"
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Loading
                     </Button>
@@ -173,6 +179,8 @@ function NewMissionModal(props: {
                         verbose: !!event.target.value,
                       }));
                     }}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
                   />
                 </div>
                 <div className="mb-4">
@@ -205,6 +213,8 @@ function NewMissionModal(props: {
                   color="white"
                   onClick={() => setShowModal(false)}
                   placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Close
                 </Button>
@@ -235,6 +245,8 @@ function NewMissionModal(props: {
                   }}
                   className="mx-1"
                   placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Add
                 </Button>

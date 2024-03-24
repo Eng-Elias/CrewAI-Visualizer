@@ -4,7 +4,7 @@ import { selectTheme } from "@/data/consts";
 import { Agent } from "@/types/agent";
 import { Mission } from "@/types/mission";
 import { Task } from "@/types/task";
-import { Button } from "@material-tailwind/react";
+import { Button, Input, Textarea } from "@material-tailwind/react";
 import React, { useState } from "react";
 import { TESelect } from "tw-elements-react";
 
@@ -20,13 +20,15 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
   onMissionChange,
 }) => {
   const [newTaskName, setNewTaskName] = useState("");
-  const [newTaskAgent, setNewTaskAgent] = useState<Agent | null>(null);
   const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [newTaskExpectedOutput, setNewTaskExpectedOutput] = useState("");
+  const [newTaskAgent, setNewTaskAgent] = useState<Agent | null>(null);
 
   const handleAddTask = () => {
     const newTask: Task = {
       name: newTaskName,
       description: newTaskDescription,
+      expected_output: newTaskExpectedOutput,
       agent: newTaskAgent,
     };
     const updatedTasks = [...(mission?.tasks ?? []), newTask];
@@ -54,6 +56,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
               onClick={() => handleRemoveTask(index)}
               className="text-red-500"
               placeholder={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Remove
             </Button>
@@ -73,23 +77,36 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
         </div>
         <div className="border border-t-0 border-success-400 rounded-b bg-success-100 px-4 py-3 text-success-700">
           <div>
-            <label>Task Name: </label>
-            <input
-              type="text"
-              placeholder="Task Name"
+            <Input
+              label="Task Name"
+              color="green"
               value={newTaskName}
               onChange={(e) => setNewTaskName(e.target.value)}
-              className="border border-gray-300 text-black rounded px-3 py-1"
+              crossOrigin={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />
+          </div>
+          <div className="my-2">
+            <Textarea
+              label="Task Description"
+              color="green"
+              resize={true}
+              value={newTaskDescription}
+              onChange={(e) => setNewTaskDescription(e.target.value)}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             />
           </div>
           <div>
-            <label>Task Description: </label>
-            <br />
-            <textarea
-              placeholder="Task Description"
-              value={newTaskDescription}
-              onChange={(e) => setNewTaskDescription(e.target.value)}
-              className="w-full border border-gray-300 text-black rounded px-3 py-1 ml-2"
+            <Textarea
+              label="Expected Output"
+              color="green"
+              resize={true}
+              value={newTaskExpectedOutput}
+              onChange={(e) => setNewTaskExpectedOutput(e.target.value)}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             />
           </div>
           <div className="m-2">
@@ -118,6 +135,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
             disabled={!newTaskName || !newTaskDescription}
             onClick={handleAddTask}
             placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
           >
             Add Task
           </Button>

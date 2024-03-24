@@ -4,7 +4,6 @@ import { Agent } from "@/types/agent";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import {
-  TEInput,
   TEModal,
   TEModalBody,
   TEModalContent,
@@ -13,9 +12,8 @@ import {
   TEModalHeader,
   TERipple,
   TESelect,
-  TETextarea,
 } from "tw-elements-react";
-import { Button, Switch } from "@material-tailwind/react";
+import { Button, Input, Switch, Textarea } from "@material-tailwind/react";
 import { useMutation } from "@apollo/client";
 import { CREATE_AGENT } from "@/utils/graphql_queries";
 import withReactContent from "sweetalert2-react-content";
@@ -40,23 +38,6 @@ function NewAgentModal(props: {
     allowDelegation: false,
     verbose: false,
   });
-
-  const [selectedImage, setSelectedImage] = useState<
-    string | ArrayBuffer | null
-  >(null);
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event?.target?.files?.[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setSelectedImage(reader.result);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
 
   const [createAgent] = useMutation(CREATE_AGENT);
   const [createAgentLoading, setCreateAgentLoading] = useState(false);
@@ -86,6 +67,8 @@ function NewAgentModal(props: {
               <Button
                 onClick={() => setShowModal(false)}
                 placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
               </Button>
@@ -95,9 +78,10 @@ function NewAgentModal(props: {
                 <div className="sm:w-1/2 mx-auto">
                   <div className="mb-4">
                     <label className="font-bold text-lg">Role:</label>
-                    <TEInput
-                      type="text"
-                      className="mt-2"
+                    <Input
+                      label="Role"
+                      color="blue"
+                      className="text-white"
                       value={tempAgent?.role}
                       onChange={(event) => {
                         setTempAgent((prevState) => ({
@@ -105,13 +89,17 @@ function NewAgentModal(props: {
                           role: event.target.value,
                         }));
                       }}
+                      crossOrigin={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="mb-4">
                     <label className="font-bold text-lg">Goal:</label>
-                    <TEInput
-                      type="text"
-                      className="mt-2"
+                    <Input
+                      label="Goal"
+                      color="blue"
+                      className="text-white"
                       value={tempAgent?.goal}
                       onChange={(event) => {
                         setTempAgent((prevState) => ({
@@ -119,12 +107,18 @@ function NewAgentModal(props: {
                           goal: event.target.value,
                         }));
                       }}
+                      crossOrigin={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="mb-4">
                     <label className="font-bold text-lg">Backstory:</label>
-                    <TETextarea
-                      rows={4}
+                    <Textarea
+                      label="Backstory"
+                      color="blue"
+                      className="text-white"
+                      resize={true}
                       value={tempAgent?.backstory || ""}
                       onChange={(event) => {
                         setTempAgent((prevState) => ({
@@ -132,6 +126,8 @@ function NewAgentModal(props: {
                           backstory: event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="flex flex-wrap mb-4">
@@ -163,6 +159,8 @@ function NewAgentModal(props: {
                           allowDelegation: !!event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                   <div className="flex items-center mb-4">
@@ -177,6 +175,24 @@ function NewAgentModal(props: {
                           verbose: !!event.target.value,
                         }));
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
+                    />
+                  </div>
+                  <div className="flex items-center mb-4">
+                    <label className="font-bold mx-2">Memory: </label>
+                    <Switch
+                      crossOrigin={undefined}
+                      color="blue"
+                      defaultChecked={tempAgent?.verbose}
+                      onChange={(event) => {
+                        setTempAgent((prevState) => ({
+                          ...prevState!,
+                          memory: !!event.target.value,
+                        }));
+                      }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     />
                   </div>
                 </div>
@@ -189,6 +205,8 @@ function NewAgentModal(props: {
                   color="white"
                   onClick={() => setShowModal(false)}
                   placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Close
                 </Button>
@@ -221,6 +239,8 @@ function NewAgentModal(props: {
                   }}
                   className="mx-1"
                   placeholder={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Add
                 </Button>

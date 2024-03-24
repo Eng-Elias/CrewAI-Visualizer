@@ -12,17 +12,16 @@ import {
   TEModalHeader,
   TEModalBody,
   TEModalFooter,
-  TEInput,
-  TETextarea,
   TESelect,
 } from "tw-elements-react";
 import TWFileInput from "../inputs/file";
 import { selectTheme } from "@/data/consts";
-import { Button, Switch } from "@material-tailwind/react";
+import { Button, Input, Switch, Textarea } from "@material-tailwind/react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { DELETE_AGENT, UPDATE_AGENT } from "@/utils/graphql_queries";
 import { useMutation } from "@apollo/client";
+import Image from "next/image";
 
 export default function AgentModal(props: {
   agent: Agent;
@@ -164,6 +163,8 @@ export default function AgentModal(props: {
               <Button
                 onClick={() => setShowModal(false)}
                 placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <Icon icon="ep:close-bold" width={20} height={20} />
               </Button>
@@ -174,9 +175,10 @@ export default function AgentModal(props: {
                   {isEdit && (
                     <div className="mb-4">
                       <label className="font-bold text-lg">Role:</label>
-                      <TEInput
-                        type="text"
-                        className="mt-2"
+                      <Input
+                        label="Role"
+                        color="blue"
+                        className="text-white"
                         value={tempAgent?.role}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
@@ -184,15 +186,19 @@ export default function AgentModal(props: {
                             role: event.target.value,
                           }));
                         }}
+                        crossOrigin={undefined}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     </div>
                   )}
                   <div className="mb-4">
                     <label className="font-bold text-lg">Goal:</label>
                     {isEdit ? (
-                      <TEInput
-                        type="text"
-                        className="mt-2"
+                      <Input
+                        label="Goal"
+                        color="blue"
+                        className="text-white"
                         value={tempAgent?.goal}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
@@ -200,6 +206,9 @@ export default function AgentModal(props: {
                             goal: event.target.value,
                           }));
                         }}
+                        crossOrigin={undefined}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <div>{agent?.goal}</div>
@@ -208,8 +217,11 @@ export default function AgentModal(props: {
                   <div className="mb-4">
                     <label className="font-bold text-lg">Backstory:</label>
                     {isEdit ? (
-                      <TETextarea
-                        rows={4}
+                      <Textarea
+                        label="Backstory"
+                        color="blue"
+                        className="text-white"
+                        resize={true}
                         value={tempAgent?.backstory || ""}
                         onChange={(event) => {
                           setTempAgent((prevState) => ({
@@ -217,6 +229,8 @@ export default function AgentModal(props: {
                             backstory: event.target.value,
                           }));
                         }}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <div>{agent?.backstory}</div>
@@ -263,13 +277,17 @@ export default function AgentModal(props: {
                             allowDelegation: !!event.target.value,
                           }));
                         }}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <Switch
                         crossOrigin={undefined}
                         color="blue"
-                        defaultChecked={tempAgent?.allowDelegation}
+                        checked={agent?.allowDelegation}
                         disabled={true}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     )}
                   </div>
@@ -286,13 +304,44 @@ export default function AgentModal(props: {
                             verbose: !!event.target.value,
                           }));
                         }}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     ) : (
                       <Switch
                         crossOrigin={undefined}
                         color="blue"
-                        defaultChecked={tempAgent?.verbose}
+                        checked={agent?.verbose}
                         disabled={true}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
+                      />
+                    )}
+                  </div>
+                  <div className="flex items-center mb-4">
+                    <label className="font-bold mx-2">Memory: </label>
+                    {isEdit ? (
+                      <Switch
+                        crossOrigin={undefined}
+                        color="blue"
+                        defaultChecked={tempAgent?.memory}
+                        onChange={(event) => {
+                          setTempAgent((prevState) => ({
+                            ...prevState!,
+                            memory: !!event.target.value,
+                          }));
+                        }}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
+                      />
+                    ) : (
+                      <Switch
+                        crossOrigin={undefined}
+                        color="blue"
+                        checked={agent?.memory}
+                        disabled={true}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       />
                     )}
                   </div>
@@ -316,12 +365,14 @@ export default function AgentModal(props: {
                           color="blue"
                           className="mx-auto"
                           placeholder={undefined}
+                          onPointerEnterCapture={undefined}
+                          onPointerLeaveCapture={undefined}
                         >
                           Upload
                         </Button>
                       </div>
                       {selectedImage && (
-                        <img
+                        <Image
                           // @ts-ignore
                           src={selectedImage}
                           alt="Agent Image"
@@ -330,7 +381,7 @@ export default function AgentModal(props: {
                       )}
                     </>
                   ) : (
-                    <img
+                    <Image
                       src={tempAgent?.image ?? "/agents_images/sailor.png"}
                       alt="Agent Image"
                       className="w-7/12 mx-auto rounded-lg"
@@ -374,6 +425,8 @@ export default function AgentModal(props: {
                           });
                       }}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Delete
                     </Button>
@@ -383,6 +436,8 @@ export default function AgentModal(props: {
                       color="green"
                       onClick={() => setEdit(true)}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Edit
                     </Button>
@@ -396,6 +451,8 @@ export default function AgentModal(props: {
                       color="white"
                       onClick={() => setEdit(false)}
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Cancel
                     </Button>
@@ -411,6 +468,7 @@ export default function AgentModal(props: {
                         handleUpdateAgent(tempAgent)
                           .then(() => {
                             setShowModal(false);
+                            setEdit(false);
                             ReactSwal.fire({
                               title: "Updated",
                               text: "Agent updated successfully",
@@ -428,6 +486,8 @@ export default function AgentModal(props: {
                       }}
                       className="mx-1"
                       placeholder={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       Save Changes
                     </Button>

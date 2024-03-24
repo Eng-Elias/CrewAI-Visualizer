@@ -17,6 +17,8 @@ enum AgentTool {
   WIKIPEDIA
   YAHOO_FINANCE
   YUOUTUBE_SEARCH
+  ARXIV
+  PUBMED
 }
 
 model Agent {
@@ -27,6 +29,7 @@ model Agent {
   tools           AgentTool[] @default([])
   allowDelegation Boolean     @default(false)
   verbose         Boolean     @default(false)
+  memory          Boolean     @default(false)
   image           String?
 
   createdAt DateTime @default(now())

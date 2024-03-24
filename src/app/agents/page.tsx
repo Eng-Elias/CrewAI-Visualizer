@@ -7,6 +7,7 @@ import { GET_AGENTS } from "@/utils/graphql_queries";
 import { useQuery } from "@apollo/client";
 import { Icon } from "@iconify/react";
 import { Alert, Button, IconButton } from "@material-tailwind/react";
+import Image from "next/image";
 import { useState } from "react";
 
 const AgentsPage = () => {
@@ -24,6 +25,8 @@ const AgentsPage = () => {
         loading={true}
         placeholder={"Loading"}
         className="text-white"
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
       >
         Loading
       </Button>
@@ -40,6 +43,8 @@ const AgentsPage = () => {
           onClick={() => {
             setShowNewAgentModal(true);
           }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
         >
           <Icon icon="mdi:add-bold" width="30" height="30" />
         </IconButton>
@@ -65,6 +70,19 @@ const AgentsPage = () => {
             </Alert>
           </div>
         )}
+        {data?.agents.length === 0 && (
+          <div className="w-full">
+            <Alert
+              color="cyan"
+              icon={
+                <Icon icon="material-symbols:warning-outline" fontSize={26} />
+              }
+              className="w-fit"
+            >
+              No Agents, Try to add one.
+            </Alert>
+          </div>
+        )}
         {data?.agents.map((agent: Agent, i: number) => (
           <div key={i} className="w-full lg:w-1/2 p-3 relative">
             <div
@@ -72,8 +90,8 @@ const AgentsPage = () => {
                 i % 2 == 0 ? "lg:flex-row" : "lg:flex-row-reverse"
               } rounded overflow-hidden h-auto min-h-52 border`}
             >
-              <img
-                className="block max-w-72 w-full lg:w-48 flex-none bg-cover"
+              <Image
+                className="block max-w-72 w-full lg:w-48 flex-none bg-cover mx-auto"
                 src={agent.image ?? "/agents_images/sailor.png"}
                 alt="Agent"
               />

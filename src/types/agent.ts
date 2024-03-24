@@ -4,7 +4,9 @@ type Tool =
   | "WIKIDATA"
   | "WIKIPEDIA"
   | "YAHOO_FINANCE"
-  | "YUOUTUBE_SEARCH";
+  | "YUOUTUBE_SEARCH"
+  | "ARXIV"
+  | "PUBMED";
 
 export type Agent = {
   id?: number | string;
@@ -14,5 +16,6 @@ export type Agent = {
   tools: Array<Tool>;
   allowDelegation: boolean;
   verbose: boolean;
+  memory?: boolean;
   image?: string | null;
 };
