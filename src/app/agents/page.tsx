@@ -7,6 +7,7 @@ import { GET_AGENTS } from "@/utils/graphql_queries";
 import { useQuery } from "@apollo/client";
 import { Icon } from "@iconify/react";
 import { Alert, Button, IconButton } from "@material-tailwind/react";
+import Image from "next/image";
 import { useState } from "react";
 
 const AgentsPage = () => {
@@ -89,7 +90,7 @@ const AgentsPage = () => {
                 i % 2 == 0 ? "lg:flex-row" : "lg:flex-row-reverse"
               } rounded overflow-hidden h-auto min-h-52 border`}
             >
-              <img
+              <Image
                 className="block max-w-72 w-full lg:w-48 flex-none bg-cover mx-auto"
                 src={agent.image ?? "/agents_images/sailor.png"}
                 alt="Agent"

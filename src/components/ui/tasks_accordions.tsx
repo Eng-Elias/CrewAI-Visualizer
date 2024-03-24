@@ -20,11 +20,15 @@ export function TasksAccordion({ tasks }: { tasks: Array<Task> }) {
           open={open === i}
           className="mb-2 rounded-lg border border-blue-gray-100 px-4"
           placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
         >
           <AccordionHeader
             onClick={() => handleOpen(i)}
             className={`border-b-0 transition-colors ${open === i ? "text-blue-500 hover:!text-blue-700" : "text-gray-400 hover:!text-gray-300"}`}
             placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
           >
             {task.name}
           </AccordionHeader>
@@ -35,15 +39,30 @@ export function TasksAccordion({ tasks }: { tasks: Array<Task> }) {
               </span>
             </div>
             <div>
-              <Typography variant="lead" placeholder={undefined}>
+              <Typography
+                variant="lead"
+                placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              >
                 {task.description}
               </Typography>
             </div>
             <div>
-              <Typography variant="h3" placeholder={undefined}>
+              <Typography
+                variant="h3"
+                placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              >
                 Expected Output
               </Typography>
-              <Typography variant="paragraph" placeholder={undefined}>
+              <Typography
+                variant="paragraph"
+                placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              >
                 {task.expected_output}
               </Typography>
             </div>

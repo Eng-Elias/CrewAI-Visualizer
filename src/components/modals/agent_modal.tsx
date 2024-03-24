@@ -21,6 +21,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { DELETE_AGENT, UPDATE_AGENT } from "@/utils/graphql_queries";
 import { useMutation } from "@apollo/client";
+import Image from "next/image";
 
 export default function AgentModal(props: {
   agent: Agent;
@@ -371,7 +372,7 @@ export default function AgentModal(props: {
                         </Button>
                       </div>
                       {selectedImage && (
-                        <img
+                        <Image
                           // @ts-ignore
                           src={selectedImage}
                           alt="Agent Image"
@@ -380,7 +381,7 @@ export default function AgentModal(props: {
                       )}
                     </>
                   ) : (
-                    <img
+                    <Image
                       src={tempAgent?.image ?? "/agents_images/sailor.png"}
                       alt="Agent Image"
                       className="w-7/12 mx-auto rounded-lg"
