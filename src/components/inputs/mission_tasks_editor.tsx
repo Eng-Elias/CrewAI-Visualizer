@@ -36,6 +36,8 @@ const MissionTaskEditor: React.FC<MissionTaskEditorProps> = ({
     onMissionChange(updatedMission);
     setNewTaskName("");
     setNewTaskDescription("");
+    setNewTaskExpectedOutput("");
+    setNewTaskAgent(null);
   };
 
   const handleRemoveTask = (index: number) => {

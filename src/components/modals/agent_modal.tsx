@@ -372,7 +372,7 @@ export default function AgentModal(props: {
                         </Button>
                       </div>
                       {selectedImage && (
-                        <Image
+                        <img
                           // @ts-ignore
                           src={selectedImage}
                           alt="Agent Image"
@@ -381,7 +381,7 @@ export default function AgentModal(props: {
                       )}
                     </>
                   ) : (
-                    <Image
+                    <img
                       src={tempAgent?.image ?? "/agents_images/sailor.png"}
                       alt="Agent Image"
                       className="w-7/12 mx-auto rounded-lg"

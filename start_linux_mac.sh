@@ -6,4 +6,4 @@ open http://localhost:3000
 
 # Run the project
 echo "Starting development server..."
-npm start
+npm run dev

@@ -1,6 +1,6 @@
 REM Run the project
 echo Starting development server...
-start call npm start
+start call npm run dev
 
 REM Wait for a few seconds to ensure the server is up and running
 timeout /t 2

@@ -42,3 +42,6 @@ __pycache__/
 
 # PyCharm
 .idea/
+
+# Images
+agents_images/

@@ -86,13 +86,6 @@ For developers:
    npm run dev
    ```
 
-   OR build the project and run the production server:
-
-   ```bash
-   npm run build
-   npm start
-   ```
-
 6. **Access the App**: Once the development server is running, access the app in your browser at `http://localhost:3000`.
 
 ## Usage

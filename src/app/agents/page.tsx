@@ -90,7 +90,7 @@ const AgentsPage = () => {
                 i % 2 == 0 ? "lg:flex-row" : "lg:flex-row-reverse"
               } rounded overflow-hidden h-auto min-h-52 border`}
             >
-              <Image
+              <img
                 className="block max-w-72 w-full lg:w-48 flex-none bg-cover mx-auto"
                 src={agent.image ?? "/agents_images/sailor.png"}
                 alt="Agent"
