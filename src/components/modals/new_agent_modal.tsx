@@ -111,6 +111,7 @@ function NewAgentModal(props: {
                     <Textarea
                       label="Backstory"
                       color="blue"
+                      className="text-white"
                       resize={true}
                       value={tempAgent?.backstory || ""}
                       onChange={(event) => {

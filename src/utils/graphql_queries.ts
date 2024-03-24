@@ -62,6 +62,7 @@ export const CREATE_AGENT = gql`
       tools
       allowDelegation
       verbose
+      memory
       image
     }
   }
@@ -220,7 +221,7 @@ export const UPDATE_MISSION = gql`
     $id: Int!
     $name: String
     $crew: [Int!]
-    $tasks: [Task!]
+    $tasks: [TaskInput!]
     $verbose: Boolean
     $process: MissionProcess
   ) {

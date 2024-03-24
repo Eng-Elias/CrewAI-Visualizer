@@ -212,6 +212,8 @@ export default function AgentModal(props: {
                     {isEdit ? (
                       <Textarea
                         label="Backstory"
+                        color="blue"
+                        className="text-white"
                         resize={true}
                         value={tempAgent?.backstory || ""}
                         onChange={(event) => {
@@ -271,7 +273,7 @@ export default function AgentModal(props: {
                       <Switch
                         crossOrigin={undefined}
                         color="blue"
-                        defaultChecked={tempAgent?.allowDelegation}
+                        checked={agent?.allowDelegation}
                         disabled={true}
                       />
                     )}
@@ -294,7 +296,7 @@ export default function AgentModal(props: {
                       <Switch
                         crossOrigin={undefined}
                         color="blue"
-                        defaultChecked={tempAgent?.verbose}
+                        checked={agent?.verbose}
                         disabled={true}
                       />
                     )}
@@ -317,7 +319,7 @@ export default function AgentModal(props: {
                       <Switch
                         crossOrigin={undefined}
                         color="blue"
-                        defaultChecked={tempAgent?.memory}
+                        checked={agent?.memory}
                         disabled={true}
                       />
                     )}
