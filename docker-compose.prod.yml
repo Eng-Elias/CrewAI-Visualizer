@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  frontend:
+    command: ["bun", "run", "start"]
+    environment:
+      - NODE_ENV=production
+
+  backend:
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      - ENVIRONMENT=production
+
+  celery_worker:
+    environment:
+      - ENVIRONMENT=production
