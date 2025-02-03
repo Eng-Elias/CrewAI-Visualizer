@@ -1,11 +1,21 @@
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, Any
+from supabase import create_client, Client
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.celery import app as celery_app
 from app.tasks import execute_crew_task
+
+# Initialize Supabase client
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+supabase: Client = create_client(supabase_url, supabase_key)
+
+# Security
+security = HTTPBearer()
 
 app = FastAPI(
     title=os.getenv('APP_TITLE', 'CrewAI Visualizer API'),
@@ -24,6 +34,49 @@ app.add_middleware(
 
 class CrewTaskRequest(BaseModel):
     crew_config: Dict[str, Any]
+
+class UserSignUp(BaseModel):
+    email: str
+    password: str
+
+class UserSignIn(BaseModel):
+    email: str
+    password: str
+
+@app.post("/auth/signup")
+async def sign_up(user: UserSignUp):
+    try:
+        response = supabase.auth.sign_up({
+            "email": user.email,
+            "password": user.password
+        })
+        return {"message": "User created successfully", "user": response.user}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/auth/signin")
+async def sign_in(user: UserSignIn):
+    try:
+        response = supabase.auth.sign_in_with_password({
+            "email": user.email,
+            "password": user.password
+        })
+        return {
+            "access_token": response.session.access_token,
+            "refresh_token": response.session.refresh_token,
+            "user": response.user
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/auth/me")
+async def get_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        # Verify the JWT token
+        user = supabase.auth.get_user(credentials.credentials)
+        return {"user": user.user}
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid authentication credentials")
 
 @app.post("/api/execute-crew")
 async def create_crew_task(request: CrewTaskRequest):
