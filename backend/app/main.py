@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -6,15 +7,19 @@ from typing import Dict, Any
 from app.celery import app as celery_app
 from app.tasks import execute_crew_task
 
-app = FastAPI()
+app = FastAPI(
+    title=os.getenv('APP_TITLE', 'CrewAI Visualizer API'),
+    description=os.getenv('APP_DESCRIPTION', 'API for CrewAI Visualizer'),
+    version=os.getenv('APP_VERSION', '1.0.0')
+)
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=os.getenv('CORS_ORIGINS', '*').split(','),
+    allow_credentials=os.getenv('CORS_CREDENTIALS', 'True').lower() == 'true',
+    allow_methods=os.getenv('CORS_METHODS', '*').split(','),
+    allow_headers=os.getenv('CORS_HEADERS', '*').split(','),
 )
 
 class CrewTaskRequest(BaseModel):
@@ -23,7 +28,6 @@ class CrewTaskRequest(BaseModel):
 @app.post("/api/execute-crew")
 async def create_crew_task(request: CrewTaskRequest):
     try:
-        # Submit task to Celery
         task = execute_crew_task.delay(request.crew_config)
         return {"task_id": task.id}
     except Exception as e:
@@ -54,8 +58,14 @@ async def get_task_status(task_id: str):
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    return {
+        "status": "healthy",
+        "environment": os.getenv('ENVIRONMENT', 'development')
+    }
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {
+        "message": os.getenv('API_WELCOME_MESSAGE', 'Welcome to CrewAI Visualizer API'),
+        "version": os.getenv('APP_VERSION', '1.0.0')
+    }
