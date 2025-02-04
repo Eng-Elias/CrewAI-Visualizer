@@ -16,6 +16,7 @@ colorama==0.4.6
 deprecation==2.1.0
 dnspython==2.7.0
 email_validator==2.2.0
+environs==14.1.0
 fastapi==0.115.8
 fastapi-cli==0.0.7
 frozenlist==1.5.0
@@ -32,6 +33,7 @@ Jinja2==3.1.5
 kombu==5.4.2
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
+marshmallow==3.26.1
 mdurl==0.1.2
 multidict==6.1.0
 packaging==24.2
@@ -61,6 +63,7 @@ typer==0.15.1
 typing_extensions==4.12.2
 tzdata==2025.1
 uvicorn==0.34.0
+uvloop==0.21.0
 vine==5.1.0
 watchfiles==1.0.4
 wcwidth==0.2.13
