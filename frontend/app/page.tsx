@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -12,46 +12,79 @@ export default function Home() {
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent mb-8">
                   CrewAI Visualizer
                 </h1>
-                
+
                 <p className="text-gray-600">
-                  Welcome to CrewAI Visualizer! This powerful tool helps you visualize and manage CrewAI workflows with ease.
+                  Welcome to CrewAI Visualizer! This powerful tool helps you
+                  visualize and manage CrewAI workflows with ease.
                 </p>
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">Features</h2>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                    Features
+                  </h2>
                   <ul className="space-y-3 text-gray-600">
                     <li className="flex items-center">
-                      <svg className="h-5 w-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      <svg
+                        className="h-5 w-5 text-indigo-500 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        ></path>
                       </svg>
                       Secure Authentication with Supabase
                     </li>
                     <li className="flex items-center">
-                      <svg className="h-5 w-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      <svg
+                        className="h-5 w-5 text-indigo-500 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        ></path>
                       </svg>
                       Interactive Workflow Visualization
                     </li>
                     <li className="flex items-center">
-                      <svg className="h-5 w-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      <svg
+                        className="h-5 w-5 text-indigo-500 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        ></path>
                       </svg>
                       Real-time Collaboration
                     </li>
                   </ul>
                 </div>
-                
+
                 <div className="space-y-4 pt-6">
-                  <Link 
-                    href="/auth-test" 
+                  <Link
+                    href="/auth-test"
                     className="block w-full text-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-md
                       hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                       transition-all duration-200 ease-in-out transform hover:scale-105 shadow-md"
                   >
                     Try Authentication
                   </Link>
-                  
-                  <a 
+
+                  <a
                     href="https://github.com/Eng-Elias/CrewAI-Visualizer"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -68,5 +101,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }
