@@ -1,13 +1,39 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Menu, User, Home, BarChart2, Settings, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  FileCode,
+  Brain,
+  WrenchIcon,
+  Link as LinkIcon,
+  BarChart2,
+  BookOpen,
+  Settings,
+  ChevronDown,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 const sidebarItems = [
-  { icon: Home, label: "Dashboard", href: "/dashboard" },
-  { icon: BarChart2, label: "Analytics", href: "/analytics" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: Users, label: "Crews", href: "/crews" },
+  {
+    icon: FileCode,
+    label: "Templates",
+    href: "/templates",
+    subItems: [
+      { label: "Crews", href: "/templates/crews" },
+      { label: "Agents", href: "/templates/agents" },
+      { label: "Tasks", href: "/templates/tasks" },
+    ],
+  },
+  { icon: Brain, label: "LLMs", href: "/llms" },
+  { icon: WrenchIcon, label: "Tools Configurations", href: "/tools" },
+  { icon: LinkIcon, label: "Integrations", href: "/integrations" },
+  { icon: BarChart2, label: "Usage", href: "/usage" },
+  { icon: BookOpen, label: "Resources", href: "/resources" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
@@ -17,6 +43,11 @@ export default function AuthenticatedLayout({
   children: React.ReactNode;
 }>) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+
+  const toggleSubmenu = (label: string) => {
+    setExpandedItem(expandedItem === label ? null : label);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -35,55 +66,70 @@ export default function AuthenticatedLayout({
               size="icon"
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             >
-              <Menu className="h-5 w-5" />
+              <ChevronDown
+                className={cn(
+                  "h-5 w-5 transition-transform",
+                  isSidebarCollapsed ? "-rotate-90" : "rotate-0"
+                )}
+              />
             </Button>
             {!isSidebarCollapsed && (
-              <span className="ml-3 text-lg font-semibold">CrewAI</span>
+              <span className="ml-3 text-lg font-semibold">
+                CrewA-Visualizer
+              </span>
             )}
           </div>
 
           {/* Navigation Items */}
           <nav className="flex-1 space-y-1 p-2">
             {sidebarItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-                  "transition-colors duration-200"
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                {!isSidebarCollapsed && (
-                  <span className="ml-3">{item.label}</span>
-                )}
-              </Link>
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                    "transition-colors duration-200"
+                  )}
+                  onClick={(e) => {
+                    if (item.subItems) {
+                      e.preventDefault();
+                      toggleSubmenu(item.label);
+                    }
+                  }}
+                >
+                  <item.icon className="h-5 w-5" />
+                  {!isSidebarCollapsed && (
+                    <>
+                      <span className="ml-3 flex-1">{item.label}</span>
+                      {item.subItems && (
+                        <ChevronDown
+                          className={cn(
+                            "h-4 w-4 transition-transform",
+                            expandedItem === item.label ? "rotate-180" : ""
+                          )}
+                        />
+                      )}
+                    </>
+                  )}
+                </Link>
+                {!isSidebarCollapsed &&
+                  item.subItems &&
+                  expandedItem === item.label && (
+                    <div className="ml-9 mt-1 space-y-1">
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.href}
+                          href={subItem.href}
+                          className="block rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+              </div>
             ))}
           </nav>
-
-          {/* User Section */}
-          <div className="border-t p-2">
-            <div
-              className={cn(
-                "flex items-center rounded-lg px-3 py-2",
-                !isSidebarCollapsed && "justify-between"
-              )}
-            >
-              <div className="flex items-center">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <User className="h-4 w-4" />
-                </div>
-                {!isSidebarCollapsed && (
-                  <span className="ml-3 text-sm font-medium">John Doe</span>
-                )}
-              </div>
-              {!isSidebarCollapsed && (
-                <Button variant="ghost" size="icon">
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
         </div>
       </aside>
 
