@@ -10,8 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Clock } from "lucide-react";
+import { Plus, Search, Clock, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 const taskTemplates = [
   {
@@ -43,9 +44,11 @@ export default function TaskTemplatesPage() {
             Manage and create task templates for your crews and agents
           </p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          New Task Template
+        <Button asChild>
+          <Link href="/templates/tasks/new">
+            <Plus className="mr-2 h-4 w-4" />
+            New Task Template
+          </Link>
         </Button>
       </div>
 
@@ -90,7 +93,12 @@ export default function TaskTemplatesPage() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end space-x-2">
-              <Button variant="outline">Edit</Button>
+              <Button variant="outline" asChild>
+                <Link href={`/templates/tasks/${template.id}`}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </Link>
+              </Button>
               <Button>Use Template</Button>
             </CardFooter>
           </Card>

@@ -10,8 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 const agentTemplates = [
   {
@@ -41,9 +42,11 @@ export default function AgentTemplatesPage() {
             Browse and create agent templates with predefined roles and capabilities
           </p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          New Agent Template
+        <Button asChild>
+          <Link href="/templates/agents/new">
+            <Plus className="mr-2 h-4 w-4" />
+            New Agent Template
+          </Link>
         </Button>
       </div>
 
@@ -74,7 +77,12 @@ export default function AgentTemplatesPage() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end space-x-2">
-              <Button variant="outline">Edit</Button>
+              <Button variant="outline" asChild>
+                <Link href={`/templates/agents/${template.id}`}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </Link>
+              </Button>
               <Button>Use Template</Button>
             </CardFooter>
           </Card>
