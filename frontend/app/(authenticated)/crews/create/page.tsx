@@ -257,25 +257,37 @@ export default function CreateCrewPage() {
     const currentAgents = form.getValues("agents") || [];
     form.setValue(
       "agents",
-      currentAgents.filter((_, i) => i !== index)
+      currentAgents.filter((_: any, i: number) => i !== index)
     );
   };
 
-  const addTask = () => {
+  const getNextTaskId = () => {
+    const tasks = form.getValues("tasks") || [];
+    const maxId = tasks.reduce((max, task) => Math.max(max, task.id || 0), 0);
+    return maxId + 1;
+  };
+
+  const addTask = (taskData: any) => {
     const currentTasks = form.getValues("tasks") || [];
-    form.setValue("tasks", [...currentTasks, { name: "", description: "" }]);
+    const newTask = {
+      ...taskData,
+      id: getNextTaskId(),
+    };
+    form.setValue("tasks", [...currentTasks, newTask]);
   };
 
   const removeTask = (index: number) => {
     const currentTasks = form.getValues("tasks") || [];
     form.setValue(
       "tasks",
-      currentTasks.filter((_, i) => i !== index)
+      currentTasks.filter((_: any, i: number) => i !== index)
     );
   };
 
   const [openTemplateModal, setOpenTemplateModal] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openTaskTemplateModal, setOpenTaskTemplateModal] = useState(false);
+  const [openCreateTaskModal, setOpenCreateTaskModal] = useState(false);
 
   return (
     <div className="p-6">
@@ -677,45 +689,265 @@ export default function CreateCrewPage() {
                 </TabsContent>
 
                 <TabsContent value="tasks" className="space-y-4">
-                  <Card className="border shadow-sm">
-                    <CardHeader className="bg-muted/30">
-                      <CardTitle className="text-lg">Crew Tasks</CardTitle>
-                      <CardDescription>
-                        Define and order tasks for your crew
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4 pt-6">
-                      <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={handleDragEnd}
-                      >
-                        <SortableContext
-                          items={form.watch("tasks").map((_, index) => index)}
-                          strategy={verticalListSortingStrategy}
+                  <div className="flex gap-4">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Dialog
+                            open={openTaskTemplateModal}
+                            onOpenChange={setOpenTaskTemplateModal}
+                          >
+                            <DialogTrigger asChild>
+                              <Button variant="outline">
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Task from Template
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl bg-white">
+                              <DialogHeader>
+                                <DialogTitle className="text-xl font-bold">
+                                  Choose Task Template
+                                </DialogTitle>
+                                <DialogDescription className="text-muted-foreground">
+                                  Select from our collection of builtin and
+                                  pre-created tasks
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="grid grid-cols-3 gap-4 py-4">
+                                {[
+                                  {
+                                    name: "Web Research",
+                                    description: "Research a specific topic on the web",
+                                    expected_output: "Comprehensive research report with key findings and sources",
+                                    tools: [
+                                      "web_search",
+                                      "web_scraping",
+                                      "summarization",
+                                    ],
+                                    async_execution: false,
+                                  },
+                                  {
+                                    name: "Data Analysis",
+                                    description: "Analyze data and generate insights",
+                                    expected_output: "Data analysis report with visualizations and key metrics",
+                                    tools: [
+                                      "data_analysis",
+                                      "visualization",
+                                      "statistics",
+                                    ],
+                                    async_execution: true,
+                                  },
+                                  {
+                                    name: "Content Generation",
+                                    description: "Generate high-quality content based on provided topic",
+                                    expected_output: "Well-structured content piece with proper formatting",
+                                    tools: [
+                                      "text_generation",
+                                      "grammar_check",
+                                      "plagiarism_detection",
+                                    ],
+                                    async_execution: false,
+                                  },
+                                ].map((template, index) => (
+                                  <Card
+                                    key={index}
+                                    className="hover:border-primary bg-card"
+                                  >
+                                    <CardHeader>
+                                      <CardTitle className="text-lg font-semibold">
+                                        {template.name}
+                                      </CardTitle>
+                                      <CardDescription className="text-sm text-muted-foreground">
+                                        {template.description}
+                                      </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                      <div className="text-sm">
+                                        <span className="font-medium">
+                                          Expected Output:
+                                        </span>
+                                        <p className="text-muted-foreground mt-1">
+                                          {template.expected_output}
+                                        </p>
+                                      </div>
+                                      <div className="text-sm">
+                                        <span className="font-medium">
+                                          Tools:
+                                        </span>
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                          {template.tools.map((tool, i) => (
+                                            <span
+                                              key={i}
+                                              className="px-2 py-1 bg-muted rounded-md text-xs"
+                                            >
+                                              {tool}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center text-sm">
+                                        <span className="font-medium mr-2">
+                                          Async:
+                                        </span>
+                                        {template.async_execution ? "Yes" : "No"}
+                                      </div>
+                                      <Button
+                                        className="w-full cursor-pointer bg-indigo-500 text-white hover:bg-indigo-600"
+                                        onClick={() => {
+                                          const newTask = {
+                                            id: Date.now(),
+                                            name: template.name,
+                                            description: template.description,
+                                            expected_output: template.expected_output,
+                                            tools: template.tools,
+                                            async_execution: template.async_execution,
+                                          };
+                                          const currentTasks = form.getValues("tasks") || [];
+                                          form.setValue("tasks", [...currentTasks, newTask]);
+                                          setOpenTaskTemplateModal(false);
+                                        }}
+                                      >
+                                        Choose
+                                      </Button>
+                                    </CardContent>
+                                  </Card>
+                                ))}
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            Choose task from templates, builtin and pre-created
+                            tasks
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <Dialog
+                      open={openCreateTaskModal}
+                      onOpenChange={setOpenCreateTaskModal}
+                    >
+                      <DialogTrigger asChild>
+                        <Button>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Create New Task
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-white sm:max-w-[600px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-xl font-bold">
+                            Create New Task
+                          </DialogTitle>
+                          <DialogDescription className="text-muted-foreground">
+                            Fill in the details to create a new task
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.currentTarget);
+                            const newTask = {
+                              name: formData.get("name") as string,
+                              description: formData.get("description") as string,
+                              expected_output: formData.get("expected_output") as string,
+                              tools: (formData.get("tools") as string).split(",").map(t => t.trim()),
+                              async_execution: formData.get("async_execution") === "true",
+                            };
+                            addTask(newTask);
+                            setOpenCreateTaskModal(false);
+                          }}
+                          className="space-y-6"
                         >
-                          {form.watch("tasks")?.map((task, index) => (
-                            <SortableTask
-                              key={index}
-                              task={task}
-                              index={index}
-                              removeTask={removeTask}
-                              form={form}
-                            />
-                          ))}
-                        </SortableContext>
-                      </DndContext>
-                      <Button
-                        type="button"
-                        onClick={addTask}
-                        variant="outline"
-                        className="w-full"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Task
-                      </Button>
-                    </CardContent>
-                  </Card>
+                          <div className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="name">Name</Label>
+                              <Input
+                                id="name"
+                                name="name"
+                                placeholder="Task name"
+                                required
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="description">Description</Label>
+                              <Textarea
+                                id="description"
+                                name="description"
+                                placeholder="Describe what the task should accomplish"
+                                required
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="expected_output">Expected Output</Label>
+                              <Textarea
+                                id="expected_output"
+                                name="expected_output"
+                                placeholder="What should the task produce as output?"
+                                required
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="tools">Tools</Label>
+                              <Input
+                                id="tools"
+                                name="tools"
+                                placeholder="Enter tools separated by commas"
+                              />
+                              <p className="text-sm text-muted-foreground">
+                                Example: web_search, data_analysis, text_generation
+                              </p>
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                              <Switch
+                                id="async_execution"
+                                name="async_execution"
+                              />
+                              <Label htmlFor="async_execution">
+                                Async Execution
+                              </Label>
+                            </div>
+                          </div>
+
+                          <Button
+                            type="submit"
+                            className="w-full bg-indigo-500 text-white hover:bg-indigo-600"
+                          >
+                            Create Task
+                          </Button>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+
+                  {/* Sortable Tasks List */}
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={form.watch("tasks")?.map((task, index) => ({ ...task, id: task.id ?? index })) || []}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <div className="space-y-4">
+                        {form.watch("tasks")?.map((task: any, index: number) => (
+                          <SortableTask
+                            key={task.id || index}
+                            task={task}
+                            index={index}
+                            removeTask={removeTask}
+                            form={form}
+                          />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
                 </TabsContent>
 
                 <TabsContent value="config" className="space-y-6">
