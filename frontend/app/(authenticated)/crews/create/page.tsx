@@ -49,10 +49,33 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 const agentSchema = z.object({
   name: z.string().min(1, "Name is required"),
   role: z.string().min(1, "Role is required"),
+  goal: z.string().min(1, "Goal is required"),
+  backstory: z.string().min(1, "Backstory is required"),
+  memory_enabled: z.boolean(),
+  verbose: z.boolean(),
+  allow_delegation: z.boolean(),
+  max_iterations: z.number().min(1, "Max iterations must be at least 1"),
+  max_rpm: z.number().min(1, "Max RPM must be at least 1").optional(),
 });
 
 const taskSchema = z.object({
@@ -214,7 +237,20 @@ export default function CreateCrewPage() {
 
   const addAgent = () => {
     const currentAgents = form.getValues("agents") || [];
-    form.setValue("agents", [...currentAgents, { name: "", role: "" }]);
+    form.setValue("agents", [
+      ...currentAgents,
+      {
+        name: "",
+        role: "",
+        goal: "",
+        backstory: "",
+        memory_enabled: true,
+        verbose: false,
+        allow_delegation: false,
+        max_iterations: 1,
+        max_rpm: undefined,
+      },
+    ]);
   };
 
   const removeAgent = (index: number) => {
@@ -237,6 +273,9 @@ export default function CreateCrewPage() {
       currentTasks.filter((_, i) => i !== index)
     );
   };
+
+  const [openTemplateModal, setOpenTemplateModal] = useState(false);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
 
   return (
     <div className="p-6">
@@ -301,74 +340,340 @@ export default function CreateCrewPage() {
                 </TabsList>
 
                 <TabsContent value="agents" className="space-y-4">
-                  <Card className="border shadow-sm">
-                    <CardHeader className="bg-muted/30">
-                      <CardTitle className="text-lg">Crew Agents</CardTitle>
-                      <CardDescription>
-                        Add and configure agents for your crew
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4 pt-6">
-                      {form.watch("agents")?.map((_, index) => (
-                        <Card key={index} className="border shadow-sm">
-                          <div className="flex gap-4 items-start p-4">
-                            <div className="flex-1 space-y-4">
-                              <FormField
-                                control={form.control}
-                                name={`agents.${index}.name`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Agent Name</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        placeholder="Enter agent name"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={form.control}
-                                name={`agents.${index}.role`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Agent Role</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        placeholder="Enter agent role"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
+                  <div className="flex gap-4">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Dialog
+                            open={openTemplateModal}
+                            onOpenChange={setOpenTemplateModal}
+                          >
+                            <DialogTrigger asChild>
+                              <Button variant="outline">
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Agent from Template
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl bg-white">
+                              <DialogHeader>
+                                <DialogTitle className="text-xl font-bold">
+                                  Choose Agent Template
+                                </DialogTitle>
+                                <DialogDescription className="text-muted-foreground">
+                                  Select from our collection of builtin and
+                                  pre-created agents
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="grid grid-cols-3 gap-4 py-4">
+                                {[
+                                  {
+                                    name: "Researcher",
+                                    role: "Research Assistant",
+                                    goal: "Gather and analyze information from various sources",
+                                    backstory:
+                                      "An AI agent specialized in conducting thorough research and providing comprehensive insights",
+                                    tools: [
+                                      "web_search",
+                                      "document_analysis",
+                                      "data_extraction",
+                                    ],
+                                  },
+                                  {
+                                    name: "Writer",
+                                    role: "Content Creator",
+                                    goal: "Create high-quality written content",
+                                    backstory:
+                                      "A creative AI agent focused on producing engaging and informative content",
+                                    tools: [
+                                      "text_generation",
+                                      "grammar_check",
+                                      "plagiarism_detection",
+                                    ],
+                                  },
+                                  {
+                                    name: "Analyst",
+                                    role: "Data Analyst",
+                                    goal: "Analyze data and provide actionable insights",
+                                    backstory:
+                                      "A detail-oriented AI agent specialized in data analysis and visualization",
+                                    tools: [
+                                      "data_analysis",
+                                      "visualization",
+                                      "statistical_modeling",
+                                    ],
+                                  },
+                                ].map((template, index) => (
+                                  <Card
+                                    key={index}
+                                    className="hover:border-primary bg-card"
+                                  >
+                                    <CardHeader>
+                                      <CardTitle className="text-lg font-semibold">
+                                        {template.name}
+                                      </CardTitle>
+                                      <CardDescription className="text-sm text-muted-foreground">
+                                        <div className="space-y-2">
+                                          <p>
+                                            <span className="font-medium">
+                                              Role:
+                                            </span>{" "}
+                                            {template.role}
+                                          </p>
+                                          <p>
+                                            <span className="font-medium">
+                                              Goal:
+                                            </span>{" "}
+                                            {template.goal}
+                                          </p>
+                                        </div>
+                                      </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                      <div className="text-sm">
+                                        <span className="font-medium">
+                                          Backstory:
+                                        </span>
+                                        <p className="text-muted-foreground mt-1">
+                                          {template.backstory}
+                                        </p>
+                                      </div>
+                                      <div className="text-sm">
+                                        <span className="font-medium">
+                                          Tools:
+                                        </span>
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                          {template.tools.map((tool, i) => (
+                                            <span
+                                              key={i}
+                                              className="px-2 py-1 bg-muted rounded-md text-xs"
+                                            >
+                                              {tool}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      </div>
+                                      <Button
+                                        className="w-full cursor-pointer bg-indigo-500 text-white hover:bg-indigo-600"
+                                        onClick={() => {
+                                          const newAgent = {
+                                            name: template.name,
+                                            role: template.role,
+                                            goal: template.goal,
+                                            backstory: template.backstory,
+                                            tools: template.tools,
+                                            memory_enabled: true,
+                                            verbose: false,
+                                            allow_delegation: false,
+                                            max_iterations: 1,
+                                          };
+                                          const currentAgents =
+                                            form.getValues("agents") || [];
+                                          form.setValue("agents", [
+                                            ...currentAgents,
+                                            newAgent,
+                                          ]);
+                                          setOpenTemplateModal(false);
+                                        }}
+                                      >
+                                        Choose
+                                      </Button>
+                                    </CardContent>
+                                  </Card>
+                                ))}
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            Choose agent from templates, builtin and pre-created
+                            agents
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <Dialog
+                      open={openCreateModal}
+                      onOpenChange={setOpenCreateModal}
+                    >
+                      <DialogTrigger asChild>
+                        <Button>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Create New Agent
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-white sm:max-w-[600px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-xl font-bold">
+                            Create New Agent
+                          </DialogTitle>
+                          <DialogDescription className="text-muted-foreground">
+                            Fill in the details to create a new agent
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.currentTarget);
+                            const newAgent = {
+                              name: formData.get("name") as string,
+                              role: formData.get("role") as string,
+                              goal: formData.get("goal") as string,
+                              backstory: formData.get("backstory") as string,
+                              memory_enabled:
+                                formData.get("memory_enabled") === "true",
+                              verbose: formData.get("verbose") === "true",
+                              allow_delegation:
+                                formData.get("allow_delegation") === "true",
+                              max_iterations:
+                                parseInt(
+                                  formData.get("max_iterations") as string
+                                ) || 1,
+                              max_rpm:
+                                parseInt(formData.get("max_rpm") as string) ||
+                                undefined,
+                            };
+                            const currentAgents =
+                              form.getValues("agents") || [];
+                            form.setValue("agents", [
+                              ...currentAgents,
+                              newAgent,
+                            ]);
+                            setOpenCreateModal(false);
+                          }}
+                          className="space-y-6"
+                        >
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="name">Name</Label>
+                                <Input
+                                  id="name"
+                                  name="name"
+                                  placeholder="Agent name"
+                                  required
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="role">Role</Label>
+                                <Input
+                                  id="role"
+                                  name="role"
+                                  placeholder="Agent role"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="goal">Goal</Label>
+                              <Textarea
+                                id="goal"
+                                name="goal"
+                                placeholder="What is the agent's primary goal?"
+                                required
                               />
                             </div>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeAgent(index)}
-                              className="text-destructive hover:text-destructive hover:bg-destructive/20"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="backstory">Backstory</Label>
+                              <Textarea
+                                id="backstory"
+                                name="backstory"
+                                placeholder="Provide some background context for the agent"
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="max_iterations">
+                                  Max Iterations
+                                </Label>
+                                <Input
+                                  id="max_iterations"
+                                  name="max_iterations"
+                                  type="number"
+                                  defaultValue={1}
+                                  min={1}
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="max_rpm">Max RPM</Label>
+                                <Input
+                                  id="max_rpm"
+                                  name="max_rpm"
+                                  type="number"
+                                  min={1}
+                                  placeholder="Optional"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4">
+                              <div className="flex items-center space-x-2">
+                                <Switch
+                                  id="memory_enabled"
+                                  name="memory_enabled"
+                                  defaultChecked
+                                />
+                                <Label htmlFor="memory_enabled">Memory</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Switch id="verbose" name="verbose" />
+                                <Label htmlFor="verbose">Verbose</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Switch
+                                  id="allow_delegation"
+                                  name="allow_delegation"
+                                />
+                                <Label htmlFor="allow_delegation">
+                                  Allow Delegation
+                                </Label>
+                              </div>
+                            </div>
                           </div>
-                        </Card>
-                      ))}
-                      <Button
-                        type="button"
-                        onClick={addAgent}
-                        variant="outline"
-                        className="w-full"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Agent
-                      </Button>
-                    </CardContent>
-                  </Card>
+
+                          <Button
+                            type="submit"
+                            className="w-full bg-indigo-500 text-white hover:bg-indigo-600"
+                          >
+                            Create Agent
+                          </Button>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+
+                  {/* Display existing agents */}
+                  <div className="space-y-4">
+                    {form.watch("agents")?.map((agent: any, index: number) => (
+                      <Card key={index}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <div>
+                            <CardTitle>{agent.name}</CardTitle>
+                            <CardDescription>{agent.role}</CardDescription>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              const currentAgents = form.getValues("agents");
+                              form.setValue(
+                                "agents",
+                                currentAgents.filter(
+                                  (_: any, i: number) => i !== index
+                                )
+                              );
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </CardHeader>
+                      </Card>
+                    ))}
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="tasks" className="space-y-4">
