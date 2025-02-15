@@ -12,9 +12,12 @@ import {
   BookOpen,
   Settings,
   ChevronDown,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signOut } from "@/lib/supabase/client";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -44,6 +47,16 @@ export default function AuthenticatedLayout({
 }>) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.replace("/auth"); // Use replace instead of push to prevent back navigation
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const toggleSubmenu = (label: string) => {
     setExpandedItem(expandedItem === label ? null : label);
@@ -130,6 +143,20 @@ export default function AuthenticatedLayout({
               </div>
             ))}
           </nav>
+
+          {/* Logout Button */}
+          <div className="border-t p-2">
+            <button
+              onClick={handleSignOut}
+              className={cn(
+                "flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 hover:text-red-700",
+                "transition-colors duration-200"
+              )}
+            >
+              <LogOut className="h-5 w-5" />
+              {!isSidebarCollapsed && <span className="ml-3">Logout</span>}
+            </button>
+          </div>
         </div>
       </aside>
 

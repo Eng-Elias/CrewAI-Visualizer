@@ -76,12 +76,12 @@ export default function Home() {
 
                 <div className="space-y-4 pt-6">
                   <Link
-                    href="/auth-test"
+                    href="/auth"
                     className="block w-full text-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-md
                       hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                       transition-all duration-200 ease-in-out transform hover:scale-105 shadow-md"
                   >
-                    Try Authentication
+                    Get Started
                   </Link>
 
                   <a
