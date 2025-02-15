@@ -1,4 +1,4 @@
-.PHONY: start stop build clean supabase-start supabase-stop dev prod help backend-install backend-uninstall frontend-install frontend-uninstall logs logs-frontend logs-backend logs-celery logs-redis logs-all
+.PHONY: start stop build clean supabase-start supabase-stop dev prod help backend-install backend-uninstall frontend-install frontend-uninstall logs logs-frontend logs-backend logs-celery logs-redis logs-all restart restart-frontend restart-backend restart-celery restart-redis
 
 help:
 	@echo "Available commands:"
@@ -15,6 +15,12 @@ help:
 	@echo "  make backend-uninstall pkg=PACKAGE - Uninstall Python package from backend"
 	@echo "  make frontend-install pkg=PACKAGE  - Install npm package in frontend"
 	@echo "  make frontend-uninstall pkg=PACKAGE - Uninstall npm package from frontend"
+	@echo "Restart Commands:"
+	@echo "  make restart       - Restart all services"
+	@echo "  make restart-frontend - Restart frontend service"
+	@echo "  make restart-backend  - Restart backend service"
+	@echo "  make restart-celery   - Restart Celery worker"
+	@echo "  make restart-redis    - Restart Redis service"
 	@echo "Log Commands:"
 	@echo "  make logs          - Show logs from all services (last 100 lines)"
 	@echo "  make logs-frontend - Show frontend logs"
@@ -98,6 +104,30 @@ endif
 	docker-compose exec frontend bun uninstall $(pkg)
 	@echo "Package $(pkg) uninstalled and package.json updated"
 
+# Restart commands
+restart: stop start
+	@echo "All services have been restarted"
+
+restart-frontend:
+	@echo "Restarting frontend service..."
+	docker-compose restart frontend
+	@echo "Frontend service restarted"
+
+restart-backend:
+	@echo "Restarting backend service..."
+	docker-compose restart backend
+	@echo "Backend service restarted"
+
+restart-celery:
+	@echo "Restarting Celery worker..."
+	docker-compose restart celery
+	@echo "Celery worker restarted"
+
+restart-redis:
+	@echo "Restarting Redis service..."
+	docker-compose restart redis
+	@echo "Redis service restarted"
+
 # Log commands
 logs:
 	@echo "Showing last 100 lines of logs from all services..."
@@ -113,7 +143,7 @@ logs-backend:
 
 logs-celery:
 	@echo "Showing Celery worker logs..."
-	docker-compose logs -f celery_worker
+	docker-compose logs -f celery
 
 logs-redis:
 	@echo "Showing Redis logs..."
