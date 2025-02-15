@@ -11,7 +11,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -19,22 +18,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { LLM } from "./page";
+import { JsonEditor } from "json-edit-react";
 
 const llmSchema = z.object({
   name: z.string().min(1, "Name is required"),
   provider: z.string().min(1, "Provider is required"),
   api_key: z.string().optional(),
   models: z.string().transform((str) => str.split(",").map((s) => s.trim())),
-  config: z
-    .string()
-    .transform((str) => {
-      try {
-        return JSON.parse(str);
-      } catch {
-        return {};
-      }
-    })
-    .optional(),
+  config: z.any().optional(),
 });
 
 type LLMFormData = z.infer<typeof llmSchema>;
@@ -59,7 +50,7 @@ export function CreateEditLLMModal({
       provider: llm?.provider || "",
       api_key: llm?.api_key || "",
       models: llm?.models || [],
-      config: llm?.config ? JSON.stringify(llm.config, null, 2) : "{}",
+      config: llm?.config || {},
     },
   });
 
@@ -70,7 +61,7 @@ export function CreateEditLLMModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-white">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle>{llm ? "Edit" : "Create"} LLM</DialogTitle>
         </DialogHeader>
@@ -140,14 +131,14 @@ export function CreateEditLLMModal({
               name="config"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Configuration (JSON)</FormLabel>
+                  <FormLabel>Configuration</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="{}"
-                      className="font-mono"
-                      rows={5}
-                      {...field}
-                    />
+                    <div className="border rounded-md p-4 bg-secondary">
+                      <JsonEditor
+                        data={field.value}
+                        setData={(newValue) => field.onChange(newValue)}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -5,6 +5,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { LLM } from "./page";
+import { JsonEditor } from "json-edit-react";
 
 interface ViewLLMModalProps {
   open: boolean;
@@ -17,7 +18,7 @@ export function ViewLLMModal({ open, onOpenChange, llm }: ViewLLMModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-white">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle>{llm.name}</DialogTitle>
         </DialogHeader>
@@ -43,9 +44,16 @@ export function ViewLLMModal({ open, onOpenChange, llm }: ViewLLMModalProps) {
 
           <div>
             <h3 className="text-sm font-medium mb-1">Configuration</h3>
-            <pre className="bg-secondary p-4 rounded-lg overflow-auto max-h-[200px] text-sm">
-              {JSON.stringify(llm.config, null, 2)}
-            </pre>
+            <div className="border rounded-md p-4 bg-secondary">
+              <JsonEditor
+                data={llm.config}
+                restrictAdd
+                restrictEdit
+                restrictDelete
+                restrictDrag
+                restrictTypeSelection
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
