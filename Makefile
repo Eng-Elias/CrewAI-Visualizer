@@ -163,3 +163,8 @@ ifdef n
 else
 	docker-compose logs -f $(subst logs-,,$@)
 endif
+
+# Clean up Docker resources
+docker-prune:
+	@echo "Cleaning up Docker resources..."
+	docker system prune -f
