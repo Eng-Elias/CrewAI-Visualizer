@@ -11,7 +11,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Helper functions for authentication
 export const getSession = async () => {
-  const { data: { session }, error } = await supabase.auth.getSession();
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
   if (error) {
     console.error("Error fetching session:", error.message);
     return null;
@@ -20,7 +23,10 @@ export const getSession = async () => {
 };
 
 export const getUser = async () => {
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
   if (error) {
     console.error("Error fetching user:", error.message);
     return null;
@@ -30,7 +36,7 @@ export const getUser = async () => {
 
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut({
-    scope: 'local'  // This ensures we clear local session data
+    scope: "local", // This ensures we clear local session data
   });
   if (error) {
     console.error("Error signing out:", error.message);

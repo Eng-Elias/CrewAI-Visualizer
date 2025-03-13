@@ -1,21 +1,17 @@
 import os
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Dict, Any
-from supabase import create_client, Client
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.celery import app as celery_app
 from app.tasks import execute_crew_task
+from app.core.dependencies import supabase, security
 
-# Initialize Supabase client
-supabase_url = os.getenv("SUPABASE_URL")
-supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-supabase: Client = create_client(supabase_url, supabase_key)
-
-# Security
-security = HTTPBearer()
+# Set default encryption key if not provided
+if not os.getenv("ENCRYPTION_KEY"):
+    os.environ["ENCRYPTION_KEY"] = "YourDefaultEncryptionKeyForDevelopment=="
 
 app = FastAPI(
     title=os.getenv('APP_TITLE', 'CrewAI Visualizer API'),
@@ -117,8 +113,13 @@ async def health_check():
     }
 
 @app.get("/")
-async def root():
+async def read_root():
+    """Root endpoint for the API"""
     return {
         "message": os.getenv('API_WELCOME_MESSAGE', 'Welcome to CrewAI Visualizer API'),
         "version": os.getenv('APP_VERSION', '1.0.0')
     }
+
+# Import and include routers after FastAPI app is created
+from app.routers import llm
+app.include_router(llm.router)

@@ -1,4 +1,3 @@
-import { LLM } from "./page";
 import {
   Card,
   CardContent,
@@ -19,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { LLM } from "@/utils/api";
 
 interface LLMCardProps {
   llm: LLM;
@@ -76,7 +76,7 @@ export function LLMCard({ llm, onView, onEdit, onDelete }: LLMCardProps) {
           <div>
             <span className="text-sm font-medium">Models:</span>
             <div className="flex flex-wrap gap-1 mt-1">
-              {llm.models.map((model) => (
+              {llm.models.map((model: string) => (
                 <span
                   key={model}
                   className="text-xs bg-secondary px-2 py-1 rounded-full"

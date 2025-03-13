@@ -3,8 +3,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
-import { LLM } from "./page";
+import { LLM } from "@/utils/api";
 import { JsonEditor } from "json-edit-react";
 
 interface ViewLLMModalProps {
@@ -21,6 +22,9 @@ export function ViewLLMModal({ open, onOpenChange, llm }: ViewLLMModalProps) {
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle>{llm.name}</DialogTitle>
+          <DialogDescription>
+            View the details of this LLM configuration.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
