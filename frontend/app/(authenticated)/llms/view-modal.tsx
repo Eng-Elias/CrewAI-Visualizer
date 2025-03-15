@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { LLM } from "@/utils/api";
+import { LLM } from "@/utils/api/types";
 import { JsonEditor } from "json-edit-react";
 
 interface ViewLLMModalProps {

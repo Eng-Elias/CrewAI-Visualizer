@@ -41,6 +41,7 @@ class LLM(LLMBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
+    user_id: Optional[str] = None
 
     class Config:
         from_attributes = True

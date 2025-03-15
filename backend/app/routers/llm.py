@@ -35,10 +35,13 @@ async def get_providers(credentials: HTTPAuthorizationCredentials = Depends(secu
 async def get_all_llms(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Get all LLMs"""
     try:
-        # Verify the JWT token
-        supabase.auth.get_user(credentials.credentials)
-        llms = await llm_repository.get_all()
-        logger.info(f"Retrieved {len(llms)} LLMs")
+        # Verify the JWT token and get user ID
+        user = supabase.auth.get_user(credentials.credentials)
+        user_id = user.user.id
+        
+        # Get LLMs for this user
+        llms = await llm_repository.get_all(user_id=user_id)
+        logger.info(f"Retrieved {len(llms)} LLMs for user {user_id}")
         return llms
     except Exception as e:
         logger.error(f"Error retrieving LLMs: {str(e)}")
@@ -53,24 +56,27 @@ async def get_llm(
     llm_id: int,
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
-    """Get an LLM by ID"""
+    """Get a specific LLM by ID"""
     try:
-        # Verify the JWT token
-        supabase.auth.get_user(credentials.credentials)
+        # Verify the JWT token and get user ID
+        user = supabase.auth.get_user(credentials.credentials)
+        user_id = user.user.id
         
-        llm = await llm_repository.get_by_id(llm_id)
+        # Get LLM for this user
+        llm = await llm_repository.get_by_id(llm_id, user_id=user_id)
+        
         if not llm:
-            logger.warning(f"LLM with ID {llm_id} not found")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"LLM with ID {llm_id} not found"
             )
-        logger.info(f"Retrieved LLM with ID {llm_id}")
+            
+        logger.info(f"Retrieved LLM with ID {llm_id} for user {user_id}")
         return llm
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error retrieving LLM with ID {llm_id}: {str(e)}")
+        logger.error(f"Error retrieving LLM: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Invalid authentication credentials: {str(e)}"
@@ -84,11 +90,13 @@ async def create_llm(
 ):
     """Create a new LLM"""
     try:
-        # Verify the JWT token
-        supabase.auth.get_user(credentials.credentials)
+        # Verify the JWT token and get user ID
+        user = supabase.auth.get_user(credentials.credentials)
+        user_id = user.user.id
         
-        created_llm = await llm_repository.create(llm_data)
-        logger.info(f"Created new LLM: {llm_data.name}")
+        # Create LLM with user ID
+        created_llm = await llm_repository.create(llm_data, user_id=user_id)
+        logger.info(f"Created new LLM: {llm_data.name} for user {user_id}")
         return created_llm
     except HTTPException:
         raise
@@ -108,28 +116,30 @@ async def update_llm(
 ):
     """Update an existing LLM"""
     try:
-        # Verify the JWT token
-        supabase.auth.get_user(credentials.credentials)
+        # Verify the JWT token and get user ID
+        user = supabase.auth.get_user(credentials.credentials)
+        user_id = user.user.id
         
-        # Check if LLM exists
-        llm = await llm_repository.get_by_id(llm_id)
-        if not llm:
-            logger.warning(f"LLM with ID {llm_id} not found")
+        # Check if LLM exists and belongs to this user
+        existing_llm = await llm_repository.get_by_id(llm_id, user_id=user_id)
+        
+        if not existing_llm:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"LLM with ID {llm_id} not found"
+                detail=f"LLM with ID {llm_id} not found or you don't have permission to update it"
             )
-        
-        updated_llm = await llm_repository.update(llm_id, llm_data)
-        logger.info(f"Updated LLM with ID {llm_id}")
+            
+        # Update LLM
+        updated_llm = await llm_repository.update(llm_id, llm_data, user_id=user_id)
+        logger.info(f"Updated LLM with ID {llm_id} for user {user_id}")
         return updated_llm
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error updating LLM with ID {llm_id}: {str(e)}")
+        logger.error(f"Error updating LLM: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update LLM: {str(e)}"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid authentication credentials: {str(e)}"
         )
 
 
@@ -140,31 +150,34 @@ async def delete_llm(
 ):
     """Delete an LLM"""
     try:
-        # Verify the JWT token
-        supabase.auth.get_user(credentials.credentials)
+        # Verify the JWT token and get user ID
+        user = supabase.auth.get_user(credentials.credentials)
+        user_id = user.user.id
         
-        # Check if LLM exists
-        llm = await llm_repository.get_by_id(llm_id)
-        if not llm:
-            logger.warning(f"LLM with ID {llm_id} not found")
+        # Check if LLM exists and belongs to this user
+        existing_llm = await llm_repository.get_by_id(llm_id, user_id=user_id)
+        
+        if not existing_llm:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"LLM with ID {llm_id} not found"
+                detail=f"LLM with ID {llm_id} not found or you don't have permission to delete it"
             )
+            
+        # Delete LLM
+        success = await llm_repository.delete(llm_id, user_id=user_id)
         
-        success = await llm_repository.delete(llm_id)
         if not success:
-            logger.error(f"Failed to delete LLM with ID {llm_id}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to delete LLM with ID {llm_id}"
             )
-        logger.info(f"Deleted LLM with ID {llm_id}")
+            
+        logger.info(f"Deleted LLM with ID {llm_id} for user {user_id}")
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error deleting LLM with ID {llm_id}: {str(e)}")
+        logger.error(f"Error deleting LLM: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete LLM: {str(e)}"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid authentication credentials: {str(e)}"
         )

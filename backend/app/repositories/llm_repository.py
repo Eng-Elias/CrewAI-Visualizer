@@ -11,9 +11,15 @@ class LLMRepository:
         self.supabase = supabase_client
         self.table = "LLMs"
     
-    async def get_all(self) -> List[Dict[str, Any]]:
-        """Get all LLMs from the database"""
-        response = self.supabase.table(self.table).select("*").execute()
+    async def get_all(self, user_id: str = None) -> List[Dict[str, Any]]:
+        """Get all LLMs from the database for a specific user"""
+        query = self.supabase.table(self.table).select("*")
+        
+        # Filter by user_id if provided
+        if user_id:
+            query = query.eq("user_id", user_id)
+            
+        response = query.execute()
         llms = response.data
         
         # Decrypt API keys
@@ -23,9 +29,15 @@ class LLMRepository:
                 
         return llms
     
-    async def get_by_id(self, llm_id: int) -> Optional[Dict[str, Any]]:
-        """Get an LLM by its ID"""
-        response = self.supabase.table(self.table).select("*").eq("id", llm_id).execute()
+    async def get_by_id(self, llm_id: int, user_id: str = None) -> Optional[Dict[str, Any]]:
+        """Get an LLM by its ID, optionally filtering by user_id"""
+        query = self.supabase.table(self.table).select("*").eq("id", llm_id)
+        
+        # Filter by user_id if provided
+        if user_id:
+            query = query.eq("user_id", user_id)
+            
+        response = query.execute()
         
         if not response.data:
             return None
@@ -38,10 +50,14 @@ class LLMRepository:
             
         return llm
     
-    async def create(self, llm_data: LLMCreate) -> Dict[str, Any]:
+    async def create(self, llm_data: LLMCreate, user_id: str = None) -> Dict[str, Any]:
         """Create a new LLM in the database"""
         # Convert to dict for Supabase
         data = llm_data.model_dump()
+        
+        # Add user_id if provided
+        if user_id:
+            data["user_id"] = user_id
         
         # Encrypt API key if provided
         if data.get("api_key"):
@@ -61,7 +77,7 @@ class LLMRepository:
             
         return created_llm
     
-    async def update(self, llm_id: int, llm_data: LLMUpdate) -> Dict[str, Any]:
+    async def update(self, llm_id: int, llm_data: LLMUpdate, user_id: str = None) -> Dict[str, Any]:
         """Update an existing LLM in the database"""
         # Convert to dict and remove None values
         data = {k: v for k, v in llm_data.model_dump().items() if v is not None}
@@ -70,8 +86,15 @@ class LLMRepository:
         if data.get("api_key"):
             data["api_key"] = encryption_service.encrypt(data["api_key"])
         
-        # Update in Supabase
-        response = self.supabase.table(self.table).update(data).eq("id", llm_id).execute()
+        # Build query
+        query = self.supabase.table(self.table).update(data).eq("id", llm_id)
+        
+        # Filter by user_id if provided
+        if user_id:
+            query = query.eq("user_id", user_id)
+        
+        # Execute update
+        response = query.execute()
         
         if not response.data:
             raise Exception(f"Failed to update LLM with ID {llm_id}")
@@ -84,9 +107,15 @@ class LLMRepository:
             
         return updated_llm
     
-    async def delete(self, llm_id: int) -> bool:
+    async def delete(self, llm_id: int, user_id: str = None) -> bool:
         """Delete an LLM from the database"""
-        response = self.supabase.table(self.table).delete().eq("id", llm_id).execute()
+        query = self.supabase.table(self.table).delete().eq("id", llm_id)
+        
+        # Filter by user_id if provided
+        if user_id:
+            query = query.eq("user_id", user_id)
+            
+        response = query.execute()
         
         if not response.data:
             return False
