@@ -151,9 +151,9 @@ grant update on table "public"."Tasks" to "service_role";
 create trigger handle_agents_updated_at
     before update on public."Agents"
     for each row
-    execute function extensions.moddatetime();
+    execute function extensions.moddatetime(updated_at);
 
 create trigger handle_tasks_updated_at
     before update on public."Tasks"
     for each row
-    execute function extensions.moddatetime();
+    execute function extensions.moddatetime(updated_at);

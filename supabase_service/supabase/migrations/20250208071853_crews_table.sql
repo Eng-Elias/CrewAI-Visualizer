@@ -21,7 +21,7 @@ create table "public"."Crews" (
 
 -- Add trigger for updated_at timestamp
 create trigger handle_updated_at before update on "public"."Crews"
-    for each row execute procedure moddatetime (updated_at);
+    for each row execute procedure extensions.moddatetime(updated_at);
 
 alter table "public"."Crews" enable row level security;
 
