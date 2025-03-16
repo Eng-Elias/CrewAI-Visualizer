@@ -104,7 +104,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
         try {
           setInitialLoading(true);
           const taskData = await getTask(parseInt(id));
-          
+
           // Set form values from task data
           form.reset({
             name: taskData.name,
@@ -136,7 +136,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
   const onSubmit = async (data: FormValues) => {
     try {
       setLoading(true);
-      
+
       // Ensure tools and config are objects if they're empty
       const formattedData = {
         ...data,
@@ -151,7 +151,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
         await createTask(formattedData);
         toast.success("Task created successfully");
       }
-      
+
       router.push("/templates/tasks");
     } catch (error) {
       console.error("Error saving task:", error);
@@ -247,7 +247,9 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
                     <FormLabel>Agent</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(parseInt(value))}
-                      defaultValue={field.value ? field.value.toString() : undefined}
+                      defaultValue={
+                        field.value ? field.value.toString() : undefined
+                      }
                       value={field.value ? field.value.toString() : undefined}
                     >
                       <FormControl>
@@ -303,9 +305,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">
-                        Template Task
-                      </FormLabel>
+                      <FormLabel className="text-base">Template Task</FormLabel>
                       <FormDescription>
                         Mark this task as a template
                       </FormDescription>
@@ -336,6 +336,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
                               data={field.value || {}}
                               onChange={(newData) => {
                                 field.onChange(newData.newValue);
+                                return newData.newValue;
                               }}
                             />
                           </div>
@@ -362,7 +363,10 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
                           <div className="h-[300px] overflow-auto p-4">
                             <JsonEditor
                               data={field.value || {}}
-                              onChange={field.onChange}
+                              onChange={(newData) => {
+                                field.onChange(newData.newValue);
+                                return newData.newValue;
+                              }}
                             />
                           </div>
                         </CardContent>
