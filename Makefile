@@ -1,4 +1,4 @@
-.PHONY: start stop build clean supabase-start supabase-stop dev prod help backend-install backend-uninstall frontend-install frontend-uninstall logs logs-frontend logs-backend logs-celery logs-redis logs-all restart restart-frontend restart-backend restart-celery restart-redis
+.PHONY: start stop build clean supabase-start supabase-stop dev prod help backend-install backend-uninstall frontend-install frontend-uninstall logs logs-frontend logs-backend logs-celery logs-redis logs-all restart restart-frontend restart-backend restart-celery restart-redis build-frontend build-backend build-celery build-redis supabase-reset supabase-migrations-new supabase-migrations-apply supabase-db-reset supabase-db-push supabase-status
 
 help:
 	@echo "Available commands:"
@@ -10,6 +10,18 @@ help:
 	@echo "  make supabase-stop  - Stop Supabase"
 	@echo "  make dev           - Start services in development mode"
 	@echo "  make prod          - Start services in production mode"
+	@echo "Supabase Commands:"
+	@echo "  make supabase-reset          - Reset Supabase and re-apply all migrations"
+	@echo "  make supabase-migrations-new name=migration_name - Create a new migration"
+	@echo "  make supabase-migrations-apply - Apply pending migrations"
+	@echo "  make supabase-db-reset       - Reset the database without applying migrations"
+	@echo "  make supabase-db-push        - Push local schema changes to the database"
+	@echo "  make supabase-status         - Show Supabase status"
+	@echo "Build Commands:"
+	@echo "  make build-frontend - Rebuild only the frontend service"
+	@echo "  make build-backend  - Rebuild only the backend service"
+	@echo "  make build-celery   - Rebuild only the Celery worker service"
+	@echo "  make build-redis    - Rebuild only the Redis service"
 	@echo "Package Management Commands:"
 	@echo "  make backend-install pkg=PACKAGE   - Install Python package in backend"
 	@echo "  make backend-uninstall pkg=PACKAGE - Uninstall Python package from backend"
@@ -37,9 +49,55 @@ supabase-stop:
 	@echo "Stopping Supabase..."
 	cd supabase_service && supabase stop
 
+# Supabase migration commands
+supabase-reset:
+	@echo "Resetting Supabase and re-applying all migrations..."
+	cd supabase_service && supabase db reset
+
+supabase-migrations-new:
+ifndef name
+	@echo "Error: Migration name not specified. Usage: make supabase-migrations-new name=migration_name"
+	@exit 1
+endif
+	@echo "Creating new migration: $(name)..."
+	cd supabase_service && supabase migration new $(name)
+
+supabase-migrations-apply:
+	@echo "Applying pending migrations..."
+	cd supabase_service && supabase db push
+
+supabase-db-reset:
+	@echo "Resetting the database without applying migrations..."
+	cd supabase_service && supabase db reset --no-migration
+
+supabase-db-push:
+	@echo "Pushing local schema changes to the database..."
+	cd supabase_service && supabase db push
+
+supabase-status:
+	@echo "Showing Supabase status..."
+	cd supabase_service && supabase status
+
 build:
 	@echo "Building Docker images..."
 	docker-compose build
+
+# Individual service build commands
+build-frontend:
+	@echo "Building frontend service..."
+	docker-compose build frontend
+
+build-backend:
+	@echo "Building backend service..."
+	docker-compose build backend
+
+build-celery:
+	@echo "Building Celery worker service..."
+	docker-compose build celery_worker
+
+build-redis:
+	@echo "Building Redis service..."
+	docker-compose build redis
 
 start: supabase-start
 	@echo "Starting all services..."
