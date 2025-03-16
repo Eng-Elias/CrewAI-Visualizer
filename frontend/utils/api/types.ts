@@ -88,8 +88,10 @@ export type TaskFormData = {
   tools?: object;
   async_execution?: boolean;
   config?: object;
-  output_json?: object;
+  output_json?: object | null;
   context?: number[];
-  is_template?: boolean; // Still needed for API but set to true by default
-  // is_builtin is not used for now
+  is_template?: boolean;
+  is_builtin?: boolean;
+  template_id?: number | null;
+  template_version?: number | null;
 };

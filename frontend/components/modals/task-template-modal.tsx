@@ -10,21 +10,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Clock } from "lucide-react";
+import { Task } from "@/utils/api/types";
 
 interface TaskTemplateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  template: {
-    id: number;
-    name: string;
-    description: string;
-    expected_output: string;
-    async_execution: boolean;
-    tools?: string[];
-    estimatedTime?: string;
-    complexity?: "Low" | "Medium" | "High";
-  };
+  template: Task;
 }
 
 export function TaskTemplateModal({
@@ -39,83 +30,52 @@ export function TaskTemplateModal({
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle className="text-2xl">{template.name}</DialogTitle>
-              {template.complexity && (
-                <Badge
-                  variant={
-                    template.complexity === "High"
-                      ? "destructive"
-                      : template.complexity === "Medium"
-                      ? "default"
-                      : "secondary"
-                  }
-                >
-                  {template.complexity}
-                </Badge>
-              )}
+              <div className="flex space-x-2">
+                {template.is_builtin && <Badge>Built-in</Badge>}
+                {template.async_execution && (
+                  <Badge variant="secondary">Async</Badge>
+                )}
+              </div>
             </div>
-            <DialogDescription>Task Template Details</DialogDescription>
+            <DialogDescription className="text-base mt-2">
+              {template.description}
+            </DialogDescription>
           </DialogHeader>
-          <ScrollArea className="max-h-[70vh]">
+
+          <Separator className="my-4" />
+
+          <ScrollArea className="max-h-[60vh]">
             <div className="space-y-6 p-1">
               <div>
-                <h3 className="font-semibold">Description</h3>
-                <p className="text-muted-foreground">{template.description}</p>
+                <h3 className="text-lg font-semibold">Expected Output</h3>
+                <p className="text-gray-700 mt-1">{template.expected_output}</p>
               </div>
 
               <div>
-                <h3 className="font-semibold">Expected Output</h3>
-                <p className="text-muted-foreground">
-                  {template.expected_output}
-                </p>
+                <h3 className="text-lg font-semibold">Agent</h3>
+                <p className="text-gray-700 mt-1">ID: {template.agent}</p>
               </div>
 
-              <Separator />
-
-              <div className="grid gap-4 md:grid-cols-2">
+              {template.tools && Object.keys(template.tools).length > 0 && (
                 <div>
-                  <h3 className="font-semibold">Configuration</h3>
-                  <ul className="mt-2 space-y-2">
-                    <li className="flex items-center justify-between">
-                      <span className="text-muted-foreground">
-                        Async Execution
-                      </span>
-                      <Badge
-                        variant={
-                          template.async_execution ? "default" : "secondary"
-                        }
-                      >
-                        {template.async_execution ? "Yes" : "No"}
+                  <h3 className="text-lg font-semibold">Tools</h3>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {Object.keys(template.tools).map((tool) => (
+                      <Badge key={tool} variant="outline">
+                        {tool}
                       </Badge>
-                    </li>
-                    {template.estimatedTime && (
-                      <li className="flex items-center justify-between">
-                        <span className="text-muted-foreground">
-                          <Clock className="mr-2 inline-block h-4 w-4" />
-                          Estimated Time
-                        </span>
-                        <Badge variant="outline">
-                          {template.estimatedTime}
-                        </Badge>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </div>
-
-              {template.tools && template.tools.length > 0 && (
-                <>
-                  <Separator />
-                  <div>
-                    <h3 className="font-semibold">Required Tools</h3>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {template.tools.map((tool) => (
-                        <Badge key={tool} variant="outline">
-                          {tool}
-                        </Badge>
-                      ))}
-                    </div>
+                    ))}
                   </div>
-                </>
+                </div>
+              )}
+
+              {template.config && Object.keys(template.config).length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold">Configuration</h3>
+                  <pre className="bg-gray-100 p-3 rounded-md mt-2 text-sm overflow-auto">
+                    {JSON.stringify(template.config, null, 2)}
+                  </pre>
+                </div>
               )}
             </div>
           </ScrollArea>

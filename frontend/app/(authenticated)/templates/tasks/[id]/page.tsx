@@ -1,32 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { TaskTemplateForm } from "@/components/forms/task-template-form";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import CreateEditTask from "../create-edit-task";
+import { use } from "react";
 
-export default function ViewTaskTemplatePage({
+export default function EditTaskPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const router = useRouter();
-
-  // TODO: Fetch task data from Supabase using the id
-  const mockTaskData = {
-    name: "Web Research Task",
-    description: "Research and gather information about a specific topic",
-    expected_output: "A comprehensive report containing the findings",
-    async_execution: false,
-    tools: [],
-    config: {},
-  };
-
-  const onSubmit = async (data: any) => {
-    // TODO: Implement update logic with Supabase
-    console.log("Updating task template:", data);
-  };
+  const resolvedParams = use(params);
+  const { id } = resolvedParams;
 
   return (
     <div className="space-y-6">
@@ -37,18 +23,13 @@ export default function ViewTaskTemplatePage({
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Edit Task Template</h1>
-          <p className="text-muted-foreground">
-            Modify the task template settings
-          </p>
+          <h1 className="text-3xl font-bold">Edit Task</h1>
+          <p className="text-muted-foreground">Modify the task settings</p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-2xl">
-        <TaskTemplateForm
-          initialData={mockTaskData}
-          onSubmit={onSubmit}
-        />
+      <div className="mx-auto max-w-5xl">
+        <CreateEditTask id={id} />
       </div>
     </div>
   );
