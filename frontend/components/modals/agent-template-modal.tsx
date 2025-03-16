@@ -10,23 +10,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Agent } from "@/utils/api/types";
 
 interface AgentTemplateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  template: {
-    id: number;
-    name: string;
-    role: string;
-    goal: string;
-    backstory?: string;
-    memory_enabled: boolean;
-    verbose: boolean;
-    allow_delegation: boolean;
-    max_iterations: number;
-    max_rpm?: number;
-    tools?: string[];
-  };
+  template: Agent | null;
 }
 
 export function AgentTemplateModal({
@@ -99,6 +88,30 @@ export function AgentTemplateModal({
                         {template.allow_delegation ? "Yes" : "No"}
                       </Badge>
                     </li>
+                    <li className="flex items-center justify-between">
+                      <span className="text-muted-foreground">
+                        Is Template
+                      </span>
+                      <Badge
+                        variant={
+                          template.is_template ? "default" : "secondary"
+                        }
+                      >
+                        {template.is_template ? "Yes" : "No"}
+                      </Badge>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span className="text-muted-foreground">
+                        Is Built-in
+                      </span>
+                      <Badge
+                        variant={
+                          template.is_builtin ? "default" : "secondary"
+                        }
+                      >
+                        {template.is_builtin ? "Yes" : "No"}
+                      </Badge>
+                    </li>
                   </ul>
                 </div>
 
@@ -121,18 +134,30 @@ export function AgentTemplateModal({
                 </div>
               </div>
 
-              {template.tools && template.tools.length > 0 && (
+              {template.tools && Object.keys(template.tools).length > 0 && (
                 <>
                   <Separator />
                   <div>
                     <h3 className="font-semibold">Tools</h3>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {template.tools.map((tool) => (
+                      {Object.keys(template.tools).map((tool) => (
                         <Badge key={tool} variant="outline">
                           {tool}
                         </Badge>
                       ))}
                     </div>
+                  </div>
+                </>
+              )}
+              
+              {template.llm_config && Object.keys(template.llm_config).length > 0 && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="font-semibold">LLM Configuration</h3>
+                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto">
+                      {JSON.stringify(template.llm_config, null, 2)}
+                    </pre>
                   </div>
                 </>
               )}
