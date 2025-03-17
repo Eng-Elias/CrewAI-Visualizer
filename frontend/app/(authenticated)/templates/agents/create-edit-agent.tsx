@@ -23,7 +23,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { JsonEditor } from "json-edit-react";
 import { AgentFormData } from "@/utils/api/types";
-import { createAgent, getAgent, updateAgent } from "@/utils/api";
+import { createAgent, getAgent, updateAgent } from "@/utils/api/agent-api";
 
 // Form schema
 const agentSchema = z.object({

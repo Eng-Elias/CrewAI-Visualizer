@@ -1,5 +1,5 @@
-import { createApiClient, handleApiError } from './api-client';
-import { LLM, LLMFormData } from './types';
+import { createApiClient, handleApiError } from "./api-client";
+import { LLM, LLMFormData } from "./types";
 
 /**
  * Get all LLMs
@@ -7,7 +7,7 @@ import { LLM, LLMFormData } from './types';
 export const getLLMs = async (): Promise<LLM[]> => {
   try {
     const apiClient = await createApiClient();
-    const response = await apiClient.get('/api/llms');
+    const response = await apiClient.get("/api/llms");
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -33,7 +33,7 @@ export const getLLM = async (id: number): Promise<LLM> => {
 export const createLLM = async (data: LLMFormData): Promise<LLM> => {
   try {
     const apiClient = await createApiClient();
-    const response = await apiClient.post('/api/llms', data);
+    const response = await apiClient.post("/api/llms", data);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -74,7 +74,7 @@ export const deleteLLM = async (id: number): Promise<void> => {
 export const getLLMProviders = async (): Promise<Record<string, string>> => {
   try {
     const apiClient = await createApiClient();
-    const response = await apiClient.get('/api/llms/providers');
+    const response = await apiClient.get("/api/llms/providers");
     return response.data;
   } catch (error) {
     return handleApiError(error);

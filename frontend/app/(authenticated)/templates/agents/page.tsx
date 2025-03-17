@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AgentTemplateModal } from "@/components/modals/agent-template-modal";
 import { Agent } from "@/utils/api/types";
-import { deleteAgent, getAgentTemplates } from "@/utils/api";
+import { deleteAgent, getAgentTemplates } from "@/utils/api/agent-api";
 
 export default function AgentTemplatesPage() {
   const [agentTemplates, setAgentTemplates] = useState<Agent[]>([]);

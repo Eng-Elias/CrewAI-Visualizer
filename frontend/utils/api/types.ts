@@ -95,3 +95,82 @@ export type TaskFormData = {
   template_id?: number | null;
   template_version?: number | null;
 };
+
+// Crew API Types
+export type CrewAgent = {
+  id: string;
+  crew_id: number;
+  agent_id: number;
+  agent_order: number;
+  role: string;
+  agent?: Agent;
+};
+
+export type CrewTask = {
+  id: string;
+  crew_id: number;
+  task_id: number;
+  task_order: number;
+  task?: Task;
+};
+
+export type Crew = {
+  id: number;
+  name: string;
+  description: string;
+  process: string;
+  verbose: boolean;
+  manager_llm?: string;
+  function_calling_llm?: string;
+  config?: object;
+  max_rpm?: number;
+  language?: string;
+  memory?: boolean;
+  memory_config?: object;
+  embedder?: object;
+  full_output?: boolean;
+  manager_agent?: number;
+  planning?: boolean;
+  planning_llm?: string;
+  is_template: boolean;
+  is_builtin: boolean;
+  template_id?: number;
+  template_version?: number;
+  user?: string;
+  created_at: string;
+  updated_at?: string;
+  agents?: CrewAgent[];
+  tasks?: CrewTask[];
+};
+
+export type CrewFormData = {
+  name: string;
+  description: string;
+  process?: string;
+  verbose?: boolean;
+  manager_llm?: string;
+  function_calling_llm?: string;
+  config?: object;
+  max_rpm?: number;
+  language?: string;
+  memory?: boolean;
+  memory_config?: object;
+  embedder?: object;
+  full_output?: boolean;
+  manager_agent?: number;
+  planning?: boolean;
+  planning_llm?: string;
+  is_template?: boolean;
+  is_builtin?: boolean;
+  template_id?: number | null;
+  template_version?: number | null;
+  agents?: {
+    agent_id: number;
+    order: number;
+    role: string;
+  }[];
+  tasks?: {
+    task_id: number;
+    order: number;
+  }[];
+};

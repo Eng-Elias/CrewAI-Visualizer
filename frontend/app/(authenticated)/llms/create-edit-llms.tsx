@@ -26,7 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LLM, LLMFormData, getLLMProviders } from "@/utils/api";
+import { LLM, LLMFormData } from "@/utils/api/types";
+import { getLLMProviders } from "@/utils/api/llm-api";
 import { JsonEditor } from "json-edit-react";
 
 // Form schema with separate input field for models
@@ -91,7 +92,7 @@ export function CreateEditLLMModal({
               ANTHROPIC: "Anthropic",
               GEMINI: "Gemini",
               DEEPSEEK: "DeepSeek",
-              OLLAMA: "Ollama"
+              OLLAMA: "Ollama",
             });
           } else {
             setProviders(providersData);
@@ -104,7 +105,7 @@ export function CreateEditLLMModal({
             ANTHROPIC: "Anthropic",
             GEMINI: "Gemini",
             DEEPSEEK: "DeepSeek",
-            OLLAMA: "Ollama"
+            OLLAMA: "Ollama",
           });
         } finally {
           setIsLoading(false);
@@ -118,7 +119,10 @@ export function CreateEditLLMModal({
   const handleSubmit = async (data: FormValues) => {
     // Convert modelsInput to models array
     const models = data.modelsInput
-      ? data.modelsInput.split(",").map((s) => s.trim()).filter(Boolean)
+      ? data.modelsInput
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : [];
 
     // Create the LLMFormData object
@@ -129,7 +133,7 @@ export function CreateEditLLMModal({
       models: models,
       config: data.config,
     };
-    
+
     await onSubmit(formData);
     form.reset();
   };
@@ -140,7 +144,9 @@ export function CreateEditLLMModal({
         <DialogHeader>
           <DialogTitle>{llm ? "Edit" : "Create"} LLM</DialogTitle>
           <DialogDescription>
-            {llm ? "Update the details of your LLM configuration." : "Configure a new LLM for your agents to use."}
+            {llm
+              ? "Update the details of your LLM configuration."
+              : "Configure a new LLM for your agents to use."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

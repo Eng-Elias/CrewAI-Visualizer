@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { LLMCard } from "./llm-card";
-import { CreateEditLLMModal } from "./create-edit-modal";
+import { CreateEditLLMModal } from "./create-edit-llms";
 import { ViewLLMModal } from "./view-modal";
-import { LLM, LLMFormData, createLLM, deleteLLM, getLLMs, updateLLM } from "@/utils/api";
+import { LLM, LLMFormData } from "@/utils/api/types";
+import { createLLM, deleteLLM, getLLMs, updateLLM } from "@/utils/api/llm-api";
 
 export default function LLMsPage() {
   const [llms, setLLMs] = useState<LLM[]>([]);
@@ -25,7 +26,9 @@ export default function LLMsPage() {
         setLLMs(data);
       } catch (error) {
         console.error("Failed to fetch LLMs:", error);
-        toast.error("Failed to load LLMs. Please check your connection and authentication.");
+        toast.error(
+          "Failed to load LLMs. Please check your connection and authentication."
+        );
         // Set empty array to avoid undefined errors
         setLLMs([]);
       } finally {
