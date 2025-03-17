@@ -20,16 +20,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
+import { createTask, getTask, updateTask } from "@/utils/api/task-api";
 import { JsonEditor } from "json-edit-react";
-import { Agent } from "@/utils/api/types";
-import { createTask, getTask, updateTask, getAgents } from "@/utils/api";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import { Agent } from "@/utils/api/types";
+// import { getAgents } from "@/utils/api/agent-api";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 
 // Form schema
@@ -37,7 +38,7 @@ const taskSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
   expected_output: z.string().min(1, "Expected output is required"),
-  agent: z.number().min(1, "Agent is required"),
+  agent: z.number().min(1, "Agent is invalid").optional(),
   async_execution: z.boolean().default(false),
   tools: z.any().optional(),
   config: z.any().optional(),
@@ -60,7 +61,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
   const isEditing = !!id;
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [agents, setAgents] = useState<Agent[]>([]);
+  // const [agents, setAgents] = useState<Agent[]>([]);
 
   // Initialize form with default values
   const form = useForm<FormValues>({
@@ -69,7 +70,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
       name: "",
       description: "",
       expected_output: "",
-      agent: 0,
+      agent: undefined,
       async_execution: false,
       tools: {},
       config: {},
@@ -83,19 +84,19 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
   });
 
   // Fetch agents for dropdown
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const agentsData = await getAgents();
-        setAgents(agentsData);
-      } catch (error) {
-        console.error("Error fetching agents:", error);
-        toast.error("Failed to load agents");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAgents = async () => {
+  //     try {
+  //       const agentsData = await getAgents();
+  //       setAgents(agentsData);
+  //     } catch (error) {
+  //       console.error("Error fetching agents:", error);
+  //       toast.error("Failed to load agents");
+  //     }
+  //   };
 
-    fetchAgents();
-  }, []);
+  //   fetchAgents();
+  // }, []);
 
   // Fetch task data if editing
   useEffect(() => {
@@ -110,7 +111,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
             name: taskData.name,
             description: taskData.description,
             expected_output: taskData.expected_output,
-            agent: taskData.agent,
+            agent: taskData.agent ?? undefined,
             async_execution: taskData.async_execution || false,
             tools: taskData.tools || {},
             config: taskData.config || {},
@@ -140,6 +141,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
       // Ensure tools and config are objects if they're empty
       const formattedData = {
         ...data,
+        agent: data.agent || undefined,
         tools: data.tools || {},
         config: data.config || {},
       };
@@ -239,7 +241,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="agent"
                 render={({ field }) => (
@@ -274,7 +276,7 @@ export default function CreateEditTask({ id }: CreateEditTaskProps) {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FormField
                 control={form.control}

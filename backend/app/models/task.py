@@ -8,7 +8,7 @@ class TaskBase(BaseModel):
     name: str
     description: str
     expected_output: str
-    agent: int
+    agent: Optional[int] = None
     tools: Optional[Dict[str, Any]] = Field(default_factory=dict)
     async_execution: bool = False
     config: Optional[Dict[str, Any]] = Field(default_factory=dict)
