@@ -11,9 +11,14 @@ export async function middleware(req: NextRequest) {
     error,
   } = await supabase.auth.getSession();
 
+  // Handle auth errors
   if (error) {
     console.error("Error fetching session:", error.message);
-    return NextResponse.redirect(new URL("/auth", req.url));
+    // Clear any existing session data
+    await supabase.auth.signOut();
+    const redirectUrl = new URL("/auth", req.url);
+    redirectUrl.searchParams.set("error", "session_expired");
+    return NextResponse.redirect(redirectUrl);
   }
 
   // Handle authenticated routes
@@ -26,9 +31,15 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Handle auth routes when already authenticated
+  if (req.nextUrl.pathname.startsWith("/auth") && session) {
+    // Redirect to home if trying to access auth pages while logged in
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   return res;
 }
 
 export const config = {
-  matcher: ["/(authenticated)/:path*", "/auth"],
+  matcher: ["/(authenticated)/:path*", "/auth/:path*"],
 };

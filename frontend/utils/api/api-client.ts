@@ -1,6 +1,7 @@
 "use client";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
 import { getSession } from "@/lib/supabase/client";
+import { AuthenticationError, handleAuthError } from "@/utils/auth/auth-error";
 
 // Default API URL for local development
 const API_URL = process.env.BACKEND_URL || "http://localhost:8000";
@@ -12,7 +13,7 @@ export const createApiClient = async (): Promise<AxiosInstance> => {
   const session = await getSession();
 
   if (!session) {
-    throw new Error("No active session");
+    throw new AuthenticationError("No active session");
   }
 
   const config: AxiosRequestConfig = {
@@ -23,7 +24,23 @@ export const createApiClient = async (): Promise<AxiosInstance> => {
     },
   };
 
-  return axios.create(config);
+  const client = axios.create(config);
+
+  // Add response interceptor to handle auth errors
+  client.interceptors.response.use(
+    (response) => response,
+    (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
+          throw new AuthenticationError(axiosError.message);
+        }
+      }
+      throw error;
+    }
+  );
+
+  return client;
 };
 
 /**
@@ -43,9 +60,20 @@ export class ApiError extends Error {
  * Handle API errors consistently
  */
 export const handleApiError = (error: unknown): never => {
+  // First check for auth errors
+  if (error instanceof AuthenticationError) {
+    handleAuthError(error);
+  }
+
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError;
     const status = axiosError.response?.status || 500;
+    
+    // Handle auth errors from axios
+    if (status === 401 || status === 403) {
+      handleAuthError(error);
+    }
+
     const message =
       axiosError.response?.data &&
       typeof axiosError.response.data === "object" &&
