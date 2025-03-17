@@ -84,7 +84,7 @@ export type TaskFormData = {
   name: string;
   description: string;
   expected_output: string;
-  agent: number;
+  agent: number | undefined;
   tools?: object;
   async_execution?: boolean;
   config?: object;
