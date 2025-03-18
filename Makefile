@@ -52,7 +52,7 @@ supabase-stop:
 # Supabase migration commands
 supabase-reset:
 	@echo "Resetting Supabase and re-applying all migrations..."
-	cd supabase_service && supabase db reset
+	cd supabase_service && supabase db reset --debug
 
 supabase-migrations-new:
 ifndef name
@@ -65,10 +65,6 @@ endif
 supabase-migrations-apply:
 	@echo "Applying pending migrations..."
 	cd supabase_service && supabase db push
-
-supabase-db-reset:
-	@echo "Resetting the database without applying migrations..."
-	cd supabase_service && supabase db reset --no-migration
 
 supabase-db-push:
 	@echo "Pushing local schema changes to the database..."
