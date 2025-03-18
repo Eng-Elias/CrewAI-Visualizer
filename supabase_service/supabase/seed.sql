@@ -130,6 +130,105 @@ INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "pro
 -- Data for Name: Agents; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+ALTER ROLE postgres SET search_path TO public;
+SET search_path TO public;
+
+-- Clean up existing data
+TRUNCATE TABLE "public"."crew_tasks" CASCADE;
+TRUNCATE TABLE "public"."crew_agents" CASCADE;
+TRUNCATE TABLE "public"."Crews" CASCADE;
+TRUNCATE TABLE "public"."Tasks" CASCADE;
+TRUNCATE TABLE "public"."Agents" CASCADE;
+TRUNCATE TABLE "public"."LLMs" CASCADE;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'process_type') THEN
+        CREATE TYPE "public"."process_type" AS ENUM ('sequential', 'hierarchical');
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'agent_role_type') THEN
+        CREATE TYPE "public"."agent_role_type" AS ENUM ('manager', 'worker');
+    END IF;
+END $$;
+
+-- Seed built-in LLMs
+INSERT INTO "public"."LLMs" (id, name, provider, models, config)
+VALUES
+  (1, 'OpenAI GPT-4', 'openai', ARRAY['gpt-4'], '{"temperature": 0.7}'),
+  (2, 'OpenAI GPT-3.5', 'openai', ARRAY['gpt-3.5-turbo'], '{"temperature": 0.7}');
+
+-- Seed built-in agent templates
+INSERT INTO "public"."Agents" (id, name, role, goal, backstory, memory_enabled, "verbose", allow_delegation, max_iterations, is_template, is_builtin)
+VALUES
+  (1, 'Research Analyst', 'Researcher', 'Conduct thorough research and analysis on given topics', 'Expert in gathering and analyzing information from various sources', true, true, true, 5, true, true),
+  (2, 'Data Scientist', 'Analyst', 'Process and analyze data to extract meaningful insights', 'Specialized in data analysis and statistical modeling', true, true, true, 5, true, true),
+  (3, 'Content Writer', 'Writer', 'Create engaging and informative content', 'Professional writer with expertise in various content formats', true, true, false, 3, true, true),
+  (4, 'Editor', 'Editor', 'Review and improve content for clarity and accuracy', 'Experienced editor with attention to detail', true, true, false, 2, true, true),
+  (5, 'Project Manager', 'Manager', 'Coordinate tasks and ensure project success', 'Experienced in managing complex projects and teams', true, true, true, 5, true, true),
+  (6, 'Quality Assurance', 'Reviewer', 'Ensure quality and accuracy of deliverables', 'Detail-oriented professional focused on quality control', true, true, false, 3, true, true);
+
+-- Seed built-in task templates
+INSERT INTO "public"."Tasks" (id, name, description, expected_output, async_execution, is_template, is_builtin)
+VALUES
+  -- Research Tasks
+  (1, 'Research Topic', 'Conduct comprehensive research on a given topic', 'Detailed research report with key findings and sources', false, true, true),
+  (2, 'Analyze Data', 'Analyze provided data and extract insights', 'Data analysis report with visualizations and recommendations', false, true, true),
+  
+  -- Content Tasks
+  (3, 'Write Article', 'Write an informative article on the researched topic', 'Well-structured article with proper citations', false, true, true),
+  (4, 'Edit Content', 'Review and improve the written content', 'Polished content with editorial improvements', false, true, true),
+  
+  -- Management Tasks
+  (5, 'Create Project Plan', 'Develop a detailed project plan', 'Project plan with timeline and resource allocation', false, true, true),
+  (6, 'Quality Review', 'Review deliverables for quality assurance', 'Quality assessment report with recommendations', false, true, true);
+
+-- Seed built-in crew templates
+INSERT INTO "public"."Crews" (
+  id, name, description, process, manager_llm_id, planning_llm_id,
+  "verbose", memory, planning, is_template, is_builtin, config, memory_config, embedder
+)
+VALUES
+  (1, 'Content Creation Team', 'A team focused on creating high-quality content', 
+   'hierarchical'::process_type, 1, 2,
+   true, true, true, true, true, '{}'::jsonb, '{}'::jsonb, '{}'::jsonb),
+   
+  (2, 'Research Team', 'A team specialized in research and analysis', 
+   'sequential'::process_type, 1, 2,
+   true, true, true, true, true, '{}'::jsonb, '{}'::jsonb, '{}'::jsonb);
+
+-- Add agents to Content Creation Crew
+INSERT INTO "public"."crew_agents" (crew_id, agent_id, agent_order, role)
+VALUES
+  (1, 5, 1, 'manager'::agent_role_type),  -- Project Manager as manager
+  (1, 1, 2, 'worker'::agent_role_type),   -- Research Analyst as worker
+  (1, 3, 3, 'worker'::agent_role_type),   -- Content Writer as worker
+  (1, 4, 4, 'worker'::agent_role_type);   -- Editor as worker
+
+-- Add tasks to Content Creation Crew
+INSERT INTO "public"."crew_tasks" (crew_id, task_id, task_order, assigned_agent_id)
+VALUES
+  (1, 5, 1, 5),  -- Create Project Plan assigned to Project Manager
+  (1, 1, 2, 1),  -- Research Topic assigned to Research Analyst
+  (1, 3, 3, 3),  -- Write Article assigned to Content Writer
+  (1, 4, 4, 4);  -- Edit Content assigned to Editor
+
+-- Add agents to Research Team
+INSERT INTO "public"."crew_agents" (crew_id, agent_id, agent_order, role)
+VALUES
+  (2, 1, 1, 'worker'::agent_role_type),   -- Research Analyst as worker
+  (2, 2, 2, 'worker'::agent_role_type),   -- Data Scientist as worker
+  (2, 6, 3, 'worker'::agent_role_type);   -- Quality Assurance as worker
+
+-- Add tasks to Research Team
+INSERT INTO "public"."crew_tasks" (crew_id, task_id, task_order, assigned_agent_id)
+VALUES
+  (2, 1, 1, 1),  -- Research Topic assigned to Research Analyst
+  (2, 2, 2, 2),  -- Analyze Data assigned to Data Scientist
+  (2, 6, 3, 6);  -- Quality Review assigned to Quality Assurance
 
 
 --
