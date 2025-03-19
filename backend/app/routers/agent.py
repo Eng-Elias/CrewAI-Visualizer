@@ -140,8 +140,7 @@ async def update_agent(
         
         # Get the current agent to check permissions
         current_agent = await agent_repository.get_by_id(agent_id, user_id=user_id)
-        print("current_agent", current_agent)
-        
+
         if not current_agent:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -156,7 +155,6 @@ async def update_agent(
             
         # Update agent with user_id for RLS
         updated_agent = await agent_repository.update(agent_id, agent_data, user_id=user_id)
-        print("updated_agent", updated_agent)
 
         logger.info(f"Updated agent with ID {agent_id} for user {user_id}")
         return updated_agent

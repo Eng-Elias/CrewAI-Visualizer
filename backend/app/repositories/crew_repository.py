@@ -88,9 +88,7 @@ class CrewRepository:
                 )
             """).eq("id", crew_id).single().execute()
             
-            print("\nresponse", response)
             if response.data:
-                print("\nresponse.data", response.data)
                 return Crew.model_validate(response.data)
             return None
         except APIError as e:

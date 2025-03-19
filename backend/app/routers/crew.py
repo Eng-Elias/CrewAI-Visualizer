@@ -74,11 +74,7 @@ async def get_crew(
         crew = crew_repository.get_by_id(crew_id)
         if not crew:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Crew not found")
-        
-        print("\ncrew", crew)
-        print("\nuser", user)
-        print("\nuser.user.id", user.user.id)
-        print("\ncrew.user_id", crew.user_id)
+
         if user.user.id != crew.user_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized")
         return crew

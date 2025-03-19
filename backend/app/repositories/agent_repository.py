@@ -108,7 +108,6 @@ class AgentRepository:
             
         # Convert to dict for Supabase
         data = agent_data.model_dump(exclude_unset=True)
-        print("data", type(data), data)
         
         # Ensure built-in agents are also templates
         if data.get("is_builtin", False):
@@ -122,7 +121,6 @@ class AgentRepository:
             query = query.eq("user_id", user_id)
             
         response = query.execute()
-        print("response", response)
         
         if not response.data:
             logger.error(f"Failed to update agent with ID {agent_id}")
