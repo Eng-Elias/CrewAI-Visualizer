@@ -1,5 +1,5 @@
-import { createApiClient, handleApiError } from './api-client';
-import { Task, TaskFormData } from './types';
+import { createApiClient, handleApiError } from "@/utils/api/api-client";
+import { Task, TaskFormData } from "@/utils/api/types";
 
 /**
  * Get all tasks
@@ -10,14 +10,14 @@ export const getTasks = async (
 ): Promise<Task[]> => {
   try {
     const apiClient = await createApiClient();
-    const params: Record<string, string | number | boolean> = { 
-      include_templates: includeTemplates 
+    const params: Record<string, string | number | boolean> = {
+      include_templates: includeTemplates,
     };
-    
+
     if (agentId !== undefined) {
       params.agent_id = agentId;
     }
-    
+
     const response = await apiClient.get(`/api/tasks`, { params });
     return response.data;
   } catch (error) {
@@ -28,7 +28,9 @@ export const getTasks = async (
 /**
  * Get task templates
  */
-export const getTaskTemplates = async (includeBuiltin: boolean = true): Promise<Task[]> => {
+export const getTaskTemplates = async (
+  includeBuiltin: boolean = true
+): Promise<Task[]> => {
   try {
     const apiClient = await createApiClient();
     const params = { include_builtin: includeBuiltin };
@@ -58,7 +60,7 @@ export const getTask = async (id: number): Promise<Task> => {
 export const createTask = async (data: TaskFormData): Promise<Task> => {
   try {
     const apiClient = await createApiClient();
-    const response = await apiClient.post('/api/tasks', data);
+    const response = await apiClient.post("/api/tasks", data);
     return response.data;
   } catch (error) {
     return handleApiError(error);
