@@ -32,7 +32,10 @@ export const createApiClient = async (): Promise<AxiosInstance> => {
     (error: unknown) => {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-        if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
+        if (
+          axiosError.response?.status === 401 ||
+          axiosError.response?.status === 403
+        ) {
           throw new AuthenticationError(axiosError.message);
         }
       }
@@ -60,27 +63,20 @@ export class ApiError extends Error {
  * Handle API errors consistently
  */
 export const handleApiError = (error: unknown): never => {
-  // First check for auth errors
-  if (error instanceof AuthenticationError) {
-    handleAuthError(error);
-  }
-
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError;
     const status = axiosError.response?.status || 500;
-    
-    // Handle auth errors from axios
-    if (status === 401 || status === 403) {
-      handleAuthError(error);
-    }
-
     const message =
       axiosError.response?.data &&
       typeof axiosError.response.data === "object" &&
       "detail" in axiosError.response.data
         ? String(axiosError.response.data.detail)
         : axiosError.message || "An unknown error occurred";
-    throw new ApiError(message, status);
+    if (status === 401 || status === 403) {
+      handleAuthError(new ApiError(message, status));
+    } else {
+      throw new ApiError(message, status);
+    }
   }
   throw error;
 };
