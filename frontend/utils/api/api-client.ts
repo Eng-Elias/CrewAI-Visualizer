@@ -63,9 +63,15 @@ export class ApiError extends Error {
  * Handle API errors consistently
  */
 export const handleApiError = (error: unknown): never => {
+  // First check for auth errors
+  if (error instanceof AuthenticationError) {
+    handleAuthError(error);
+  }
+
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError;
     const status = axiosError.response?.status || 500;
+
     const message =
       axiosError.response?.data &&
       typeof axiosError.response.data === "object" &&
