@@ -42,12 +42,12 @@ class AgentRepository:
         """
         query = self.supabase.table(self.table).select("*").eq("is_template", True)
         
-        if not include_builtin:
-            query = query.eq("is_builtin", False)
-        
         # Filter by user_id if provided (for RLS)
         if user_id:
             query = query.eq("user_id", user_id)
+
+        if include_builtin:
+            query = query.or_("is_builtin", True)
             
         response = query.execute()
         return response.data
