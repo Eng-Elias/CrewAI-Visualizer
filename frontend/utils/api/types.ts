@@ -106,13 +106,19 @@ export enum AgentRole {
 }
 
 export type CrewAgent = {
+  crew_id?: number;
   agent_id: number;
   role: AgentRole;
+  agent_order?: number;
+  data?: Agent;
 };
 
 export type CrewTask = {
+  crew_id?: number;
   task_id: number;
+  task_order?: number;
   assigned_agent_id?: number;
+  data?: Task;
 };
 
 export type Crew = {
@@ -120,10 +126,21 @@ export type Crew = {
   name: string;
   description?: string;
   process: ProcessType;
+  verbose: boolean;
   manager_llm_id?: number;
+  function_calling_llm_id?: number;
+  config?: object;
+  max_rpm?: number;
+  language?: string;
+  memory?: boolean;
+  memory_config?: object;
+  embedder?: object;
+  full_output?: boolean;
+  manager_agent?: number;
+  planning?: boolean;
   planning_llm_id?: number;
-  agents: CrewAgent[];
-  tasks: CrewTask[];
+  crew_agents: CrewAgent[];
+  crew_tasks: CrewTask[];
   created_at: string;
   updated_at: string;
   is_template: boolean;
@@ -135,29 +152,10 @@ export type CreateCrewRequest = {
   name: string;
   description?: string;
   process: ProcessType;
+  verbose: boolean;
   manager_llm_id?: number;
+  function_calling_llm_id?: number;
   planning_llm_id?: number;
-  agents: CrewAgent[];
-  tasks: CrewTask[];
-};
-
-export type UpdateCrewRequest = {
-  name?: string;
-  description?: string;
-  process?: ProcessType;
-  manager_llm_id?: number;
-  planning_llm_id?: number;
-  agents?: CrewAgent[];
-  tasks?: CrewTask[];
-};
-
-export type CrewFormData = {
-  name: string;
-  description: string;
-  process?: string;
-  verbose?: boolean;
-  manager_llm?: string;
-  function_calling_llm?: string;
   config?: object;
   max_rpm?: number;
   language?: string;
@@ -167,18 +165,52 @@ export type CrewFormData = {
   full_output?: boolean;
   manager_agent?: number;
   planning?: boolean;
-  planning_llm?: string;
+  crew_agents: CrewAgent[];
+  crew_tasks: CrewTask[];
+};
+
+export type UpdateCrewRequest = {
+  name?: string;
+  description?: string;
+  process?: ProcessType;
+  verbose?: boolean;
+  manager_llm_id?: number;
+  function_calling_llm_id?: number;
+  planning_llm_id?: number;
+  config?: object;
+  max_rpm?: number;
+  language?: string;
+  memory?: boolean;
+  memory_config?: object;
+  embedder?: object;
+  full_output?: boolean;
+  manager_agent?: number;
+  planning?: boolean;
+  crew_agents?: CrewAgent[];
+  crew_tasks?: CrewTask[];
+};
+
+export type CrewFormData = {
+  name: string;
+  description: string;
+  process?: string;
+  verbose?: boolean;
+  manager_llm_id?: number;
+  function_calling_llm_id?: number;
+  config?: object;
+  max_rpm?: number;
+  language?: string;
+  memory?: boolean;
+  memory_config?: object;
+  embedder?: object;
+  full_output?: boolean;
+  manager_agent?: number;
+  planning?: boolean;
+  planning_llm_id?: number;
   is_template?: boolean;
   is_builtin?: boolean;
   template_id?: number | null;
   template_version?: number | null;
-  agents?: {
-    agent_id: number;
-    order: number;
-    role: string;
-  }[];
-  tasks?: {
-    task_id: number;
-    order: number;
-  }[];
+  crew_agents?: CrewAgent[];
+  crew_tasks?: CrewTask[];
 };
