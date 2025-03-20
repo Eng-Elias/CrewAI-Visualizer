@@ -64,16 +64,46 @@ class CrewUpdate(BaseModel):
     template_version: Optional[int] = None
 
 
+class AgentData(BaseModel):
+    """Model for Agent data in relations"""
+    id: int
+    name: str
+    description: Optional[str] = None
+    llm_id: Optional[int] = None
+    role: Optional[str] = None
+    config: Optional[Dict[str, Any]] = None
+    is_template: bool = False
+    is_builtin: bool = False
+    user_id: Optional[str] = None
+
+
+class TaskData(BaseModel):
+    """Model for Task data in relations"""
+    id: int
+    name: str
+    description: Optional[str] = None
+    input: Optional[Dict[str, Any]] = None
+    expected_output: Optional[str] = None
+    tools: Optional[List[str]] = None
+    is_template: bool = False
+    is_builtin: bool = False
+    template_id: Optional[int] = None
+    template_version: Optional[int] = None
+    user_id: Optional[str] = None
+
+
 class CrewAgentRelation(BaseModel):
     """Model for Crew Agent Relation"""
-    agent_id: str
+    agent_id: int
     role: AgentRole = Field(default=AgentRole.WORKER, description="Role of the agent")
+    data: Optional[AgentData] = None
 
 
 class CrewTaskRelation(BaseModel):
     """Model for Crew Task Relation"""
-    task_id: str
-    assigned_agent_id: Optional[str] = Field(None, description="ID of the agent assigned to the task")
+    task_id: int
+    assigned_agent_id: Optional[int] = Field(None, description="ID of the agent assigned to the task")
+    data: Optional[TaskData] = None
 
 
 class Crew(CrewBase):
@@ -83,8 +113,8 @@ class Crew(CrewBase):
     updated_at: Optional[datetime] = None
     template_id: Optional[int] = None
     template_version: Optional[int] = None
-    agents: List[CrewAgentRelation] = Field(default_factory=list, description="List of agents with their roles")
-    tasks: List[CrewTaskRelation] = Field(default_factory=list, description="List of tasks with their assigned agents")
+    crew_agents: List[CrewAgentRelation] = Field(default_factory=list, description="List of agents with their roles")
+    crew_tasks: List[CrewTaskRelation] = Field(default_factory=list, description="List of tasks with their assigned agents")
 
     class Config:
         from_attributes = True

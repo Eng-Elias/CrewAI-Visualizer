@@ -51,7 +51,7 @@ async def get_templates(
         templates = crew_repository.get_crews_templates(user_id=user_id)
         logger.info(f"Retrieved {len(templates)} crew templates for user {user_id}")
         # Convert Crew objects to dictionaries
-        templates_dict = [template.dict() for template in templates]
+        templates_dict = [template.model_dump() for template in templates]
         return templates_dict
     except Exception as e:
         logger.error(f"Error retrieving crew templates: {str(e)}")

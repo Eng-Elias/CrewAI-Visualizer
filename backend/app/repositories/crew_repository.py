@@ -8,6 +8,62 @@ import logging
 logger = logging.getLogger(__name__)
 
 class CrewRepository:
+
+    CREW_AGENTS_SUPABASE_QUERY = """
+        crew_agents:crew_agents(
+            id,
+            agent_id,
+            role,
+            data:agent_id(
+                id,
+                created_at,
+                updated_at,
+                name,
+                role,
+                goal,
+                backstory,
+                memory_enabled,
+                verbose,
+                allow_delegation,
+                max_iterations,
+                max_rpm,
+                llm_config,
+                tools,
+                user_id,
+                is_template,
+                is_builtin,
+                template_id,
+                template_version
+            )
+        )
+    """
+
+    CREW_TASKS_SUPABASE_QUERY = """
+        crew_tasks:crew_tasks(
+            id,
+            task_id,
+            assigned_agent_id,
+            data:task_id(
+                id,
+                created_at,
+                updated_at,
+                name,
+                description,
+                expected_output,
+                tools,
+                async_execution,
+                config,
+                output_json,
+                user_id,
+                context,
+                is_template,
+                is_builtin,
+                template_id,
+                template_version
+            )
+        )
+    """
+
     def __init__(self):
         self.supabase = supabase_client
         self.table = "Crews"
@@ -15,23 +71,17 @@ class CrewRepository:
     def get_crews(self, include_templates: bool = False, user_id: str = None) -> List[Crew]:
         """Get all crews for a user, optionally including templates"""
         try:
-            query = self.supabase.from_(self.table).select("""
+            query = self.supabase.from_(self.table).select(f"""
                 *,
-                crew_agents:crew_agents(
-                    id,
-                    agent_id,
-                    role
-                ),
-                crew_tasks:crew_tasks(
-                    id,
-                    task_id,
-                    assigned_agent_id
-                )
+                {self.CREW_AGENTS_SUPABASE_QUERY},
+                {self.CREW_TASKS_SUPABASE_QUERY}
             """)
 
+            # Filter out templates if not requested
             if not include_templates:
                 query = query.eq("is_template", False)
 
+            # Filter by user_id if provided, otherwise get all public crews
             if user_id:
                 # Get user's own crews and public crews (is_builtin=true)
                 query = query.or_(f"user_id.eq.{user_id},is_builtin.eq.true")
@@ -48,21 +98,15 @@ class CrewRepository:
     def get_crews_templates(self, user_id: str) -> List[Crew]:
         """Get crew templates that are either built-in or owned by the user"""
         try:
-            response = self.supabase.from_(self.table).select("""
+            response = self.supabase.from_(self.table).select(f"""
                 *,
-                crew_agents:crew_agents(
-                    id,
-                    agent_id,
-                    role
-                ),
-                crew_tasks:crew_tasks(
-                    id,
-                    task_id,
-                    assigned_agent_id
-                )
+                {self.CREW_AGENTS_SUPABASE_QUERY},
+                {self.CREW_TASKS_SUPABASE_QUERY}
             """).eq("is_template", True).or_(
                 f"is_builtin.eq.true,user_id.eq.{user_id}"
             ).execute()
+
+            logger.info(f"Retrieved {len(response.data)} crew templates for user {user_id}")
             
             if response.data:
                 return [Crew.model_validate(crew) for crew in response.data]
@@ -74,18 +118,10 @@ class CrewRepository:
     def get_by_id(self, crew_id: int) -> Optional[Crew]:
         """Get a specific crew by ID"""
         try:
-            response = self.supabase.from_(self.table).select("""
+            response = self.supabase.from_(self.table).select(f"""
                 *,
-                crew_agents:crew_agents(
-                    id,
-                    agent_id,
-                    role
-                ),
-                crew_tasks:crew_tasks(
-                    id,
-                    task_id,
-                    assigned_agent_id
-                )
+                {self.CREW_AGENTS_SUPABASE_QUERY},
+                {self.CREW_TASKS_SUPABASE_QUERY}
             """).eq("id", crew_id).single().execute()
             
             if response.data:
@@ -98,23 +134,15 @@ class CrewRepository:
     def create_crew(self, crew: dict) -> Crew:
         """Create a new crew"""
         try:
-            response = self.supabase.from_(self.table).insert(crew).select("""
+            response = self.supabase.from_(self.table).insert(crew).select(f"""
                 *,
-                crew_agents:crew_agents(
-                    id,
-                    agent_id,
-                    role
-                ),
-                crew_tasks:crew_tasks(
-                    id,
-                    task_id,
-                    assigned_agent_id
-                )
+                {self.CREW_AGENTS_SUPABASE_QUERY},
+                {self.CREW_TASKS_SUPABASE_QUERY}
             """).single().execute()
             
             if response.data:
                 return Crew.model_validate(response.data)
-            raise ValueError("Failed to create crew")
+            return None
         except APIError as e:
             logger.error(f"Error creating crew: {str(e)}")
             raise
@@ -122,18 +150,10 @@ class CrewRepository:
     def update_crew(self, crew_id: int, crew: dict) -> Optional[Crew]:
         """Update an existing crew"""
         try:
-            response = self.supabase.from_(self.table).update(crew).eq("id", crew_id).select("""
+            response = self.supabase.from_(self.table).update(crew).eq("id", crew_id).select(f"""
                 *,
-                crew_agents:crew_agents(
-                    id,
-                    agent_id,
-                    role
-                ),
-                crew_tasks:crew_tasks(
-                    id,
-                    task_id,
-                    assigned_agent_id
-                )
+                {self.CREW_AGENTS_SUPABASE_QUERY},
+                {self.CREW_TASKS_SUPABASE_QUERY}
             """).single().execute()
             
             if response.data:
