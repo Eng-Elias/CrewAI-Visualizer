@@ -15,7 +15,7 @@ app = Celery(
     "crew_ai_tasks",
     broker=CELERY_BROKER_URL,
     backend=CELERY_RESULT_BACKEND,
-    include=["app.tasks"]
+    include=["app.celery_tasks.example"]
 )
 
 # Optional configurations

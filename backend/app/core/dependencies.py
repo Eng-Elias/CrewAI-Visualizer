@@ -1,3 +1,4 @@
+"""Dependencies for FastAPI application"""
 import os
 import logging
 from supabase import create_client, Client
@@ -26,13 +27,18 @@ except Exception as e:
 # Initialize security scheme
 security = HTTPBearer()
 
-async def get_current_user(
+
+def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> User:
     """Get the current authenticated user"""
     try:
         user = supabase_client.auth.get_user(credentials.credentials)
-        return User(id=user.user.id, email=user.user.email)
+        return User(
+            id=user.user.id,
+            email=user.user.email,
+            user_metadata=user.user.user_metadata
+        )
     except AuthError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -40,6 +46,20 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+
 def get_supabase_client() -> Client:
     """Get the Supabase client instance"""
     return supabase_client
+
+
+def verify_user_access(
+    user: User = Depends(get_current_user),
+    supabase_client: Client = Depends(get_supabase_client)
+) -> bool:
+    """Verify that the user has access to the requested resource"""
+    try:
+        # Verify user exists in Supabase
+        user_data = supabase_client.auth.get_user(user.id)
+        return bool(user_data)
+    except Exception:
+        return False
