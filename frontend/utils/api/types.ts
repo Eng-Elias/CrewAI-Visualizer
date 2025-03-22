@@ -29,6 +29,8 @@ export type LLMFormData = {
 export type Agent = {
   id: number;
   name: string;
+  description?: string;
+  llm_id?: number;
   role: string;
   goal: string;
   backstory?: string;
@@ -43,13 +45,16 @@ export type Agent = {
   is_builtin: boolean;
   template_id?: string;
   template_version?: number;
-  user?: string;
+  user_id?: string;
   created_at: string;
   updated_at?: string;
+  config?: object;
 };
 
 export type AgentFormData = {
   name: string;
+  description?: string;
+  llm_id?: number;
   role: string;
   goal: string;
   backstory?: string;
@@ -60,6 +65,11 @@ export type AgentFormData = {
   max_rpm?: number;
   llm_config?: object;
   tools?: object;
+  config?: object;
+  is_template?: boolean;
+  is_builtin?: boolean;
+  template_id?: string;
+  template_version?: number;
 };
 
 // Task API Types
