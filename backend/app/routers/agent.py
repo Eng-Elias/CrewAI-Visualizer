@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from typing import List, Dict, Any, Optional
 from app.models.agent import Agent, AgentCreate, AgentUpdate
 from app.repositories.agent_repository import AgentRepository
-from app.core.dependencies import supabase, security
+from app.core.dependencies import supabase_client, security
 from fastapi.security import HTTPAuthorizationCredentials
 import logging
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/agents", tags=["agents"])
 
 # Create repository instance
-agent_repository = AgentRepository(supabase)
+agent_repository = AgentRepository(supabase_client=supabase_client)
 
 
 @router.get("/", response_model=List[Dict[str, Any]])
@@ -24,7 +24,7 @@ async def get_all_agents(
     """Get all Agents"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get agents with user_id filter for RLS
@@ -47,7 +47,7 @@ async def get_templates(
     """Get all template Agents"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get templates with user_id filter for RLS
@@ -70,7 +70,7 @@ async def get_agent(
     """Get an Agent by ID"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get agent with user_id filter for RLS
@@ -103,7 +103,7 @@ async def create_agent(
     """Create a new Agent"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Check if trying to create a built-in agent (only admins can do this)
@@ -135,7 +135,7 @@ async def update_agent(
     """Update an existing Agent"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get the current agent to check permissions
@@ -176,7 +176,7 @@ async def delete_agent(
     """Delete an Agent"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get the current agent to check permissions

@@ -1,7 +1,11 @@
 import os
-from supabase import create_client, Client
-from fastapi.security import HTTPBearer
 import logging
+from supabase import create_client, Client
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException, status
+from gotrue.errors import AuthError
+from app.models.user import User
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -13,11 +17,29 @@ supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "eyJhbGciOiJIUzI1NiIsInR5c
 
 logger.info(f"Initializing Supabase client with URL: {supabase_url}")
 try:
-    supabase: Client = create_client(supabase_url, supabase_key)
+    supabase_client: Client = create_client(supabase_url, supabase_key)
     logger.info("Supabase client initialized successfully")
 except Exception as e:
     logger.error(f"Failed to initialize Supabase client: {str(e)}")
     raise
 
-# Security
+# Initialize security scheme
 security = HTTPBearer()
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> User:
+    """Get the current authenticated user"""
+    try:
+        user = supabase_client.auth.get_user(credentials.credentials)
+        return User(id=user.user.id, email=user.user.email)
+    except AuthError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+def get_supabase_client() -> Client:
+    """Get the Supabase client instance"""
+    return supabase_client

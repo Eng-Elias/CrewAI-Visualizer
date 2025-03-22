@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 from app.celery import app as celery_app
 from app.tasks import execute_crew_task
-from app.core.dependencies import supabase, security
+from app.core.dependencies import supabase_client, security
 
 # Set default encryption key if not provided
 if not os.getenv("ENCRYPTION_KEY"):
@@ -42,7 +42,7 @@ class UserSignIn(BaseModel):
 @app.post("/auth/signup")
 async def sign_up(user: UserSignUp):
     try:
-        response = supabase.auth.sign_up({
+        response = supabase_client.auth.sign_up({
             "email": user.email,
             "password": user.password
         })
@@ -53,7 +53,7 @@ async def sign_up(user: UserSignUp):
 @app.post("/auth/signin")
 async def sign_in(user: UserSignIn):
     try:
-        response = supabase.auth.sign_in_with_password({
+        response = supabase_client.auth.sign_in_with_password({
             "email": user.email,
             "password": user.password
         })
@@ -69,7 +69,7 @@ async def sign_in(user: UserSignIn):
 async def get_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         return {"user": user.user}
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid authentication credentials")

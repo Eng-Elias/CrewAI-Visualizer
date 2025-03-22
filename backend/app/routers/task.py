@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status, Query
 from typing import List, Dict, Any, Optional
 from app.models.task import Task, TaskCreate, TaskUpdate
 from app.repositories.task_repository import TaskRepository
-from app.core.dependencies import supabase, security
+from app.core.dependencies import supabase_client, security
 from fastapi.security import HTTPAuthorizationCredentials
 import logging
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
 
 # Create repository instance
-task_repository = TaskRepository(supabase)
+task_repository = TaskRepository(supabase_client=supabase_client)
 
 
 @router.get("/", response_model=List[Dict[str, Any]])
@@ -25,7 +25,7 @@ async def get_all_tasks(
     """Get all Tasks, optionally filtered by agent ID"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         if agent_id:
@@ -52,7 +52,7 @@ async def get_templates(
     """Get all template Tasks"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get templates with user_id filter for RLS
@@ -75,7 +75,7 @@ async def get_task(
     """Get a Task by ID"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get task with user_id filter for RLS
@@ -107,7 +107,7 @@ async def create_task(
     """Create a new Task"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Check if trying to create a built-in task (only admins can do this)
@@ -137,7 +137,7 @@ async def update_task(
     """Update an existing Task"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get the current task to check permissions
@@ -178,7 +178,7 @@ async def delete_task(
     """Delete a Task"""
     try:
         # Verify the JWT token
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get the current task to check permissions
