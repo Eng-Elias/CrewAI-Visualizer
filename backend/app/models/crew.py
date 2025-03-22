@@ -4,10 +4,13 @@ from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 from crewai import Process
+from .crew_relations import CrewAgent, CrewTask
+
 
 class AgentRole(str, Enum):
     MANAGER = "manager"
     WORKER = "worker"
+
 
 class CrewBase(BaseModel):
     """Base model for Crew data"""
@@ -28,6 +31,8 @@ class CrewBase(BaseModel):
     planning: Optional[bool] = Field(default=False, description="Enable planning")
     is_template: bool = Field(default=False, description="Whether this is a template")
     is_builtin: bool = Field(default=False, description="Whether this is a built-in template")
+    template_id: Optional[int] = None
+    template_version: Optional[int] = None
     user_id: Optional[str] = None
 
 
@@ -92,29 +97,13 @@ class TaskData(BaseModel):
     user_id: Optional[str] = None
 
 
-class CrewAgentRelation(BaseModel):
-    """Model for Crew Agent Relation"""
-    agent_id: int
-    role: AgentRole = Field(default=AgentRole.WORKER, description="Role of the agent")
-    data: Optional[AgentData] = None
-
-
-class CrewTaskRelation(BaseModel):
-    """Model for Crew Task Relation"""
-    task_id: int
-    assigned_agent_id: Optional[int] = Field(None, description="ID of the agent assigned to the task")
-    data: Optional[TaskData] = None
-
-
 class Crew(CrewBase):
     """Model for Crew with database fields"""
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    template_id: Optional[int] = None
-    template_version: Optional[int] = None
-    crew_agents: List[CrewAgentRelation] = Field(default_factory=list, description="List of agents with their roles")
-    crew_tasks: List[CrewTaskRelation] = Field(default_factory=list, description="List of tasks with their assigned agents")
+    crew_agents: List[CrewAgent] = Field(default_factory=list, description="List of agents with their roles")
+    crew_tasks: List[CrewTask] = Field(default_factory=list, description="List of tasks with their assigned agents")
 
     class Config:
         from_attributes = True

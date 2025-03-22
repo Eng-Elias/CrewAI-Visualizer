@@ -18,12 +18,14 @@ class AgentBase(BaseModel):
     tools: Optional[Dict[str, Any]] = Field(default_factory=dict)
     is_template: bool = False
     is_builtin: bool = False
+    template_id: Optional[int] = None
+    template_version: Optional[int] = None
+    user_id: Optional[str] = None
 
 
 class AgentCreate(AgentBase):
     """Model for creating a new Agent"""
-    template_id: Optional[int] = None
-    template_version: Optional[int] = None
+    pass
 
 
 class AgentUpdate(BaseModel):
@@ -50,9 +52,6 @@ class Agent(AgentBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    template_id: Optional[int] = None
-    template_version: Optional[int] = 1
-    user_id: Optional[str] = None
 
     class Config:
         from_attributes = True

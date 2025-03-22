@@ -12,16 +12,18 @@ class TaskBase(BaseModel):
     tools: Optional[Dict[str, Any]] = Field(default_factory=dict)
     async_execution: bool = False
     config: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    context: Optional[List[int]] = None
+    output_json: Optional[Dict[str, Any]] = None
     is_template: bool = False
     is_builtin: bool = False
+    template_id: Optional[int] = None
+    template_version: Optional[int] = None
+    user_id: Optional[str] = None
 
 
 class TaskCreate(TaskBase):
     """Model for creating a new Task"""
-    output_json: Optional[Dict[str, Any]] = None
-    context: Optional[List[int]] = None
-    template_id: Optional[int] = None
-    template_version: Optional[int] = None
+    pass
 
 
 class TaskUpdate(BaseModel):
@@ -33,8 +35,8 @@ class TaskUpdate(BaseModel):
     tools: Optional[Dict[str, Any]] = None
     async_execution: Optional[bool] = None
     config: Optional[Dict[str, Any]] = None
-    output_json: Optional[Dict[str, Any]] = None
     context: Optional[List[int]] = None
+    output_json: Optional[Dict[str, Any]] = None
     is_template: Optional[bool] = None
     is_builtin: Optional[bool] = None
     template_id: Optional[int] = None
@@ -46,11 +48,6 @@ class Task(TaskBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    output_json: Optional[Dict[str, Any]] = None
-    context: Optional[List[int]] = None
-    template_id: Optional[int] = None
-    template_version: Optional[int] = 1
-    user_id: Optional[str] = None
 
     class Config:
         from_attributes = True
