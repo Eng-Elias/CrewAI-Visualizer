@@ -121,8 +121,6 @@ async def read_root():
     }
 
 # Import and include routers after FastAPI app is created
-from app.routers import llm, agent, task, crew
-app.include_router(llm.router)
-app.include_router(agent.router)
-app.include_router(task.router)
-app.include_router(crew.router)
+from app.routers import routers
+for router in routers:
+    app.include_router(router)
