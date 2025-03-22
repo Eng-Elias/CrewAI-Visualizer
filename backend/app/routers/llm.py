@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from typing import List, Dict, Any
 from app.models.llm import LLM, LLMCreate, LLMUpdate, LLMProvider
 from app.repositories.llm_repository import LLMRepository
-from app.core.dependencies import supabase, security
+from app.core.dependencies import supabase_client, security
 from fastapi.security import HTTPAuthorizationCredentials
 import logging
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/llms", tags=["llms"])
 
 # Create repository instance
-llm_repository = LLMRepository(supabase)
+llm_repository = LLMRepository(supabase_client=supabase_client)
 
 
 @router.get("/providers", response_model=Dict[str, str])
@@ -21,7 +21,7 @@ async def get_providers(credentials: HTTPAuthorizationCredentials = Depends(secu
     """Get all available LLM providers"""
     try:
         # Verify the JWT token
-        supabase.auth.get_user(credentials.credentials)
+        supabase_client.auth.get_user(credentials.credentials)
         providers = {provider.name: provider.value for provider in LLMProvider}
         logger.info(f"Retrieved providers: {providers}")
         return providers
@@ -36,7 +36,7 @@ async def get_all_llms(credentials: HTTPAuthorizationCredentials = Depends(secur
     """Get all LLMs"""
     try:
         # Verify the JWT token and get user ID
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get LLMs for this user
@@ -59,7 +59,7 @@ async def get_llm(
     """Get a specific LLM by ID"""
     try:
         # Verify the JWT token and get user ID
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Get LLM for this user
@@ -91,7 +91,7 @@ async def create_llm(
     """Create a new LLM"""
     try:
         # Verify the JWT token and get user ID
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Create LLM with user ID
@@ -117,7 +117,7 @@ async def update_llm(
     """Update an existing LLM"""
     try:
         # Verify the JWT token and get user ID
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Check if LLM exists and belongs to this user
@@ -151,7 +151,7 @@ async def delete_llm(
     """Delete an LLM"""
     try:
         # Verify the JWT token and get user ID
-        user = supabase.auth.get_user(credentials.credentials)
+        user = supabase_client.auth.get_user(credentials.credentials)
         user_id = user.user.id
         
         # Check if LLM exists and belongs to this user
