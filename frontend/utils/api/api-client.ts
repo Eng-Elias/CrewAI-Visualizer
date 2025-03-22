@@ -1,7 +1,11 @@
 "use client";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
 import { getSession } from "@/lib/supabase/client";
-import { AuthenticationError, handleAuthError } from "@/utils/auth/auth-error";
+import {
+  AuthenticationError,
+  handleAuthError,
+  isAuthError,
+} from "@/utils/auth/auth-error";
 
 // Default API URL for local development
 const API_URL = process.env.BACKEND_URL || "http://localhost:8000";
@@ -36,7 +40,9 @@ export const createApiClient = async (): Promise<AxiosInstance> => {
           axiosError.response?.status === 401 ||
           axiosError.response?.status === 403
         ) {
-          throw new AuthenticationError(axiosError.message);
+          const authError = new AuthenticationError(axiosError.message);
+          handleAuthError(authError);
+          throw authError;
         }
       }
       throw error;
@@ -64,7 +70,7 @@ export class ApiError extends Error {
  */
 export const handleApiError = (error: unknown): never => {
   // First check for auth errors
-  if (error instanceof AuthenticationError) {
+  if (isAuthError(error)) {
     handleAuthError(error);
   }
 
