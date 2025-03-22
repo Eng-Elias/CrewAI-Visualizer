@@ -1,4 +1,4 @@
-import { Crew, CrewFormData } from "@/utils/api/types";
+import { Crew, CreateCrewRequest, UpdateCrewRequest } from "@/utils/api/types";
 import { createApiClient } from "./api-client";
 
 /**
@@ -43,7 +43,7 @@ export const getCrew = async (id: number): Promise<Crew> => {
 /**
  * Create a new crew
  */
-export const createCrew = async (data: CrewFormData): Promise<Crew> => {
+export const createCrew = async (data: CreateCrewRequest): Promise<Crew> => {
   try {
     const apiClient = await createApiClient();
     const response = await apiClient.post<Crew>("/api/crews", data);
@@ -58,7 +58,7 @@ export const createCrew = async (data: CrewFormData): Promise<Crew> => {
  */
 export const updateCrew = async (
   id: number,
-  data: CrewFormData
+  data: UpdateCrewRequest
 ): Promise<Crew> => {
   try {
     const apiClient = await createApiClient();
@@ -76,6 +76,19 @@ export const deleteCrew = async (id: number): Promise<void> => {
   try {
     const apiClient = await createApiClient();
     await apiClient.delete(`/api/crews/${id}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Create a crew from a template
+ */
+export const createCrewFromTemplate = async (templateId: number): Promise<Crew> => {
+  try {
+    const apiClient = await createApiClient();
+    const response = await apiClient.post<Crew>(`/api/crews/from-template/${templateId}`);
+    return response.data;
   } catch (error) {
     throw error;
   }
