@@ -54,6 +54,13 @@ supabase-reset:
 	@echo "Resetting Supabase and re-applying all migrations..."
 	cd supabase_service && supabase db reset --debug
 
+supabase-gen-types:
+	@echo "Generating Supabase types..."
+	cd supabase_service && npx supabase gen types typescript --local > database.types.ts && cd ..
+	@echo "Moving database.types.ts to frontend/core/ and replacing existing file"
+	@if exist frontend\core\database.types.ts del /Q frontend\core\database.types.ts
+	@if exist supabase_service\database.types.ts (move supabase_service\database.types.ts frontend\core\database.types.ts)
+
 supabase-migrations-new:
 ifndef name
 	@echo "Error: Migration name not specified. Usage: make supabase-migrations-new name=migration_name"
