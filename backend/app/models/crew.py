@@ -18,8 +18,6 @@ class CrewBase(BaseModel):
     description: str = Field(..., description="Description of the crew's purpose")
     process: Process = Field(default=Process.sequential, description="Process type (sequential, hierarchical, etc.)")
     verbose: bool = Field(default=False, description="Enable verbose output")
-    manager_llm_id: Optional[int] = Field(None, description="The LLM used by the manager agent in a hierarchical process")
-    planning_llm_id: Optional[int] = Field(None, description="LLM for planning")
     config: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Additional configuration")
     max_rpm: Optional[int] = Field(default=None, description="Maximum requests per minute")
     language: Optional[str] = Field(default=None, description="Language for the crew")
@@ -50,8 +48,6 @@ class CrewUpdate(BaseModel):
     description: Optional[str] = None
     process: Optional[Process] = None
     verbose: Optional[bool] = None
-    manager_llm_id: Optional[int] = None
-    planning_llm_id: Optional[int] = None
     config: Optional[Dict[str, Any]] = None
     max_rpm: Optional[int] = None
     language: Optional[str] = None
