@@ -188,17 +188,15 @@ VALUES
 
 -- Seed built-in crew templates
 INSERT INTO "public"."Crews" (
-  id, name, description, process, manager_llm_id, planning_llm_id,
+  id, name, description, process,
   "verbose", memory, planning, is_template, is_builtin, config, memory_config, embedder
 )
 VALUES
   (1, 'Content Creation Team', 'A team focused on creating high-quality content', 
-   'hierarchical'::process_type, 1, 2,
-   true, true, true, true, true, '{}'::jsonb, '{}'::jsonb, '{}'::jsonb),
+   'hierarchical'::process_type, true, true, true, true, true, '{}'::jsonb, '{}'::jsonb, '{}'::jsonb),
    
   (2, 'Research Team', 'A team specialized in research and analysis', 
-   'sequential'::process_type, 1, 2,
-   true, true, true, true, true, '{}'::jsonb, '{}'::jsonb, '{}'::jsonb);
+   'sequential'::process_type, true, true, true, true, true, '{}'::jsonb, '{}'::jsonb, '{}'::jsonb);
 
 -- Add agents to Content Creation Crew
 INSERT INTO "public"."crew_agents" (crew_id, agent_id, agent_order, role)
