@@ -137,8 +137,6 @@ export type Crew = {
   description?: string;
   process: ProcessType;
   verbose: boolean;
-  manager_llm_id?: number;
-  function_calling_llm_id?: number;
   config?: object;
   max_rpm?: number;
   language?: string;
@@ -148,7 +146,6 @@ export type Crew = {
   full_output?: boolean;
   manager_agent?: number;
   planning?: boolean;
-  planning_llm_id?: number;
   crew_agents: CrewAgent[];
   crew_tasks: CrewTask[];
   created_at: string;
@@ -163,9 +160,6 @@ export type CreateCrewRequest = {
   description?: string;
   process: ProcessType;
   verbose: boolean;
-  manager_llm_id?: number;
-  function_calling_llm_id?: number;
-  planning_llm_id?: number;
   config?: object;
   max_rpm?: number;
   language?: string;
@@ -184,9 +178,6 @@ export type UpdateCrewRequest = {
   description?: string;
   process?: ProcessType;
   verbose?: boolean;
-  manager_llm_id?: number;
-  function_calling_llm_id?: number;
-  planning_llm_id?: number;
   config?: object;
   max_rpm?: number;
   language?: string;
@@ -205,8 +196,6 @@ export type CrewFormData = {
   description: string;
   process?: string;
   verbose?: boolean;
-  manager_llm_id?: number;
-  function_calling_llm_id?: number;
   config?: object;
   max_rpm?: number;
   language?: string;
@@ -216,7 +205,6 @@ export type CrewFormData = {
   full_output?: boolean;
   manager_agent?: number;
   planning?: boolean;
-  planning_llm_id?: number;
   is_template?: boolean;
   is_builtin?: boolean;
   template_id?: number | null;
@@ -224,3 +212,63 @@ export type CrewFormData = {
   crew_agents?: CrewAgent[];
   crew_tasks?: CrewTask[];
 };
+
+// Mission types
+export interface MissionData {
+  text: string;
+}
+
+export interface Mission {
+  id: number;
+  crew_id: number;
+  name: string;
+  description?: string;
+  default_llm_id?: number;
+  default_llm_model?: string;
+  manager_llm_id?: number;
+  manager_llm_model?: string;
+  function_calling_llm_id?: number;
+  function_calling_llm_model?: string;
+  planning_llm_id?: number;
+  planning_llm_model?: string;
+  input_data: MissionData;
+  result_data?: MissionData;
+  status: string;
+  error?: string;
+  created_at: string;
+  updated_at: string;
+  user_id?: string;
+  is_deleted?: boolean;
+}
+
+export interface MissionCreate {
+  crew_id: number;
+  name: string;
+  description?: string;
+  default_llm_id?: number;
+  default_llm_model?: string;
+  manager_llm_id?: number;
+  manager_llm_model?: string;
+  function_calling_llm_id?: number;
+  function_calling_llm_model?: string;
+  planning_llm_id?: number;
+  planning_llm_model?: string;
+  input_data?: MissionData;
+}
+
+export interface MissionUpdate {
+  name?: string;
+  description?: string;
+  default_llm_id?: number;
+  default_llm_model?: string;
+  manager_llm_id?: number;
+  manager_llm_model?: string;
+  function_calling_llm_id?: number;
+  function_calling_llm_model?: string;
+  planning_llm_id?: number;
+  planning_llm_model?: string;
+  input_data?: MissionData;
+  result_data?: MissionData;
+  status?: string;
+  error?: string;
+}

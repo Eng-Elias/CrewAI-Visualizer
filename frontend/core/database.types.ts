@@ -212,19 +212,16 @@ export type Database = {
           description: string
           embedder: Json | null
           full_output: boolean | null
-          function_calling_llm_id: number | null
           id: number
           is_builtin: boolean | null
           is_template: boolean | null
           language: string | null
           manager_agent: number | null
-          manager_llm_id: number | null
           max_rpm: number | null
           memory: boolean | null
           memory_config: Json | null
           name: string
           planning: boolean | null
-          planning_llm_id: number | null
           process: Database["public"]["Enums"]["process_type"] | null
           template_id: number | null
           template_version: number | null
@@ -238,19 +235,16 @@ export type Database = {
           description: string
           embedder?: Json | null
           full_output?: boolean | null
-          function_calling_llm_id?: number | null
           id?: number
           is_builtin?: boolean | null
           is_template?: boolean | null
           language?: string | null
           manager_agent?: number | null
-          manager_llm_id?: number | null
           max_rpm?: number | null
           memory?: boolean | null
           memory_config?: Json | null
           name: string
           planning?: boolean | null
-          planning_llm_id?: number | null
           process?: Database["public"]["Enums"]["process_type"] | null
           template_id?: number | null
           template_version?: number | null
@@ -264,19 +258,16 @@ export type Database = {
           description?: string
           embedder?: Json | null
           full_output?: boolean | null
-          function_calling_llm_id?: number | null
           id?: number
           is_builtin?: boolean | null
           is_template?: boolean | null
           language?: string | null
           manager_agent?: number | null
-          manager_llm_id?: number | null
           max_rpm?: number | null
           memory?: boolean | null
           memory_config?: Json | null
           name?: string
           planning?: boolean | null
-          planning_llm_id?: number | null
           process?: Database["public"]["Enums"]["process_type"] | null
           template_id?: number | null
           template_version?: number | null
@@ -286,31 +277,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "Crews_function_calling_llm_id_fkey"
-            columns: ["function_calling_llm_id"]
-            isOneToOne: false
-            referencedRelation: "LLMs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "Crews_manager_agent_fkey"
             columns: ["manager_agent"]
             isOneToOne: false
             referencedRelation: "Agents"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Crews_manager_llm_id_fkey"
-            columns: ["manager_llm_id"]
-            isOneToOne: false
-            referencedRelation: "LLMs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Crews_planning_llm_id_fkey"
-            columns: ["planning_llm_id"]
-            isOneToOne: false
-            referencedRelation: "LLMs"
             referencedColumns: ["id"]
           },
           {
@@ -357,6 +327,111 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      Missions: {
+        Row: {
+          created_at: string
+          crew_id: number
+          default_llm_id: number | null
+          default_llm_model: string | null
+          description: string | null
+          error: string | null
+          function_calling_llm_id: number | null
+          function_calling_llm_model: string | null
+          id: number
+          input_data: Json
+          is_deleted: boolean
+          manager_llm_id: number | null
+          manager_llm_model: string | null
+          name: string
+          planning_llm_id: number | null
+          planning_llm_model: string | null
+          result_data: Json | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          crew_id: number
+          default_llm_id?: number | null
+          default_llm_model?: string | null
+          description?: string | null
+          error?: string | null
+          function_calling_llm_id?: number | null
+          function_calling_llm_model?: string | null
+          id?: number
+          input_data?: Json
+          is_deleted?: boolean
+          manager_llm_id?: number | null
+          manager_llm_model?: string | null
+          name: string
+          planning_llm_id?: number | null
+          planning_llm_model?: string | null
+          result_data?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          crew_id?: number
+          default_llm_id?: number | null
+          default_llm_model?: string | null
+          description?: string | null
+          error?: string | null
+          function_calling_llm_id?: number | null
+          function_calling_llm_model?: string | null
+          id?: number
+          input_data?: Json
+          is_deleted?: boolean
+          manager_llm_id?: number | null
+          manager_llm_model?: string | null
+          name?: string
+          planning_llm_id?: number | null
+          planning_llm_model?: string | null
+          result_data?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Missions_crew_id_fkey"
+            columns: ["crew_id"]
+            isOneToOne: false
+            referencedRelation: "Crews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Missions_default_llm_id_fkey"
+            columns: ["default_llm_id"]
+            isOneToOne: false
+            referencedRelation: "LLMs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Missions_function_calling_llm_id_fkey"
+            columns: ["function_calling_llm_id"]
+            isOneToOne: false
+            referencedRelation: "LLMs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Missions_manager_llm_id_fkey"
+            columns: ["manager_llm_id"]
+            isOneToOne: false
+            referencedRelation: "LLMs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Missions_planning_llm_id_fkey"
+            columns: ["planning_llm_id"]
+            isOneToOne: false
+            referencedRelation: "LLMs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       Tasks: {
         Row: {
