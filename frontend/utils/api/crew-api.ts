@@ -1,95 +1,76 @@
-import { Crew, CreateCrewRequest, UpdateCrewRequest } from "@/utils/api/types";
-import { createApiClient } from "./api-client";
+"use client";
 
-/**
- * Get all crews
- */
-export const getCrews = async (): Promise<Crew[]> => {
-  try {
-    const apiClient = await createApiClient();
-    const response = await apiClient.get<Crew[]>("/api/crews");
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+import { BaseApi } from "./base-api";
+import { handleApiError } from "./api-client";
+import {
+  Crew,
+  CrewCreateDto,
+  CrewUpdateDto,
+  CrewAgent,
+  CrewTask,
+  AddAgentToCrewParams,
+  AddTaskToCrewParams,
+} from "./types";
 
-/**
- * Get crew templates
- */
-export const getCrewTemplates = async (): Promise<Crew[]> => {
-  try {
-    const apiClient = await createApiClient();
-    const response = await apiClient.get<Crew[]>(`/api/crews/templates`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+export class CrewApi extends BaseApi<Crew, CrewCreateDto, CrewUpdateDto> {
+  protected endpoint = "/crews";
 
-/**
- * Get a specific crew by ID
- */
-export const getCrew = async (id: number): Promise<Crew> => {
-  try {
-    const apiClient = await createApiClient();
-    const response = await apiClient.get<Crew>(`/api/crews/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error;
+  /**
+   * Add an agent to a crew
+   */
+  async addAgent(crewId: number, params: AddAgentToCrewParams): Promise<CrewAgent> {
+    try {
+      const client = await this.getClient();
+      const response = await client.post<CrewAgent>(
+        `${this.endpoint}/${crewId}/agents`,
+        params
+      );
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
+    }
   }
-};
 
-/**
- * Create a new crew
- */
-export const createCrew = async (data: CreateCrewRequest): Promise<Crew> => {
-  try {
-    const apiClient = await createApiClient();
-    const response = await apiClient.post<Crew>("/api/crews", data);
-    return response.data;
-  } catch (error) {
-    throw error;
+  /**
+   * Add a task to a crew
+   */
+  async addTask(crewId: number, params: AddTaskToCrewParams): Promise<CrewTask> {
+    try {
+      const client = await this.getClient();
+      const response = await client.post<CrewTask>(
+        `${this.endpoint}/${crewId}/tasks`,
+        params
+      );
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
+    }
   }
-};
 
-/**
- * Update an existing crew
- */
-export const updateCrew = async (
-  id: number,
-  data: UpdateCrewRequest
-): Promise<Crew> => {
-  try {
-    const apiClient = await createApiClient();
-    const response = await apiClient.put<Crew>(`/api/crews/${id}`, data);
-    return response.data;
-  } catch (error) {
-    throw error;
+  /**
+   * Remove an agent from a crew
+   */
+  async removeAgent(crewId: number, agentId: number): Promise<void> {
+    try {
+      const client = await this.getClient();
+      await client.delete(`${this.endpoint}/${crewId}/agents/${agentId}`);
+    } catch (error) {
+      return handleApiError(error);
+    }
   }
-};
 
-/**
- * Delete a crew
- */
-export const deleteCrew = async (id: number): Promise<void> => {
-  try {
-    const apiClient = await createApiClient();
-    await apiClient.delete(`/api/crews/${id}`);
-  } catch (error) {
-    throw error;
+  /**
+   * Remove a task from a crew
+   */
+  async removeTask(crewId: number, taskId: number): Promise<void> {
+    try {
+      const client = await this.getClient();
+      await client.delete(`${this.endpoint}/${crewId}/tasks/${taskId}`);
+    } catch (error) {
+      return handleApiError(error);
+    }
   }
-};
+}
 
-/**
- * Create a crew from a template
- */
-export const createCrewFromTemplate = async (templateId: number): Promise<Crew> => {
-  try {
-    const apiClient = await createApiClient();
-    const response = await apiClient.post<Crew>(`/api/crews/from-template/${templateId}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+// Export singleton instance
+export const crewApi = new CrewApi();

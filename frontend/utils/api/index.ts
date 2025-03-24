@@ -1,11 +1,12 @@
-// Export API client utilities
+// Export API client and error handling
 export * from "./api-client";
 
-// Export all types
+// Export base types and interfaces
 export * from "./types";
 
-// Export API functions
-export * from "./llm-api";
-export * from "./agent-api";
-export * from "./task-api";
-export * from "./crew-api";
+// Export API instances
+export { agentApi } from "./agent-api";
+export { crewApi } from "./crew-api";
+export { llmApi } from "./llm-api";
+export { missionApi } from "./mission-api";
+export { taskApi } from "./task-api";
