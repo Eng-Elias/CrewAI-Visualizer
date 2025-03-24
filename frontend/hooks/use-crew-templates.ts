@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Crew } from "@/utils/api/types";
-import { getCrewTemplates } from "@/utils/api/crew-api";
+import { crewApi } from "@/utils/api";
 
 export function useCrewTemplates() {
   const {
@@ -9,7 +9,7 @@ export function useCrewTemplates() {
     error,
   } = useQuery<Crew[]>({
     queryKey: ["crewTemplates"],
-    queryFn: getCrewTemplates,
+    queryFn: () => crewApi.getTemplates(),
   });
 
   return {

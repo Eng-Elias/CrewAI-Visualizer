@@ -3,9 +3,9 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
 import { getSession } from "@/lib/supabase/client";
 import {
   AuthenticationError,
-  handleAuthError,
   isAuthError,
-} from "@/utils/auth/auth-error";
+  handleAuthError,
+} from "@/lib/auth/utils";
 
 // Default API URL for local development
 const API_URL = process.env.BACKEND_URL || "http://localhost:8000";

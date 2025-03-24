@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { getLLMs } from "@/utils/api/llm-api";
-import { useToast } from "@/hooks/use-toast";
 import { LLM } from "@/utils/api/types";
+import { llmApi } from "@/utils/api";
+import { useToast } from "@/hooks/use-toast";
 
 export function useLLMs() {
   const [llms, setLLMs] = useState<LLM[]>([]);
@@ -11,12 +11,12 @@ export function useLLMs() {
   const fetchLLMs = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data = await getLLMs();
+      const data = await llmApi.getAll();
       setLLMs(data);
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to fetch LLMs ${error}`,
+        description: error instanceof Error ? error.message : "Failed to fetch LLMs",
         variant: "destructive",
       });
     } finally {

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCrew } from "@/utils/api/crew-api";
 import { Crew } from "@/utils/api/types";
+import { crewApi } from "@/utils/api";
 
 export function useCrew(crewId: number) {
   const {
@@ -9,7 +9,7 @@ export function useCrew(crewId: number) {
     error,
   } = useQuery<Crew>({
     queryKey: ["crew", crewId],
-    queryFn: () => getCrew(crewId),
+    queryFn: () => crewApi.getById(crewId),
     enabled: !!crewId,
   });
 

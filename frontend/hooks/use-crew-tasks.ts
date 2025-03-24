@@ -20,13 +20,12 @@ export const useCrewTasks = (
       return false;
     }
 
-    const newTask: CrewTask = {
+    const newTask: Partial<CrewTask> = {
       task_id: task.id,
       task_order: tasks.length + 1,
-      data: task,
     };
 
-    setTasks([...tasks, newTask]);
+    setTasks([...tasks, newTask as CrewTask]);
     return true;
   };
 
@@ -34,16 +33,18 @@ export const useCrewTasks = (
     setTasks(tasks.filter((t) => t.task_id !== taskId));
   };
 
-  const assignAgent = (taskId: number, agentId: number) => {
-    // Verify agent exists in crew
-    const agentExists = crewAgents.some((a) => a.agent_id === agentId);
-    if (!agentExists) {
-      toast({
-        title: "Invalid agent",
-        description: "Selected agent is not part of the crew",
-        variant: "destructive",
-      });
-      return false;
+  const assignAgent = (taskId: number, agentId: number | null) => {
+    // Verify agent exists in crew if an agent is being assigned
+    if (agentId !== null) {
+      const agentExists = crewAgents.some((a) => a.agent_id === agentId);
+      if (!agentExists) {
+        toast({
+          title: "Invalid agent",
+          description: "Selected agent is not part of the crew",
+          variant: "destructive",
+        });
+        return false;
+      }
     }
 
     setTasks(
@@ -68,7 +69,7 @@ export const useCrewTasks = (
     setTasks(
       tasks.map((task) =>
         task.assigned_agent_id === agentId
-          ? { ...task, assigned_agent_id: undefined }
+          ? { ...task, assigned_agent_id: null }
           : task
       )
     );

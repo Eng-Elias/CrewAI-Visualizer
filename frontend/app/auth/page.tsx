@@ -1,9 +1,9 @@
-import { AuthComponent } from "@/components/auth/AuthComponent";
+import { AuthFormContainer } from "@/lib/auth/components/auth-form";
 
 export default function AuthPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <AuthComponent />
+    <div className="container flex items-center justify-center min-h-screen py-12">
+      <AuthFormContainer />
     </div>
   );
 }

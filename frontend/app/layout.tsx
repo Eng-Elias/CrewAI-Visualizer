@@ -3,8 +3,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SupabaseProvider } from "@/lib/supabase/provider";
-import { AuthProvider } from "@/components/auth/auth-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "@/lib/auth/provider";
 import "./globals.css";
 
 const geistSans = Geist({

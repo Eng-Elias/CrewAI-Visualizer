@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Agent, AgentRole, CrewAgent } from "@/utils/api/types";
+import { Agent, CrewAgent, AgentRoleType } from "@/utils/api/types";
 import { useToast } from "@/hooks/use-toast";
 
 export const useCrewAgents = (initialAgents: CrewAgent[] = []) => {
   const [agents, setAgents] = useState<CrewAgent[]>(initialAgents);
   const { toast } = useToast();
 
-  const addAgent = (agent: Agent, role: AgentRole) => {
+  const addAgent = (agent: Agent, role: AgentRoleType) => {
     const existingAgent = agents.find((a) => a.agent_id === agent.id);
     if (existingAgent) {
       toast({
@@ -17,14 +17,13 @@ export const useCrewAgents = (initialAgents: CrewAgent[] = []) => {
       return false;
     }
 
-    const newAgent: CrewAgent = {
+    const newAgent: Partial<CrewAgent> = {
       agent_id: agent.id,
       role,
       agent_order: agents.length + 1,
-      data: agent,
     };
 
-    setAgents([...agents, newAgent]);
+    setAgents([...agents, newAgent as CrewAgent]);
     return true;
   };
 
@@ -32,7 +31,7 @@ export const useCrewAgents = (initialAgents: CrewAgent[] = []) => {
     setAgents(agents.filter((a) => a.agent_id !== agentId));
   };
 
-  const updateAgentRole = (agentId: number, role: AgentRole) => {
+  const updateAgentRole = (agentId: number, role: AgentRoleType) => {
     setAgents(agents.map((a) => (a.agent_id === agentId ? { ...a, role } : a)));
   };
 

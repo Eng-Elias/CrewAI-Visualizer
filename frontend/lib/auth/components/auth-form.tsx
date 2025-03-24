@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "../provider";
 
 interface AuthFormProps {
   onSubmit: (e: React.FormEvent) => Promise<void>;
@@ -55,26 +55,14 @@ function AuthForm({
   );
 }
 
-export function AuthComponent() {
+export function AuthFormContainer() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { login, signup } = useAuth();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-
-  // Check if user is already logged in
-  useEffect(() => {
-    const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        router.push("/dashboard");
-      }
-    };
-    checkSession();
-  }, [router]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,14 +70,8 @@ export function AuthComponent() {
     setError(null);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
+      const success = await signup(email, password);
+      if (success) {
         const redirectTo = searchParams.get("redirectedFrom") || "/dashboard";
         router.push(redirectTo);
       }
@@ -106,14 +88,8 @@ export function AuthComponent() {
     setError(null);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
+      const success = await login(email, password);
+      if (success) {
         const redirectTo = searchParams.get("redirectedFrom") || "/dashboard";
         router.push(redirectTo);
       }
@@ -163,4 +139,4 @@ export function AuthComponent() {
       </CardContent>
     </Card>
   );
-}
+} 

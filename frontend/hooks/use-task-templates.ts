@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { getTaskTemplates } from "@/utils/api/task-api";
-import { useToast } from "@/hooks/use-toast";
 import { Task } from "@/utils/api/types";
+import { taskApi } from "@/utils/api";
+import { useToast } from "@/hooks/use-toast";
 
 export function useTaskTemplates() {
   const [templates, setTemplates] = useState<Task[]>([]);
@@ -11,12 +11,12 @@ export function useTaskTemplates() {
   const fetchTemplates = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data = await getTaskTemplates();
+      const data = await taskApi.getTemplates();
       setTemplates(data);
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to fetch task templates, ${error}`,
+        description: error instanceof Error ? error.message : "Failed to fetch task templates",
         variant: "destructive",
       });
     } finally {

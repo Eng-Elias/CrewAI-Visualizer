@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { AuthError } from "@supabase/supabase-js";
 
 export class AuthenticationError extends Error {
@@ -20,11 +19,11 @@ export const isAuthError = (error: unknown): boolean => {
   );
 };
 
-export const handleAuthError = (error: unknown) => {
-  if (isAuthError(error)) {
-    // Clear any stored auth state if needed
-    // Redirect to login page
-    redirect("/auth");
+export const handleAuthError = (error: unknown): never => {
+  // Clear any stored auth state if needed
+  // Redirect to login page
+  if (typeof window !== "undefined") {
+    window.location.href = "/auth";
   }
   throw error;
-};
+}; 

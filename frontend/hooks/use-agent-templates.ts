@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { getAgentTemplates } from "@/utils/api/agent-api";
-import { useToast } from "@/hooks/use-toast";
 import { Agent } from "@/utils/api/types";
+import { agentApi } from "@/utils/api";
+import { useToast } from "@/hooks/use-toast";
 
-export function useAgentTemplates() {
+export function useAgentTemplates(includeBuiltin: boolean = true) {
   const [templates, setTemplates] = useState<Agent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
@@ -11,18 +11,18 @@ export function useAgentTemplates() {
   const fetchTemplates = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data = await getAgentTemplates();
+      const data = await agentApi.getTemplates(includeBuiltin);
       setTemplates(data);
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to fetch agent templates, ${error}`,
+        description: error instanceof Error ? error.message : "Failed to fetch agent templates",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, includeBuiltin]);
 
   useEffect(() => {
     fetchTemplates();
