@@ -4,6 +4,7 @@ from app.models.llm import LLM, LLMCreate, LLMUpdate
 from .base_repository import BaseRepository
 from .consts import TableNameEnum
 import logging
+from app.services.encryption import encryption_service
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

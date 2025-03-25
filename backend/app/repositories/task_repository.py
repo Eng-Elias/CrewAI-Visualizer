@@ -84,7 +84,7 @@ class TaskRepository(BaseRepository[Task, TaskCreate, TaskUpdate]):
         user_id: Optional[str] = None
     ) -> List[Task]:
         """Get all tasks that reference a specific context"""
-        query = self.supabase.table(self.table_name)\
+        query = self.supabase.table(self.table)\
             .select("*")\
             .contains("context", [context_id])
             

@@ -24,13 +24,13 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
     
     Attributes:
         supabase: Supabase client instance
-        table_name: Name of the table in Supabase
+        table: Name of the table in Supabase
         model: Pydantic model class for the entity
     """
     
-    def __init__(self, supabase_client: Client, table_name: str, model: Type[ModelType]):
+    def __init__(self, supabase_client: Client, table: str, model: Type[ModelType]):
         self.supabase = supabase_client
-        self.table_name = table_name
+        self.table = table
         self.model = model
     
     async def get_all(
@@ -40,7 +40,7 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         user_id: Optional[str] = None
     ) -> List[ModelType]:
         """Get all items from the database with optional filters"""
-        query = self.supabase.table(self.table_name).select(select)
+        query = self.supabase.table(self.table).select(select)
         
         if filters:
             for key, value in filters.items():
@@ -59,7 +59,7 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         user_id: Optional[str] = None
     ) -> Optional[ModelType]:
         """Get an item by its ID"""
-        query = self.supabase.table(self.table_name).select(select).eq("id", item_id)
+        query = self.supabase.table(self.table).select(select).eq("id", item_id)
         
         if user_id:
             query = query.eq("user_id", user_id)
@@ -86,11 +86,11 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         create_data = await self._pre_create(create_data)
         
         # Insert into Supabase
-        response = self.supabase.table(self.table_name).insert(create_data).execute()
+        response = self.supabase.table(self.table).insert(create_data).execute()
         
         if not response.data:
-            logger.error(f"Failed to create item in {self.table_name}")
-            raise Exception(f"Failed to create item in {self.table_name}")
+            logger.error(f"Failed to create item in {self.table}")
+            raise Exception(f"Failed to create item in {self.table}")
             
         return self.model.model_validate(response.data[0])
     
@@ -116,7 +116,7 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         update_data = await self._pre_update(current_item, update_data)
         
         # Update in Supabase
-        query = self.supabase.table(self.table_name).update(update_data).eq("id", item_id)
+        query = self.supabase.table(self.table).update(update_data).eq("id", item_id)
         
         if user_id:
             query = query.eq("user_id", user_id)
@@ -124,8 +124,8 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         response = query.execute()
         
         if not response.data:
-            logger.error(f"Failed to update item in {self.table_name}")
-            raise Exception(f"Failed to update item in {self.table_name}")
+            logger.error(f"Failed to update item in {self.table}")
+            raise Exception(f"Failed to update item in {self.table}")
             
         return self.model.model_validate(response.data[0])
     
@@ -135,7 +135,7 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         user_id: Optional[str] = None
     ) -> bool:
         """Delete an item from the database"""
-        query = self.supabase.table(self.table_name).delete().eq("id", item_id)
+        query = self.supabase.table(self.table).delete().eq("id", item_id)
         
         if user_id:
             query = query.eq("user_id", user_id)
@@ -151,13 +151,11 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         """Check if an item exists in the database"""
         item = await self.get_by_id(item_id, select="id", user_id=user_id)
         return item is not None
-    
-    @abstractmethod
+
     async def _pre_create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Pre-process data before creation. Override in derived classes if needed."""
         return data
-    
-    @abstractmethod
+
     async def _pre_update(
         self,
         current_item: ModelType,
