@@ -42,7 +42,14 @@ export function BaseModal({
 }: BaseModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={cn(maxWidthClasses[maxWidth], className)}>
+      <DialogContent 
+        className={cn(
+          maxWidthClasses[maxWidth],
+          'max-h-[90vh] overflow-y-auto',
+          className
+        )} 
+        style={{backgroundColor: 'white'}}
+      >
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}
