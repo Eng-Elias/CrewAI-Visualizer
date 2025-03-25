@@ -158,8 +158,8 @@ END $$;
 -- Seed built-in LLMs
 INSERT INTO "public"."LLMs" (id, name, provider, models, config)
 VALUES
-  (1, 'OpenAI GPT-4', 'openai', ARRAY['gpt-4'], '{"temperature": 0.7}'),
-  (2, 'OpenAI GPT-3.5', 'openai', ARRAY['gpt-3.5-turbo'], '{"temperature": 0.7}');
+  (1, 'OpenAI GPT-4', 'OpenAI', ARRAY['gpt-4'], '{"temperature": 0.7}'),
+  (2, 'OpenAI GPT-3.5', 'OpenAI', ARRAY['gpt-3.5-turbo'], '{"temperature": 0.7}');
 
 -- Seed built-in agent templates
 INSERT INTO "public"."Agents" (id, name, role, goal, backstory, memory_enabled, "verbose", allow_delegation, max_iterations, is_template, is_builtin)
