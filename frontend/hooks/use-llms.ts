@@ -1,40 +1,70 @@
-import { useCallback, useEffect, useState } from "react";
-import { LLM } from "@/utils/api/types";
-import { llmApi } from "@/utils/api";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from 'react';
+import { LLM } from '@/utils/api/types';
+import { LLMFormData } from '@/lib/schemas/llm';
+import { llmApi } from '@/utils/api/llm-api';
 
 export function useLLMs() {
   const [llms, setLLMs] = useState<LLM[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  const fetchLLMs = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const data = await llmApi.getAll();
-      setLLMs(data);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to fetch LLMs",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchLLMs();
-  }, [fetchLLMs]);
+  }, []);
 
-  const refresh = useCallback(() => {
-    fetchLLMs();
-  }, [fetchLLMs]);
+  const fetchLLMs = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await llmApi.getAll();
+      setLLMs(data);
+    } catch (err) {
+      setError('Failed to fetch LLMs');
+      console.error('Failed to fetch LLMs:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createLLM = async (data: LLMFormData) => {
+    try {
+      const newLLM = await llmApi.create(data);
+      setLLMs(prev => [...prev, newLLM]);
+      return newLLM;
+    } catch (err) {
+      console.error('Failed to create LLM:', err);
+      throw err;
+    }
+  };
+
+  const updateLLM = async (id: number, data: LLMFormData) => {
+    try {
+      const updatedLLM = await llmApi.update(id, data);
+      setLLMs(prev => prev.map(llm => llm.id === id ? updatedLLM : llm));
+      return updatedLLM;
+    } catch (err) {
+      console.error('Failed to update LLM:', err);
+      throw err;
+    }
+  };
+
+  const deleteLLM = async (id: number) => {
+    try {
+      await llmApi.delete(id);
+      setLLMs(prev => prev.filter(llm => llm.id !== id));
+    } catch (err) {
+      console.error('Failed to delete LLM:', err);
+      throw err;
+    }
+  };
 
   return {
     llms,
     isLoading,
-    refresh,
+    error,
+    createLLM,
+    updateLLM,
+    deleteLLM,
+    refetch: fetchLLMs,
   };
 }
