@@ -1,7 +1,7 @@
 """Router for LLM endpoints"""
 from typing import List
-from fastapi import Depends, HTTPException
-from app.models.llm import LLM, LLMCreate, LLMUpdate
+from fastapi import Depends, HTTPException, APIRouter
+from app.models.llm import LLM, LLMCreate, LLMUpdate, LLMProvider
 from app.repositories.llm_repository import LLMRepository
 from app.core.dependencies import get_current_user, get_supabase_client
 from .base_router import BaseRouter
@@ -24,6 +24,15 @@ class LLMRouter(BaseRouter[LLM, LLMCreate, LLMUpdate]):
         # Register additional routes
         self._register_additional_routes()
     
+    def _register_routes(self):
+        # Register providers endpoint to be before /{item_id}
+        @self.router.get("/providers")
+        async def get_providers(user=Depends(get_current_user)):
+            """Get all available LLM providers"""
+            return [provider.value for provider in LLMProvider]
+
+        return super()._register_routes()
+
     def _register_additional_routes(self):
         """Register additional LLM-specific routes"""
         

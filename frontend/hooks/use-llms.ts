@@ -5,11 +5,13 @@ import { llmApi } from '@/utils/api/llm-api';
 
 export function useLLMs() {
   const [llms, setLLMs] = useState<LLM[]>([]);
+  const [providers, setProviders] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchLLMs();
+    fetchProviders();
   }, []);
 
   const fetchLLMs = async () => {
@@ -23,6 +25,16 @@ export function useLLMs() {
       console.error('Failed to fetch LLMs:', err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchProviders = async () => {
+    try {
+      const data = await llmApi.getProviders();
+      setProviders(data);
+    } catch (error) {
+      console.log(error);
+      console.error('Failed to fetch LLM providers:', error);
     }
   };
 
@@ -60,6 +72,7 @@ export function useLLMs() {
 
   return {
     llms,
+    providers,
     isLoading,
     error,
     createLLM,
