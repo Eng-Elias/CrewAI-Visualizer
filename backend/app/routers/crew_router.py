@@ -10,10 +10,10 @@ from app.repositories.agent_repository import AgentRepository
 from app.repositories.task_repository import TaskRepository
 from app.repositories.crew_relations_repository import CrewAgentRepository, CrewTaskRepository
 from app.core.dependencies import get_current_user, get_supabase_client
-from .base_router import BaseRouter
+from .base_router import TemplateRouter
 
 
-class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
+class CrewRouter(TemplateRouter[Crew, CrewCreate, CrewUpdate]):
     """Router for Crew endpoints"""
     
     def __init__(self):
@@ -49,14 +49,14 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
             crew_agent_repo = CrewAgentRepository(supabase_client)
             
             # Verify crew exists and user has access
-            crew = await crew_repo.get_by_id(crew_id, user_id=user["id"])
+            crew = await crew_repo.get_by_id(crew_id, user_id=user.id)
             if not crew:
                 raise HTTPException(status_code=404, detail="Crew not found")
             
             # Create agent from template or data
             if agent_template_id:
                 # Get template
-                template = await agent_repo.get_by_id(agent_template_id, user_id=user["id"])
+                template = await agent_repo.get_by_id(agent_template_id, user_id=user.id)
                 if not template or not template.is_template:
                     raise HTTPException(status_code=400, detail="Agent template not found")
                 
@@ -69,13 +69,13 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
                 agent_dict["template_version"] = template.template_version or 1
                 agent = await agent_repo.create(
                     AgentCreate.model_validate(agent_dict),
-                    user_id=user["id"]
+                    user_id=user.id
                 )
             elif agent_data:
                 # Create from provided data
                 agent_data.is_template = False
                 agent_data.is_builtin = False
-                agent = await agent_repo.create(agent_data, user_id=user["id"])
+                agent = await agent_repo.create(agent_data, user_id=user.id)
             else:
                 raise HTTPException(
                     status_code=400,
@@ -91,11 +91,11 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
                         role=role,
                         agent_order=agent_order
                     ),
-                    user_id=user["id"]
+                    user_id=user.id
                 )
             except Exception as e:
                 # Cleanup agent if crew assignment fails
-                await agent_repo.delete(agent.id, user_id=user["id"])
+                await agent_repo.delete(agent.id, user_id=user.id)
                 raise HTTPException(status_code=400, detail=str(e))
         
         @self.router.post("/{crew_id}/tasks", response_model=CrewTask)
@@ -115,13 +115,13 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
             crew_agent_repo = CrewAgentRepository(supabase_client)
             
             # Verify crew exists and user has access
-            crew = await crew_repo.get_by_id(crew_id, user_id=user["id"])
+            crew = await crew_repo.get_by_id(crew_id, user_id=user.id)
             if not crew:
                 raise HTTPException(status_code=404, detail="Crew not found")
             
             # Verify assigned agent is in crew if provided
             if assigned_agent_id:
-                crew_agents = await crew_agent_repo.get_by_crew(crew_id, user_id=user["id"])
+                crew_agents = await crew_agent_repo.get_by_crew(crew_id, user_id=user.id)
                 if not any(ca.agent_id == assigned_agent_id for ca in crew_agents):
                     raise HTTPException(
                         status_code=400,
@@ -131,7 +131,7 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
             # Create task from template or data
             if task_template_id:
                 # Get template
-                template = await task_repo.get_by_id(task_template_id, user_id=user["id"])
+                template = await task_repo.get_by_id(task_template_id, user_id=user.id)
                 if not template or not template.is_template:
                     raise HTTPException(status_code=400, detail="Task template not found")
                 
@@ -145,14 +145,14 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
                 task_dict["agent"] = assigned_agent_id
                 task = await task_repo.create(
                     TaskCreate.model_validate(task_dict),
-                    user_id=user["id"]
+                    user_id=user.id
                 )
             elif task_data:
                 # Create from provided data
                 task_data.is_template = False
                 task_data.is_builtin = False
                 task_data.agent = assigned_agent_id
-                task = await task_repo.create(task_data, user_id=user["id"])
+                task = await task_repo.create(task_data, user_id=user.id)
             else:
                 raise HTTPException(
                     status_code=400,
@@ -168,11 +168,11 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
                         task_order=task_order,
                         assigned_agent_id=assigned_agent_id
                     ),
-                    user_id=user["id"]
+                    user_id=user.id
                 )
             except Exception as e:
                 # Cleanup task if crew assignment fails
-                await task_repo.delete(task.id, user_id=user["id"])
+                await task_repo.delete(task.id, user_id=user.id)
                 raise HTTPException(status_code=400, detail=str(e))
         
         @self.router.delete("/{crew_id}/agents/{agent_id}")
@@ -188,7 +188,7 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
             success = await crew_agent_repo.delete(
                 crew_id=crew_id,
                 agent_id=agent_id,
-                user_id=user["id"]
+                user_id=user.id
             )
             
             if not success:
@@ -212,7 +212,7 @@ class CrewRouter(BaseRouter[Crew, CrewCreate, CrewUpdate]):
             success = await crew_task_repo.delete(
                 crew_id=crew_id,
                 task_id=task_id,
-                user_id=user["id"]
+                user_id=user.id
             )
             
             if not success:

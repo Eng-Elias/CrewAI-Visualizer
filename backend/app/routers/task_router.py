@@ -5,10 +5,10 @@ from app.models.task import Task, TaskCreate, TaskUpdate
 from app.repositories.task_repository import TaskRepository
 from app.repositories.crew_relations_repository import CrewTaskRepository
 from app.core.dependencies import get_current_user, get_supabase_client
-from .base_router import BaseRouter
+from .base_router import TemplateRouter
 
 
-class TaskRouter(BaseRouter[Task, TaskCreate, TaskUpdate]):
+class TaskRouter(TemplateRouter[Task, TaskCreate, TaskUpdate]):
     """Router for Task endpoints"""
     
     def __init__(self):
@@ -39,12 +39,12 @@ class TaskRouter(BaseRouter[Task, TaskCreate, TaskUpdate]):
             task_repo = TaskRepository(supabase_client)
             
             # Get crew-task relationships
-            crew_tasks = await crew_task_repo.get_by_crew(crew_id, user_id=user["id"])
+            crew_tasks = await crew_task_repo.get_by_crew(crew_id, user_id=user.id)
             
             # Get full task details
             tasks = []
             for crew_task in crew_tasks:
-                task = await task_repo.get_by_id(crew_task.task_id, user_id=user["id"])
+                task = await task_repo.get_by_id(crew_task.task_id, user_id=user.id)
                 if task:
                     # Set the assigned agent
                     task.agent = crew_task.assigned_agent_id
@@ -64,7 +64,7 @@ class TaskRouter(BaseRouter[Task, TaskCreate, TaskUpdate]):
             return await task_repo.get_by_agent(
                 agent_id,
                 include_templates=include_templates,
-                user_id=user["id"]
+                user_id=user.id
             )
         
         @self.router.get("/by-context/{context_id}", response_model=List[Task])
@@ -75,4 +75,4 @@ class TaskRouter(BaseRouter[Task, TaskCreate, TaskUpdate]):
         ):
             """Get all tasks that reference a specific context"""
             task_repo = TaskRepository(supabase_client)
-            return await task_repo.get_by_context(context_id, user_id=user["id"])
+            return await task_repo.get_by_context(context_id, user_id=user.id)

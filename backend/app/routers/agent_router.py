@@ -5,10 +5,10 @@ from app.models.agent import Agent, AgentCreate, AgentUpdate
 from app.repositories.agent_repository import AgentRepository
 from app.repositories.crew_relations_repository import CrewAgentRepository
 from app.core.dependencies import get_current_user, get_supabase_client
-from .base_router import BaseRouter
+from .base_router import TemplateRouter
 
 
-class AgentRouter(BaseRouter[Agent, AgentCreate, AgentUpdate]):
+class AgentRouter(TemplateRouter[Agent, AgentCreate, AgentUpdate]):
     """Router for Agent endpoints"""
     
     def __init__(self):
@@ -39,12 +39,12 @@ class AgentRouter(BaseRouter[Agent, AgentCreate, AgentUpdate]):
             agent_repo = AgentRepository(supabase_client)
             
             # Get crew-agent relationships
-            crew_agents = await crew_agent_repo.get_by_crew(crew_id, user_id=user["id"])
+            crew_agents = await crew_agent_repo.get_by_crew(crew_id, user_id=user.id)
             
             # Get full agent details
             agents = []
             for crew_agent in crew_agents:
-                agent = await agent_repo.get_by_id(crew_agent.agent_id, user_id=user["id"])
+                agent = await agent_repo.get_by_id(crew_agent.agent_id, user_id=user.id)
                 if agent:
                     agents.append(agent)
             

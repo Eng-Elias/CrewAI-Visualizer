@@ -39,7 +39,7 @@ class MissionRouter(BaseRouter[Mission, MissionCreate, MissionUpdate]):
         ) -> List[Mission]:
             """Get all missions for a specific crew"""
             try:
-                return await mission_repository.get_by_crew_id(crew_id, user["id"])
+                return await mission_repository.get_by_crew_id(crew_id, user.id)
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
         
@@ -51,7 +51,7 @@ class MissionRouter(BaseRouter[Mission, MissionCreate, MissionUpdate]):
         ) -> Dict[str, Any]:
             """Execute a mission"""
             try:
-                return await crew_ai_service.execute_mission(mission_id, user["id"])
+                return await crew_ai_service.execute_mission(mission_id, user.id)
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
     

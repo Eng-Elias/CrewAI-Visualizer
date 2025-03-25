@@ -36,6 +36,6 @@ class LLMRouter(BaseRouter[LLM, LLMCreate, LLMUpdate]):
             """Get all LLMs for a specific provider"""
             repo = LLMRepository(supabase_client)
             try:
-                return await repo.get_by_provider(provider, user_id=user["id"])
+                return await repo.get_by_provider(provider, user_id=user.id)
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
