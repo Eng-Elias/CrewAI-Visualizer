@@ -11,8 +11,12 @@ export interface BaseEntity {
   created_at: string;
   updated_at: string | null;
   user_id: string | null;
-  is_template: boolean | null;
-  is_builtin: boolean | null;
+}
+
+// Template entity interface
+export interface TemplateEntity extends BaseEntity {
+  is_template: boolean;
+  is_builtin: boolean;
   template_id?: number | null;
   template_version?: number | null;
 }
@@ -20,6 +24,9 @@ export interface BaseEntity {
 // Common query parameters
 export interface BaseQueryParams {
   include_templates?: boolean;
+}
+
+export interface TemplateQueryParams extends BaseQueryParams {
   include_builtin?: boolean;
 }
 
@@ -28,8 +35,39 @@ export interface CreateFromTemplateParams {
   template_id: number;
 }
 
+// LLM entity interfaces
+export interface LLM extends BaseEntity {
+  name: string;
+  provider: string;
+  models: string[];
+  api_key?: string;
+  temperature?: number;
+  max_tokens?: number;
+  config?: Record<string, string | number>;
+}
+
+export interface LLMCreateDto {
+  name: string;
+  provider: string;
+  models: string[];
+  api_key?: string;
+  temperature?: number;
+  max_tokens?: number;
+  config?: Record<string, string | number>;
+}
+
+export interface LLMUpdateDto {
+  name?: string;
+  provider?: string;
+  models?: string[];
+  api_key?: string;
+  temperature?: number;
+  max_tokens?: number;
+  config?: Record<string, string | number>;
+}
+
 // Agent types
-export interface Agent extends BaseEntity {
+export interface Agent extends TemplateEntity {
   name: string;
   role: string;
   goal: string;
@@ -62,7 +100,7 @@ export interface AgentCreateDto {
 export type AgentUpdateDto = Partial<Omit<AgentCreateDto, 'is_template' | 'is_builtin'>>;
 
 // Crew types
-export interface Crew extends BaseEntity {
+export interface Crew extends TemplateEntity {
   name: string;
   description: string;
   process: ProcessType | null;
@@ -133,41 +171,8 @@ export interface AddTaskToCrewParams {
   assigned_agent_id?: number;
 }
 
-// LLM entity interfaces
-export interface LLM extends BaseEntity {
-  name: string;
-  provider: string;
-  model_name: string;
-  api_key?: string;
-  temperature?: number;
-  max_tokens?: number;
-  config?: Record<string, string | number>;
-}
-
-export interface LLMCreateDto {
-  name: string;
-  provider: string;
-  model_name: string;
-  api_key?: string;
-  temperature?: number;
-  max_tokens?: number;
-  config?: Record<string, string | number>;
-  is_template?: boolean;
-  is_builtin?: boolean;
-}
-
-export interface LLMUpdateDto {
-  name?: string;
-  provider?: string;
-  model_name?: string;
-  api_key?: string;
-  temperature?: number;
-  max_tokens?: number;
-  config?: Record<string, string | number>;
-}
-
 // Task types
-export interface Task extends BaseEntity {
+export interface Task extends TemplateEntity {
   name: string;
   description: string;
   expected_output: string;

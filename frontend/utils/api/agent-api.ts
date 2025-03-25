@@ -1,9 +1,9 @@
 "use client";
 
-import { BaseApi } from "./base-api";
+import { TemplateApi } from "./base-api";
 import { Agent, AgentCreateDto, AgentUpdateDto } from "./types";
 
-export class AgentApi extends BaseApi<Agent, AgentCreateDto, AgentUpdateDto> {
+export class AgentApi extends TemplateApi<Agent, AgentCreateDto, AgentUpdateDto> {
   protected endpoint = "/agents";
 }
 

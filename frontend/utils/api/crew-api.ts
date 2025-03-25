@@ -1,6 +1,6 @@
 "use client";
 
-import { BaseApi } from "./base-api";
+import { TemplateApi } from "./base-api";
 import { handleApiError } from "./api-client";
 import {
   Crew,
@@ -12,7 +12,7 @@ import {
   AddTaskToCrewParams,
 } from "./types";
 
-export class CrewApi extends BaseApi<Crew, CrewCreateDto, CrewUpdateDto> {
+export class CrewApi extends TemplateApi<Crew, CrewCreateDto, CrewUpdateDto> {
   protected endpoint = "/crews";
 
   /**

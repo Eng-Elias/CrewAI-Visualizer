@@ -2,7 +2,7 @@
 
 import { AxiosInstance } from "axios";
 import { createApiClient, handleApiError } from "./api-client";
-import { BaseEntity, BaseQueryParams, CreateFromTemplateParams } from "./types";
+import { BaseEntity, BaseQueryParams, TemplateEntity, CreateFromTemplateParams } from "./types";
 
 export abstract class BaseApi<T extends BaseEntity, CreateDto, UpdateDto> {
   protected abstract endpoint: string;
@@ -22,21 +22,6 @@ export abstract class BaseApi<T extends BaseEntity, CreateDto, UpdateDto> {
     try {
       const client = await this.getClient();
       const response = await client.get<T[]>(this.endpoint, { params });
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
-  }
-
-  /**
-   * Get all templates
-   */
-  async getTemplates(includeBuiltin: boolean = true): Promise<T[]> {
-    try {
-      const client = await this.getClient();
-      const response = await client.get<T[]>(`${this.endpoint}/templates`, {
-        params: { include_builtin: includeBuiltin }
-      });
       return response.data;
     } catch (error) {
       return handleApiError(error);
@@ -89,6 +74,23 @@ export abstract class BaseApi<T extends BaseEntity, CreateDto, UpdateDto> {
     try {
       const client = await this.getClient();
       await client.delete(`${this.endpoint}/${id}`);
+    } catch (error) {
+      return handleApiError(error);
+    }
+  }
+}
+
+export abstract class TemplateApi<T extends TemplateEntity, CreateDto, UpdateDto> extends BaseApi<T, CreateDto, UpdateDto> {
+  /**
+   * Get all templates
+   */
+  async getTemplates(includeBuiltin: boolean = true): Promise<T[]> {
+    try {
+      const client = await this.getClient();
+      const response = await client.get<T[]>(`${this.endpoint}/templates`, {
+        params: { include_builtin: includeBuiltin }
+      });
+      return response.data;
     } catch (error) {
       return handleApiError(error);
     }
