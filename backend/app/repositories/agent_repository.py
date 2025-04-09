@@ -23,11 +23,22 @@ class AgentRepository(BaseRepository[Agent, AgentCreate, AgentUpdate]):
         user_id: Optional[str] = None
     ) -> List[Agent]:
         """Get all template Agents from the database"""
-        filters = {"is_template": True}
-        if not include_builtin:
-            filters["is_builtin"] = False
+        filters = {
+            "is_template": True
+        }
         
-        return await self.get_all(filters=filters, user_id=user_id)
+        if include_builtin:
+            filters["or"] = {
+                "is_builtin": True,
+                "user_id": user_id if user_id else None
+            }
+        else:
+            filters["and"] = [
+                ["is_builtin", "eq", False],
+                ["user_id", "eq", user_id]
+            ]
+        
+        return await self.get_all(filters=filters)
     
     async def _pre_create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Pre-process data before creation"""

@@ -146,6 +146,6 @@ class LLMRepository(BaseRepository[LLM, LLMCreate, LLMUpdate]):
         user_id: Optional[str] = None
     ) -> List[LLM]:
         """Get all LLMs for a specific provider"""
-        filters = {"provider": provider}
+        filters = {"provider": {"eq": provider}}
         
         return await self.get_all(filters=filters, user_id=user_id)

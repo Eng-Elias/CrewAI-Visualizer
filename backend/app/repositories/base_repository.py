@@ -44,7 +44,17 @@ class BaseRepository(ABC, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
         
         if filters:
             for key, value in filters.items():
-                query = query.eq(key, value)
+                if key == 'and':
+                    for and_filter in value:
+                        query = query.filter(*and_filter)
+                elif key == 'or':
+                    or_filters = [f"{k}.eq.{v}" for k, v in value.items()]
+                    query = query.or_(",".join(or_filters))
+                elif key == 'not':
+                    for not_filter in value:
+                        query = query.not_(*not_filter)
+                else:
+                    query = query.eq(key, value)
         
         if user_id:
             query = query.eq("user_id", user_id)

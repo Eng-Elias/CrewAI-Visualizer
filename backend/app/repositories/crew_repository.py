@@ -25,8 +25,17 @@ class CrewRepository(BaseRepository[Crew, CrewCreate, CrewUpdate]):
     ) -> List[Crew]:
         """Get all template Crews from the database"""
         filters = {"is_template": True}
-        if not include_builtin:
-            filters["is_builtin"] = False
+        
+        if include_builtin:
+            filters["or"] = {
+                "is_builtin": True,
+                "user_id": user_id if user_id else None
+            }
+        else:
+            filters["and"] = [
+                ["is_builtin", "eq", False],
+                ["user_id", "eq", user_id]
+            ]
         
         return await self.get_all(filters=filters, user_id=user_id)
     

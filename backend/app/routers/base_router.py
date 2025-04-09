@@ -105,22 +105,7 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
     """Router class for entities that support templates"""
     
     def _register_routes(self):
-        """Register common CRUD routes and template-specific routes"""
-        super()._register_routes()
-        
-        @self.router.get("/", response_model=List[self.response_model])
-        async def get_all(
-            include_templates: bool = False,
-            user=Depends(get_current_user),
-            supabase_client=Depends(get_supabase_client)
-        ):
-            """Get all items"""
-            repo = self.repository_class(supabase_client)
-            return await repo.get_all(
-                filters=None if include_templates else {"is_template": False},
-                user_id=user.id
-            )
-        
+        """Registered before super() to avoid the conflict with /{item_id} router"""
         @self.router.get("/templates", response_model=List[self.response_model])
         async def get_templates(
             include_builtin: bool = True,
@@ -185,3 +170,19 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
                 )
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
+
+        """Register common CRUD routes and template-specific routes"""
+        super()._register_routes()
+        
+        @self.router.get("/", response_model=List[self.response_model])
+        async def get_all(
+            include_templates: bool = True,
+            user=Depends(get_current_user),
+            supabase_client=Depends(get_supabase_client)
+        ):
+            """Get all items"""
+            repo = self.repository_class(supabase_client)
+            return await repo.get_all(
+                filters=None if include_templates else {"is_template": False},
+                user_id=user.id
+            )
