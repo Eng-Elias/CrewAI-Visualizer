@@ -2,7 +2,12 @@
 
 import { AxiosInstance } from "axios";
 import { createApiClient, handleApiError } from "./api-client";
-import { BaseEntity, BaseQueryParams, TemplateEntity, CreateFromTemplateParams } from "./types";
+import {
+  BaseEntity,
+  BaseQueryParams,
+  TemplateEntity,
+  CreateFromTemplateParams,
+} from "./types";
 
 export abstract class BaseApi<T extends BaseEntity, CreateDto, UpdateDto> {
   protected abstract endpoint: string;
@@ -80,7 +85,11 @@ export abstract class BaseApi<T extends BaseEntity, CreateDto, UpdateDto> {
   }
 }
 
-export abstract class TemplateApi<T extends TemplateEntity, CreateDto, UpdateDto> extends BaseApi<T, CreateDto, UpdateDto> {
+export abstract class TemplateApi<
+  T extends TemplateEntity,
+  CreateDto,
+  UpdateDto
+> extends BaseApi<T, CreateDto, UpdateDto> {
   /**
    * Get all templates
    */
@@ -88,9 +97,51 @@ export abstract class TemplateApi<T extends TemplateEntity, CreateDto, UpdateDto
     try {
       const client = await this.getClient();
       const response = await client.get<T[]>(`${this.endpoint}/templates`, {
-        params: { include_builtin: includeBuiltin }
+        params: { include_builtin: includeBuiltin },
       });
       return response.data;
+    } catch (error) {
+      console.log(error);
+      return handleApiError(error);
+    }
+  }
+
+  /**
+   * Create a new template
+   */
+  async createTemplate(data: CreateDto): Promise<T> {
+    try {
+      const client = await this.getClient();
+      const response = await client.post<T>(`${this.endpoint}/templates`, data);
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
+    }
+  }
+
+  /**
+   * Update an existing template
+   */
+  async updateTemplate(id: number, data: UpdateDto): Promise<T> {
+    try {
+      const client = await this.getClient();
+      const response = await client.put<T>(
+        `${this.endpoint}/templates/${id}`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
+    }
+  }
+
+  /**
+   * Delete a template
+   */
+  async deleteTemplate(id: number): Promise<void> {
+    try {
+      const client = await this.getClient();
+      await client.delete(`${this.endpoint}/templates/${id}`);
     } catch (error) {
       return handleApiError(error);
     }
@@ -110,4 +161,4 @@ export abstract class TemplateApi<T extends TemplateEntity, CreateDto, UpdateDto
       return handleApiError(error);
     }
   }
-} 
+}
