@@ -1,5 +1,5 @@
 """Base router class for all routers"""
-from typing import Generic, TypeVar, List
+from typing import Generic, TypeVar, List, Dict
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from app.core.dependencies import get_current_user, get_supabase_client
@@ -118,7 +118,47 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
                 include_builtin=include_builtin,
                 user_id=user.id
             )
-        
+
+        @self.router.post("/templates", response_model=self.response_model)
+        async def create_template(
+            data: self.create_schema,
+            user=Depends(get_current_user),
+            supabase_client=Depends(get_supabase_client)
+        ):
+            """Create a new template item"""
+            repo = self.repository_class(supabase_client)
+            # Convert to dict and set is_template to True
+            create_data = data.model_dump()
+            create_data["is_template"] = True
+            return await repo.create(self.create_schema(**create_data), user_id=user.id)
+
+        @self.router.put("/templates/{item_id}", response_model=self.response_model)
+        async def update_template(
+            item_id: int,
+            data: self.update_schema,
+            user=Depends(get_current_user),
+            supabase_client=Depends(get_supabase_client)
+        ):
+            """Update a template item"""
+            repo = self.repository_class(supabase_client)
+            # Convert to dict and ensure is_template remains True
+            update_data = data.model_dump(exclude_unset=True)
+            update_data["is_template"] = True
+            return await repo.update(item_id, self.update_schema(**update_data), user_id=user.id)
+
+        @self.router.delete("/templates/{item_id}", response_model=Dict[str, str])
+        async def delete_template(
+            item_id: int,
+            user=Depends(get_current_user),
+            supabase_client=Depends(get_supabase_client)
+        ):
+            """Delete a template item"""
+            repo = self.repository_class(supabase_client)
+            success = await repo.delete(item_id, user_id=user.id)
+            if not success:
+                raise HTTPException(status_code=404, detail="Template not found")
+            return {"status": "success"}
+
         @self.router.post(
             "/from-template/{template_id}",
             response_model=self.response_model
@@ -171,7 +211,7 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
 
-        """Register common CRUD routes and template-specific routes"""
+        """Register common CRUD routes"""
         super()._register_routes()
         
         @self.router.get("/", response_model=List[self.response_model])
