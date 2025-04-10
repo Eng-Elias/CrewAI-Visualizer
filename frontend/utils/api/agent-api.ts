@@ -3,7 +3,11 @@
 import { TemplateApi } from "./base-api";
 import { Agent, AgentCreateDto, AgentUpdateDto } from "./types";
 
-export class AgentApi extends TemplateApi<Agent, AgentCreateDto, AgentUpdateDto> {
+export class AgentApi extends TemplateApi<
+  Agent,
+  AgentCreateDto,
+  AgentUpdateDto
+> {
   protected endpoint = "/agents";
 }
 

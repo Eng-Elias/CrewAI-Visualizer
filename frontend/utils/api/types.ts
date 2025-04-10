@@ -85,19 +85,21 @@ export interface AgentCreateDto {
   name: string;
   role: string;
   goal: string;
-  backstory?: string;
-  memory_enabled?: boolean;
-  verbose?: boolean;
-  allow_delegation?: boolean;
-  max_iterations?: number;
-  max_rpm?: number;
-  tools?: Json;
-  llm_config?: Json;
-  is_template?: boolean;
-  is_builtin?: boolean;
+  backstory?: string | null;
+  memory_enabled?: boolean | null;
+  verbose?: boolean | null;
+  allow_delegation?: boolean | null;
+  max_iterations?: number | null;
+  max_rpm?: number | null;
+  tools?: Json | null;
+  llm_config?: Json | null;
+  is_template?: boolean | null;
+  is_builtin?: boolean | null;
 }
 
-export type AgentUpdateDto = Partial<Omit<AgentCreateDto, 'is_template' | 'is_builtin'>>;
+export type AgentUpdateDto = Partial<
+  Omit<AgentCreateDto, "is_template" | "is_builtin">
+>;
 
 // Crew types
 export interface Crew extends TemplateEntity {
@@ -134,7 +136,9 @@ export interface CrewCreateDto {
   is_builtin?: boolean;
 }
 
-export type CrewUpdateDto = Partial<Omit<CrewCreateDto, 'is_template' | 'is_builtin'>>;
+export type CrewUpdateDto = Partial<
+  Omit<CrewCreateDto, "is_template" | "is_builtin">
+>;
 
 // Crew relations types
 export interface CrewAgent {
@@ -197,7 +201,9 @@ export interface TaskCreateDto {
   is_builtin?: boolean;
 }
 
-export type TaskUpdateDto = Partial<Omit<TaskCreateDto, 'is_template' | 'is_builtin'>>;
+export type TaskUpdateDto = Partial<
+  Omit<TaskCreateDto, "is_template" | "is_builtin">
+>;
 
 // Mission types
 export interface Mission extends BaseEntity {
@@ -234,7 +240,7 @@ export interface MissionCreateDto {
   input_data: Json;
 }
 
-export type MissionUpdateDto = Partial<Omit<MissionCreateDto, 'crew_id'>> & {
+export type MissionUpdateDto = Partial<Omit<MissionCreateDto, "crew_id">> & {
   result_data?: Json;
   status?: string;
   error?: string;
@@ -244,4 +250,4 @@ export interface MissionExecuteResponse {
   status: string;
   result?: Json;
   error?: string;
-} 
+}

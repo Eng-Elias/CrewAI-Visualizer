@@ -15,9 +15,8 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TaskTemplateModal } from "@/components/modals/task-template-modal";
-import { getTasks, deleteTask } from "@/utils/api";
+import { taskApi } from "@/utils/api";
 import { Task } from "@/utils/api/types";
-import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ToastUtils } from "@/utils/ui/toast-utils";
 
 export default function TaskTemplatesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,11 +43,11 @@ export default function TaskTemplatesPage() {
       try {
         setLoading(true);
         // Get all tasks (both templates and regular tasks)
-        const allTasks = await getTasks();
+        const allTasks = await taskApi.getTemplates();
         setTasks(allTasks);
       } catch (error) {
         console.error("Error fetching tasks:", error);
-        toast.error("Failed to load tasks");
+        ToastUtils.error("Failed to load tasks");
       } finally {
         setLoading(false);
       }
@@ -58,18 +58,19 @@ export default function TaskTemplatesPage() {
 
   const handleDeleteTask = async (id: number) => {
     try {
-      await deleteTask(id);
-      setTasks(tasks.filter(task => task.id !== id));
-      toast.success("Task deleted successfully");
+      await taskApi.delete(id);
+      setTasks(tasks.filter((task) => task.id !== id));
+      ToastUtils.success("Task deleted successfully");
     } catch (error) {
       console.error("Error deleting task:", error);
-      toast.error("Failed to delete task");
+      ToastUtils.error("Failed to delete task");
     }
   };
 
-  const filteredTasks = tasks.filter((task) =>
-    task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    task.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTasks = tasks.filter(
+    (task) =>
+      task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const openModal = (template: Task) => {
@@ -108,22 +109,24 @@ export default function TaskTemplatesPage() {
 
       {loading ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
-          {Array(6).fill(0).map((_, i) => (
-            <Card key={`skeleton-${i}`}>
-              <CardHeader>
-                <Skeleton className="h-6 w-1/3 mb-2" />
-                <Skeleton className="h-4 w-2/3" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-3/4" />
-              </CardContent>
-              <CardFooter>
-                <Skeleton className="h-10 w-24 mr-2" />
-                <Skeleton className="h-10 w-24" />
-              </CardFooter>
-            </Card>
-          ))}
+          {Array(6)
+            .fill(0)
+            .map((_, i) => (
+              <Card key={`skeleton-${i}`}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-1/3 mb-2" />
+                  <Skeleton className="h-4 w-2/3" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-4 w-full mb-2" />
+                  <Skeleton className="h-4 w-3/4" />
+                </CardContent>
+                <CardFooter>
+                  <Skeleton className="h-10 w-24 mr-2" />
+                  <Skeleton className="h-10 w-24" />
+                </CardFooter>
+              </Card>
+            ))}
         </div>
       ) : filteredTasks.length === 0 ? (
         <div className="flex flex-col justify-center items-center h-64 space-y-4 mt-6">
@@ -151,9 +154,7 @@ export default function TaskTemplatesPage() {
                     {task.is_template && (
                       <Badge variant="outline">Template</Badge>
                     )}
-                    {task.is_builtin && (
-                      <Badge>Built-in</Badge>
-                    )}
+                    {task.is_builtin && <Badge>Built-in</Badge>}
                   </div>
                 </div>
                 <CardDescription>
@@ -200,7 +201,8 @@ export default function TaskTemplatesPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will permanently delete the task &quot;{task.name}&quot;. This action cannot be undone.
+                        This will permanently delete the task &quot;{task.name}
+                        &quot;. This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
