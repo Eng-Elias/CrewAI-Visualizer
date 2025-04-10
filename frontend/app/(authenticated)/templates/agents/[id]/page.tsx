@@ -1,18 +1,87 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import CreateEditAgent from "../create-edit-agent";
-import { use } from "react";
+import { AgentModal } from "@/components/modals/agent/agent-modal";
+import { useAgentTemplates } from "@/hooks/use-agent-templates";
+import { Agent } from "@/utils/api/types";
+import { AgentFormData } from "@/lib/schemas/agent";
 
-// Use a server component to extract the ID
 export default function ViewAgentTemplatePage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const resolvedParams = use(params);
+  const {
+    templates,
+    isLoading,
+    error,
+    updateTemplate,
+    deleteTemplate,
+    refreshTemplates,
+  } = useAgentTemplates();
+
+  const [selectedTemplate, setSelectedTemplate] = useState<Agent | null>(null);
+  const [isLoadingAction, setIsLoadingAction] = useState(false);
+
+  useEffect(() => {
+    const template = templates.find((t) => t.id === parseInt(params.id));
+    if (template) {
+      setSelectedTemplate(template);
+    }
+  }, [templates, params.id]);
+
+  const handleUpdate = async (data: AgentFormData) => {
+    if (!selectedTemplate) return;
+    try {
+      setIsLoadingAction(true);
+      await updateTemplate(selectedTemplate.id, data);
+      await refreshTemplates();
+    } catch (error) {
+      console.error("Failed to update template:", error);
+    } finally {
+      setIsLoadingAction(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedTemplate) return;
+    try {
+      setIsLoadingAction(true);
+      await deleteTemplate(selectedTemplate.id);
+    } catch (error) {
+      console.error("Failed to delete template:", error);
+    } finally {
+      setIsLoadingAction(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-lg text-gray-500">Loading agent template...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-lg text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  if (!selectedTemplate) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-lg text-gray-500">Agent template not found</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -23,7 +92,14 @@ export default function ViewAgentTemplatePage({
         </Button>
       </div>
 
-      <CreateEditAgent id={resolvedParams.id} />
+      <AgentModal
+        agent={selectedTemplate}
+        isOpen={true}
+        onClose={() => {}}
+        onUpdate={handleUpdate}
+        onDelete={handleDelete}
+        isLoading={isLoadingAction}
+      />
     </div>
   );
 }
