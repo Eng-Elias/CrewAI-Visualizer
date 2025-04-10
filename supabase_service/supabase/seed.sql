@@ -156,10 +156,10 @@ BEGIN
 END $$;
 
 -- Seed built-in LLMs
-INSERT INTO "public"."LLMs" (id, name, provider, models, config)
+INSERT INTO "public"."LLMs" (name, provider, models, config)
 VALUES
-  (1, 'OpenAI GPT-4', 'OpenAI', ARRAY['gpt-4'], '{"temperature": 0.7}'),
-  (2, 'OpenAI GPT-3.5', 'OpenAI', ARRAY['gpt-3.5-turbo'], '{"temperature": 0.7}');
+  ('OpenAI GPT-4', 'OpenAI', ARRAY['gpt-4'], '{"temperature": 0.7}'),
+  ('OpenAI GPT-3.5', 'OpenAI', ARRAY['gpt-3.5-turbo'], '{"temperature": 0.7}');
 
 -- Seed built-in agent templates
 INSERT INTO "public"."Agents" (id, name, role, goal, backstory, memory_enabled, "verbose", allow_delegation, max_iterations, is_template, is_builtin)
@@ -300,29 +300,36 @@ SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 3, true);
 -- Name: key_key_id_seq; Type: SEQUENCE SET; Schema: pgsodium; Owner: supabase_admin
 --
 
-SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
+-- SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
 
 
 --
 -- Name: Agents_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."Agents_id_seq"', 1, false);
-
+-- Update LLMs sequence
+SELECT setval('"public"."LLMs_id_seq"', (SELECT MAX(id) FROM "public"."LLMs"));
 
 --
--- Name: Crews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: Agents_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."Crews_id_seq"', 1, false);
-
+-- Update Agents sequence
+SELECT setval('"public"."Agents_id_seq"', (SELECT MAX(id) FROM "public"."Agents"));
 
 --
 -- Name: Tasks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."Tasks_id_seq"', 1, false);
+-- Update Tasks sequence
+SELECT setval('"public"."Tasks_id_seq"', (SELECT MAX(id) FROM "public"."Tasks"));
 
+--
+-- Name: Crews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+-- Update Crews sequence
+SELECT setval('"public"."Crews_id_seq"', (SELECT MAX(id) FROM "public"."Crews"));
 
 --
 -- Name: hooks_id_seq; Type: SEQUENCE SET; Schema: supabase_functions; Owner: supabase_functions_admin
