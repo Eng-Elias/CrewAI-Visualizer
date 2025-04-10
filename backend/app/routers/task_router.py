@@ -34,23 +34,26 @@ class TaskRouter(TemplateRouter[Task, TaskCreate, TaskUpdate]):
             user=Depends(get_current_user),
             supabase_client=Depends(get_supabase_client)
         ):
-            """Get all tasks in a specific crew"""
-            crew_task_repo = CrewTaskRepository(supabase_client)
-            task_repo = TaskRepository(supabase_client)
-            
-            # Get crew-task relationships
-            crew_tasks = await crew_task_repo.get_by_crew(crew_id, user_id=user.id)
-            
-            # Get full task details
-            tasks = []
-            for crew_task in crew_tasks:
-                task = await task_repo.get_by_id(crew_task.task_id, user_id=user.id)
-                if task:
-                    # Set the assigned agent
-                    task.agent = crew_task.assigned_agent_id
-                    tasks.append(task)
-            
-            return tasks
+            try:
+                """Get all tasks in a specific crew"""
+                crew_task_repo = CrewTaskRepository(supabase_client)
+                task_repo = TaskRepository(supabase_client)
+                
+                # Get crew-task relationships
+                crew_tasks = await crew_task_repo.get_by_crew(crew_id, user_id=user.id)
+                
+                # Get full task details
+                tasks = []
+                for crew_task in crew_tasks:
+                    task = await task_repo.get_by_id(crew_task.task_id, user_id=user.id)
+                    if task:
+                        # Set the assigned agent
+                        task.agent = crew_task.assigned_agent_id
+                        tasks.append(task)
+                
+                return tasks
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
         
         @self.router.get("/by-agent/{agent_id}", response_model=List[Task])
         async def get_by_agent(
@@ -59,13 +62,16 @@ class TaskRouter(TemplateRouter[Task, TaskCreate, TaskUpdate]):
             user=Depends(get_current_user),
             supabase_client=Depends(get_supabase_client)
         ):
-            """Get all tasks assigned to a specific agent"""
-            task_repo = TaskRepository(supabase_client)
-            return await task_repo.get_by_agent(
-                agent_id,
-                include_templates=include_templates,
-                user_id=user.id
-            )
+            try:
+                """Get all tasks assigned to a specific agent"""
+                task_repo = TaskRepository(supabase_client)
+                return await task_repo.get_by_agent(
+                    agent_id,
+                    include_templates=include_templates,
+                    user_id=user.id
+                )
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
         
         @self.router.get("/by-context/{context_id}", response_model=List[Task])
         async def get_by_context(
@@ -73,6 +79,9 @@ class TaskRouter(TemplateRouter[Task, TaskCreate, TaskUpdate]):
             user=Depends(get_current_user),
             supabase_client=Depends(get_supabase_client)
         ):
-            """Get all tasks that reference a specific context"""
-            task_repo = TaskRepository(supabase_client)
-            return await task_repo.get_by_context(context_id, user_id=user.id)
+            try:
+                """Get all tasks that reference a specific context"""
+                task_repo = TaskRepository(supabase_client)
+                return await task_repo.get_by_context(context_id, user_id=user.id)
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))

@@ -34,18 +34,21 @@ class AgentRouter(TemplateRouter[Agent, AgentCreate, AgentUpdate]):
             user=Depends(get_current_user),
             supabase_client=Depends(get_supabase_client)
         ):
-            """Get all agents in a specific crew"""
-            crew_agent_repo = CrewAgentRepository(supabase_client)
-            agent_repo = AgentRepository(supabase_client)
+            try:
+                """Get all agents in a specific crew"""
+                crew_agent_repo = CrewAgentRepository(supabase_client)
+                agent_repo = AgentRepository(supabase_client)
+                
+                # Get crew-agent relationships
+                crew_agents = await crew_agent_repo.get_by_crew(crew_id, user_id=user.id)
             
-            # Get crew-agent relationships
-            crew_agents = await crew_agent_repo.get_by_crew(crew_id, user_id=user.id)
+                # Get full agent details
+                agents = []
+                for crew_agent in crew_agents:
+                    agent = await agent_repo.get_by_id(crew_agent.agent_id, user_id=user.id)
+                    if agent:
+                        agents.append(agent)
             
-            # Get full agent details
-            agents = []
-            for crew_agent in crew_agents:
-                agent = await agent_repo.get_by_id(crew_agent.agent_id, user_id=user.id)
-                if agent:
-                    agents.append(agent)
-            
-            return agents
+                return agents
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))

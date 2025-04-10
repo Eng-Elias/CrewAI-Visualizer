@@ -43,7 +43,10 @@ class BaseRouter(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         ):
             """Get all items"""
             repo = self.repository_class(supabase_client)
-            return await repo.get_all(user_id=user.id)
+            try:
+                return await repo.get_all(user_id=user.id)
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
         
         @self.router.get("/{item_id}", response_model=self.response_model)
         async def get_by_id(
@@ -53,10 +56,13 @@ class BaseRouter(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         ):
             """Get an item by ID"""
             repo = self.repository_class(supabase_client)
-            item = await repo.get_by_id(item_id, user_id=user.id)
-            if not item:
-                raise HTTPException(status_code=404, detail="Item not found")
-            return item
+            try:
+                item = await repo.get_by_id(item_id, user_id=user.id)
+                if not item:
+                    raise HTTPException(status_code=404, detail="Item not found")
+                return item
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
         
         @self.router.post("/", response_model=self.response_model)
         async def create(
@@ -66,7 +72,10 @@ class BaseRouter(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         ):
             """Create a new item"""
             repo = self.repository_class(supabase_client)
-            return await repo.create(data, user_id=user.id)
+            try:
+                return await repo.create(data, user_id=user.id)
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
         
         @self.router.put("/{item_id}", response_model=self.response_model)
         async def update(
@@ -114,10 +123,13 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
         ):
             """Get all template items"""
             repo = self.repository_class(supabase_client)
-            return await repo.get_templates(
-                include_builtin=include_builtin,
-                user_id=user.id
-            )
+            try:
+                return await repo.get_templates(
+                    include_builtin=include_builtin,
+                    user_id=user.id
+                )
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
 
         @self.router.post("/templates", response_model=self.response_model)
         async def create_template(
@@ -130,7 +142,10 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
             # Convert to dict and set is_template to True
             create_data = data.model_dump()
             create_data["is_template"] = True
-            return await repo.create(self.create_schema(**create_data), user_id=user.id)
+            try:
+                return await repo.create(self.create_schema(**create_data), user_id=user.id)
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
 
         @self.router.put("/templates/{item_id}", response_model=self.response_model)
         async def update_template(
@@ -144,7 +159,10 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
             # Convert to dict and ensure is_template remains True
             update_data = data.model_dump(exclude_unset=True)
             update_data["is_template"] = True
-            return await repo.update(item_id, self.update_schema(**update_data), user_id=user.id)
+            try:
+                return await repo.update(item_id, self.update_schema(**update_data), user_id=user.id)
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
 
         @self.router.delete("/templates/{item_id}", response_model=Dict[str, str])
         async def delete_template(
@@ -154,10 +172,13 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
         ):
             """Delete a template item"""
             repo = self.repository_class(supabase_client)
-            success = await repo.delete(item_id, user_id=user.id)
-            if not success:
-                raise HTTPException(status_code=404, detail="Template not found")
-            return {"status": "success"}
+            try:
+                success = await repo.delete(item_id, user_id=user.id)
+                if not success:
+                    raise HTTPException(status_code=404, detail="Template not found")
+                return {"status": "success"}
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
 
         @self.router.post(
             "/from-template/{template_id}",
@@ -171,39 +192,40 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
             """Create a new item from a template"""
             repo = self.repository_class(supabase_client)
             
-            # Get the template
-            template = await repo.get_by_id(template_id, user_id=user.id)
-            if not template:
-                raise HTTPException(
-                    status_code=404,
-                    detail="Template not found"
-                )
-            
-            if not template.is_template:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Specified item is not a template"
-                )
-            
-            # Create new data from template
-            template_dict = template.model_dump(exclude={
-                "id",
-                "created_at",
-                "updated_at",
-                "is_template",
-                "is_builtin",
-                "template_id",
-                "template_version"
-            })
-            
-            # Set template reference
-            template_dict["template_id"] = template_id
-            template_dict["template_version"] = template.template_version or 1
-            template_dict["is_template"] = False
-            template_dict["is_builtin"] = False
-            
-            # Create new item
             try:
+                # Get the template
+                template = await repo.get_by_id(template_id, user_id=user.id)
+
+                if not template:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Template not found"
+                    )
+                
+                if not template.is_template:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Specified item is not a template"
+                    )
+            
+                # Create new data from template
+                template_dict = template.model_dump(exclude={
+                    "id",
+                    "created_at",
+                    "updated_at",
+                    "is_template",
+                    "is_builtin",
+                    "template_id",
+                    "template_version"
+                })
+            
+                # Set template reference
+                template_dict["template_id"] = template_id
+                template_dict["template_version"] = template.template_version or 1
+                template_dict["is_template"] = False
+                template_dict["is_builtin"] = False
+            
+                # Create new item
                 return await repo.create(
                     self.create_schema.model_validate(template_dict),
                     user_id=user.id
@@ -222,7 +244,10 @@ class TemplateRouter(BaseRouter[ModelType, CreateSchemaType, UpdateSchemaType]):
         ):
             """Get all items"""
             repo = self.repository_class(supabase_client)
-            return await repo.get_all(
-                filters=None if include_templates else {"is_template": False},
-                user_id=user.id
-            )
+            try:
+                return await repo.get_all(
+                    filters=None if include_templates else {"is_template": False},
+                    user_id=user.id
+                )
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
