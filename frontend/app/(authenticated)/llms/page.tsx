@@ -1,20 +1,19 @@
 "use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { LLMCard } from '@/components/cards/llm/llm-card';
-import { LLMModal } from '@/components/modals/llm/llm-modal';
-import { NewLLMModal } from '@/components/modals/llm/new-llm-modal';
-import { useLLMs } from '@/hooks/use-llms';
-import { LLMFormData } from '@/lib/schemas/llm';
-import { LLM } from '@/utils/api/types';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { LLMCard } from "@/components/cards/llm/llm-card";
+import { LLMModal } from "@/components/modals/llm/llm-modal";
+import { NewLLMModal } from "@/components/modals/llm/new-llm-modal";
+import { useLLMs } from "@/hooks/use-llms";
+import { LLMFormData } from "@/lib/schemas/llm";
+import { LLM } from "@/utils/api/types";
+import { ToastUtils } from "@/utils/ui/toast-utils";
 
 export default function LLMsPage() {
-  const { toast } = useToast();
   const { llms, isLoading, error, createLLM, updateLLM, deleteLLM } = useLLMs();
-  
+
   const [selectedLLM, setSelectedLLM] = useState<LLM | undefined>();
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -23,16 +22,9 @@ export default function LLMsPage() {
     try {
       await createLLM(data);
       setIsNewModalOpen(false);
-      toast({
-        title: 'Success',
-        description: 'LLM created successfully',
-      });
+      ToastUtils.success("LLM created successfully");
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: `Failed to create LLM ${error}`,
-        variant: 'destructive',
-      });
+      ToastUtils.error(`Failed to create LLM ${error}`);
     }
   };
 
@@ -42,16 +34,9 @@ export default function LLMsPage() {
     try {
       await updateLLM(selectedLLM.id, data);
       setIsEditModalOpen(false);
-      toast({
-        title: 'Success',
-        description: 'LLM updated successfully',
-      });
+      ToastUtils.success("LLM updated successfully");
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: `Failed to update LLM ${error}`,
-        variant: 'destructive',
-      });
+      ToastUtils.error(`Failed to update LLM ${error}`);
     }
   };
 
@@ -61,16 +46,9 @@ export default function LLMsPage() {
     try {
       await deleteLLM(selectedLLM.id);
       setIsEditModalOpen(false);
-      toast({
-        title: 'Success',
-        description: 'LLM deleted successfully',
-      });
+      ToastUtils.success("LLM deleted successfully");
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: `Failed to delete LLM ${error}`,
-        variant: 'destructive',
-      });
+      ToastUtils.error(`Failed to delete LLM ${error}`);
     }
   };
 
@@ -94,7 +72,10 @@ export default function LLMsPage() {
       ) : isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-48 bg-gray-100 animate-pulse rounded-lg" />
+            <div
+              key={i}
+              className="h-48 bg-gray-100 animate-pulse rounded-lg"
+            />
           ))}
         </div>
       ) : (

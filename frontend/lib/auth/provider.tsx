@@ -1,8 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
+import { ToastUtils } from "@/utils/ui/toast-utils";
 import { authApi } from "./api";
 import { AuthContextType, AuthState, User } from "./types";
 import { handleAuthError, isAuthError } from "./utils";
@@ -18,12 +24,11 @@ const initialState: AuthState = {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>(initialState);
   const router = useRouter();
-  const { toast } = useToast();
 
   const handleAuthError = useCallback(
     (error: unknown) => {
       console.error("Auth error:", error);
-      
+
       if (isAuthError(error)) {
         setState({
           user: null,
@@ -33,13 +38,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push("/auth");
       }
 
-      toast({
-        variant: "destructive",
-        title: "Authentication Error",
-        description: error instanceof Error ? error.message : "An error occurred",
-      });
+      ToastUtils.error(
+        `Authentication Error: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     },
-    [router, toast]
+    [router]
   );
 
   const checkAuth = useCallback(async () => {
@@ -60,17 +65,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         await authApi.login({ email, password });
         await checkAuth();
-        toast({
-          title: "Success",
-          description: "Logged in successfully",
-        });
+        ToastUtils.success("Logged in successfully");
         return true;
       } catch (error) {
         handleAuthError(error);
         return false;
       }
     },
-    [checkAuth, handleAuthError, toast]
+    [checkAuth, handleAuthError]
   );
 
   const signup = useCallback(
@@ -78,17 +80,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         await authApi.signup({ email, password });
         await checkAuth();
-        toast({
-          title: "Success",
-          description: "Account created successfully",
-        });
+        ToastUtils.success("Account created successfully");
         return true;
       } catch (error) {
         handleAuthError(error);
         return false;
       }
     },
-    [checkAuth, handleAuthError, toast]
+    [checkAuth, handleAuthError]
   );
 
   const logout = useCallback(async () => {
@@ -100,14 +99,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading: false,
       });
       router.push("/auth");
-      toast({
-        title: "Success",
-        description: "Logged out successfully",
-      });
+      ToastUtils.success("Logged out successfully");
     } catch (error) {
       handleAuthError(error);
     }
-  }, [router, handleAuthError, toast]);
+  }, [router, handleAuthError]);
 
   const updateProfile = useCallback(
     async (updates: Partial<User>) => {
@@ -117,15 +113,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           ...prev,
           user: updatedUser,
         }));
-        toast({
-          title: "Success",
-          description: "Profile updated successfully",
-        });
+        ToastUtils.success("Profile updated successfully");
       } catch (error) {
         handleAuthError(error);
       }
     },
-    [handleAuthError, toast]
+    [handleAuthError]
   );
 
   useEffect(() => {
@@ -156,4 +149,4 @@ export const useAuth = (): AuthContextType => {
     throw error;
   }
   return context;
-}; 
+};

@@ -13,7 +13,7 @@ import {
   Session,
 } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
+import { ToastUtils } from "@/utils/ui/toast-utils";
 import { supabase } from "./client";
 
 interface SupabaseContextType {
@@ -33,7 +33,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const router = useRouter();
-  const { toast } = useToast();
 
   const handleAuthError = useCallback(
     (error: Error) => {
@@ -41,16 +40,12 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       setError(error);
       setUser(null);
 
-      toast({
-        variant: "destructive",
-        title: "Session Error",
-        description: error.message,
-      });
+      ToastUtils.error("Session Error");
 
       // Redirect to login
       router.push("/auth");
     },
-    [router, toast]
+    [router]
   );
 
   const checkSession = useCallback(async () => {

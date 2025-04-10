@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { ToastUtils } from "@/utils/ui/toast-utils";
 
 interface AppSettings {
   theme: "light" | "dark" | "system";
@@ -21,7 +21,6 @@ const STORAGE_KEY = "app_settings";
 export function useSettings() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
 
   // Load settings from localStorage
   useEffect(() => {
@@ -38,43 +37,32 @@ export function useSettings() {
   }, []);
 
   // Save settings to localStorage
-  const updateSettings = useCallback((updates: Partial<AppSettings>) => {
-    try {
-      const newSettings = { ...settings, ...updates };
-      setSettings(newSettings);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
-      toast({
-        title: "Success",
-        description: "Settings updated successfully",
-      });
-    } catch (error) {
-      console.error("Failed to update settings:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update settings",
-        variant: "destructive",
-      });
-    }
-  }, [settings, toast]);
+  const updateSettings = useCallback(
+    (updates: Partial<AppSettings>) => {
+      try {
+        const newSettings = { ...settings, ...updates };
+        setSettings(newSettings);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
+        ToastUtils.success("Settings updated successfully");
+      } catch (error) {
+        console.error("Failed to update settings:", error);
+        ToastUtils.error("Failed to update settings");
+      }
+    },
+    [settings]
+  );
 
   // Reset settings to defaults
   const resetSettings = useCallback(() => {
     try {
       setSettings(DEFAULT_SETTINGS);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_SETTINGS));
-      toast({
-        title: "Success",
-        description: "Settings reset to defaults",
-      });
+      ToastUtils.success("Settings reset to defaults");
     } catch (error) {
       console.error("Failed to reset settings:", error);
-      toast({
-        title: "Error",
-        description: "Failed to reset settings",
-        variant: "destructive",
-      });
+      ToastUtils.error("Failed to reset settings");
     }
-  }, [toast]);
+  }, []);
 
   return {
     settings,
@@ -82,4 +70,4 @@ export function useSettings() {
     updateSettings,
     resetSettings,
   };
-} 
+}
