@@ -46,7 +46,7 @@ export function useAgentTemplates() {
       ToastUtils.success("Agent template updated successfully");
       return updatedTemplate;
     } catch (error) {
-      // console.error("Failed to update agent template:", error);
+      console.error("Failed to update agent template:", error);
       ToastUtils.error(
         `Failed to update agent template${
           error instanceof Error ? `: ${error.message}` : ""
