@@ -101,6 +101,36 @@ export type AgentUpdateDto = Partial<
   Omit<AgentCreateDto, "is_template" | "is_builtin">
 >;
 
+// Task types
+export interface Task extends TemplateEntity {
+  name: string;
+  description: string;
+  expected_output: string;
+  agent: number | null;
+  // tools: Record<string, unknown> | null;
+  // async_execution: boolean;
+  // config: Record<string, unknown> | null;
+  // context: number[] | null;
+  // output_json: Record<string, unknown> | null;
+  user_id: string | null;
+}
+
+export interface TaskCreateDto {
+  name: string;
+  description: string;
+  expected_output: string;
+  agent?: number | null;
+  // tools?: Record<string, unknown>;
+  // async_execution?: boolean;
+  // config?: Record<string, unknown>;
+  // context?: number[];
+  // output_json?: Record<string, unknown>;
+}
+
+export type TaskUpdateDto = Partial<
+  Omit<TaskCreateDto, "is_template" | "is_builtin">
+>;
+
 // Crew types
 export interface Crew extends TemplateEntity {
   name: string;
@@ -174,36 +204,6 @@ export interface AddTaskToCrewParams {
   task_order: number;
   assigned_agent_id?: number;
 }
-
-// Task types
-export interface Task extends TemplateEntity {
-  name: string;
-  description: string;
-  expected_output: string;
-  agent: number | null;
-  async_execution: boolean | null;
-  config: Json | null;
-  context: number[] | null;
-  output_json: Json | null;
-  tools: Json | null;
-}
-
-export interface TaskCreateDto {
-  name: string;
-  description: string;
-  expected_output: string;
-  agent?: number;
-  async_execution?: boolean;
-  config?: Json;
-  context?: number[];
-  tools?: Json;
-  is_template?: boolean;
-  is_builtin?: boolean;
-}
-
-export type TaskUpdateDto = Partial<
-  Omit<TaskCreateDto, "is_template" | "is_builtin">
->;
 
 // Mission types
 export interface Mission extends BaseEntity {

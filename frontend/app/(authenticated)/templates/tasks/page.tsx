@@ -1,234 +1,163 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Pencil, Eye, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { TaskTemplateModal } from "@/components/modals/task-template-modal";
-import { taskApi } from "@/utils/api";
-import { Task } from "@/utils/api/types";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Plus, Search } from "lucide-react";
+import { TaskCard } from "@/components/cards/task/task-card";
+import { TaskModal } from "@/components/modals/task/task-modal";
+import { NewTaskModal } from "@/components/modals/task/new-task-modal";
+import { useTaskTemplates } from "@/hooks/use-task-templates";
+import { Task, TaskCreateDto, TaskUpdateDto } from "@/utils/api/types";
+import { useAuth } from "@/lib/auth/provider";
 import { ToastUtils } from "@/utils/ui/toast-utils";
 
 export default function TaskTemplatesPage() {
+  const { user } = useAuth();
+
+  const {
+    templates,
+    isLoading,
+    error,
+    createTemplate,
+    updateTemplate,
+    deleteTemplate,
+  } = useTaskTemplates();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<Task | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+  const [isLoadingAction, setIsLoadingAction] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // Get all tasks (both templates and regular tasks)
-        const allTasks = await taskApi.getTemplates();
-        setTasks(allTasks);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-        ToastUtils.error("Failed to load tasks");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const handleDeleteTask = async (id: number) => {
+  const handleCreate = async (data: TaskCreateDto) => {
     try {
-      await taskApi.delete(id);
-      setTasks(tasks.filter((task) => task.id !== id));
-      ToastUtils.success("Task deleted successfully");
+      setIsLoadingAction(true);
+      await createTemplate(data);
+      setIsNewModalOpen(false);
     } catch (error) {
-      console.error("Error deleting task:", error);
-      ToastUtils.error("Failed to delete task");
+      console.error("Failed to create template:", error);
+    } finally {
+      setIsLoadingAction(false);
     }
   };
 
-  const filteredTasks = tasks.filter(
-    (task) =>
-      task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const openModal = (template: Task) => {
-    setSelectedTemplate(template);
-    setIsModalOpen(true);
+  const handleUpdate = async (data: TaskUpdateDto) => {
+    if (!selectedTemplate) return;
+    try {
+      setIsLoadingAction(true);
+      await updateTemplate(selectedTemplate.id, data);
+      setSelectedTemplate(null);
+    } catch (error) {
+      console.error("Failed to update template:", error);
+      ToastUtils.error("Failed to update task template");
+    } finally {
+      setIsLoadingAction(false);
+    }
   };
 
+  const handleDelete = async () => {
+    if (!selectedTemplate) return;
+    try {
+      setIsLoadingAction(true);
+      await deleteTemplate(selectedTemplate.id);
+      setSelectedTemplate(null);
+    } catch (error) {
+      console.error("Failed to delete template:", error);
+      ToastUtils.error("Failed to delete task template");
+    } finally {
+      setIsLoadingAction(false);
+    }
+  };
+
+  const filteredTemplates = searchQuery
+    ? templates.filter(
+        (template) =>
+          template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          template.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : templates;
+
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Tasks</h1>
-          <p className="text-muted-foreground">
-            Browse and create tasks for your agents to execute
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/templates/tasks/new">
+    <>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Task Templates</h1>
+            <p className="text-muted-foreground">
+              Browse and create task templates with predefined descriptions and
+              expected outputs
+            </p>
+          </div>
+          <Button onClick={() => setIsNewModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            New Task
-          </Link>
-        </Button>
-      </div>
-
-      <div className="flex w-full max-w-sm items-center space-x-2 mt-6">
-        <Input
-          type="text"
-          placeholder="Search tasks..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <Button variant="secondary" size="icon">
-          <Search className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {loading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
-          {Array(6)
-            .fill(0)
-            .map((_, i) => (
-              <Card key={`skeleton-${i}`}>
-                <CardHeader>
-                  <Skeleton className="h-6 w-1/3 mb-2" />
-                  <Skeleton className="h-4 w-2/3" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-3/4" />
-                </CardContent>
-                <CardFooter>
-                  <Skeleton className="h-10 w-24 mr-2" />
-                  <Skeleton className="h-10 w-24" />
-                </CardFooter>
-              </Card>
-            ))}
-        </div>
-      ) : filteredTasks.length === 0 ? (
-        <div className="flex flex-col justify-center items-center h-64 space-y-4 mt-6">
-          <p className="text-lg text-gray-500">
-            {searchQuery ? "No matching tasks found" : "No tasks found"}
-          </p>
-          <Button asChild>
-            <Link href="/templates/tasks/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Your First Task
-            </Link>
+            New Task Template
           </Button>
         </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
-          {filteredTasks.map((task) => (
-            <Card key={task.id}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>{task.name}</CardTitle>
-                  <div className="flex space-x-1">
-                    {task.async_execution && (
-                      <Badge variant="secondary">Async</Badge>
-                    )}
-                    {task.is_template && (
-                      <Badge variant="outline">Template</Badge>
-                    )}
-                    {task.is_builtin && <Badge>Built-in</Badge>}
-                  </div>
-                </div>
-                <CardDescription>
-                  {task.description.substring(0, 100)}
-                  {task.description.length > 100 ? "..." : ""}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {task.tools && Object.keys(task.tools).length > 0 ? (
-                    Object.keys(task.tools).map((tool) => (
-                      <Badge key={tool} variant="outline">
-                        {tool}
-                      </Badge>
-                    ))
-                  ) : (
-                    <span className="text-sm text-muted-foreground">
-                      No tools configured
-                    </span>
-                  )}
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-end space-x-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => openModal(task)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link href={`/templates/tasks/${task.id}`}>
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
-                  </Link>
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will permanently delete the task &quot;{task.name}
-                        &quot;. This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDeleteTask(task.id)}
-                        className="bg-red-500 hover:bg-red-600"
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </CardFooter>
-            </Card>
-          ))}
+
+        <div className="flex w-full max-w-sm items-center space-x-2">
+          <Input
+            type="text"
+            placeholder="Search task templates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Button variant="secondary" size="icon">
+            <Search className="h-4 w-4" />
+          </Button>
         </div>
-      )}
+
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-lg text-gray-500">Loading task templates...</p>
+          </div>
+        ) : error ? (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-lg text-red-500">{error}</p>
+          </div>
+        ) : filteredTemplates.length === 0 ? (
+          <div className="flex flex-col justify-center items-center h-64 space-y-4">
+            <p className="text-lg text-gray-500">
+              {searchQuery
+                ? "No matching task templates found"
+                : "No task templates found"}
+            </p>
+            <Button onClick={() => setIsNewModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Your First Task Template
+            </Button>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredTemplates.map((template: Task) => (
+              <TaskCard
+                key={template.id}
+                task={template}
+                onButtonClick={() => setSelectedTemplate(template)}
+                isLoading={isLoadingAction}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <NewTaskModal
+        isOpen={isNewModalOpen}
+        onClose={() => setIsNewModalOpen(false)}
+        onCreate={handleCreate}
+        isLoading={isLoadingAction}
+      />
 
       {selectedTemplate && (
-        <TaskTemplateModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          template={selectedTemplate}
+        <TaskModal
+          task={selectedTemplate}
+          isOpen={!!selectedTemplate}
+          isEditable={user?.id === selectedTemplate?.user_id}
+          onClose={() => setSelectedTemplate(null)}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+          isLoading={isLoadingAction}
         />
       )}
-    </div>
+    </>
   );
 }
