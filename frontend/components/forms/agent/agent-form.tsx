@@ -5,10 +5,10 @@ import { FormSection } from "@/components/forms/form-section";
 import { FormField } from "@/components/forms/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { JsonEditor } from "json-edit-react";
 import { EntityFieldControl } from "@/lib/types/field-control";
 import { Agent } from "@/utils/api/types";
+// import { Switch } from "@/components/ui/switch";
+// import { JsonEditor } from "json-edit-react";
 
 export interface AgentFormProps {
   agent?: Partial<Agent>;
@@ -28,7 +28,7 @@ export function AgentForm({
   const {
     register,
     handleSubmit,
-    setValue,
+    // setValue,
     formState: { errors },
   } = useForm<AgentFormData>({
     resolver: zodResolver(agentSchema),
@@ -37,17 +37,17 @@ export function AgentForm({
       role: agent?.role || "",
       goal: agent?.goal || "",
       backstory: agent?.backstory || "",
-      memory_enabled: agent?.memory_enabled ?? true,
-      verbose: agent?.verbose ?? false,
-      allow_delegation: agent?.allow_delegation ?? false,
-      max_iterations: agent?.max_iterations ?? 5,
-      max_rpm: agent?.max_rpm ?? null,
-      tools: agent?.tools || {},
-      llm_config: agent?.llm_config || {},
-      is_template: agent?.is_template ?? false,
-      is_builtin: agent?.is_builtin ?? false,
-      template_id: agent?.template_id ?? null,
-      template_version: agent?.template_version ?? null,
+      // memory_enabled: agent?.memory_enabled ?? true,
+      // verbose: agent?.verbose ?? false,
+      // allow_delegation: agent?.allow_delegation ?? false,
+      // max_iterations: agent?.max_iterations ?? 5,
+      // max_rpm: agent?.max_rpm ?? null,
+      // tools: agent?.tools || {},
+      // llm_config: agent?.llm_config || {},
+      // is_template: agent?.is_template ?? false,
+      // is_builtin: agent?.is_builtin ?? false,
+      // template_id: agent?.template_id ?? null,
+      // template_version: agent?.template_version ?? null,
     },
   });
 
@@ -109,7 +109,7 @@ export function AgentForm({
         </FormField>
       </FormSection>
 
-      <FormSection
+      {/* <FormSection
         title="Configuration"
         description="Agent behavior settings"
         collapsible
@@ -151,7 +151,9 @@ export function AgentForm({
           >
             <Switch
               checked={Boolean(agent?.allow_delegation)}
-              onCheckedChange={(checked) => setValue("allow_delegation", checked)}
+              onCheckedChange={(checked) =>
+                setValue("allow_delegation", checked)
+              }
             />
           </FormField>
 
@@ -220,7 +222,7 @@ export function AgentForm({
             />
           </div>
         </FormField>
-      </FormSection>
+      </FormSection> */}
 
       {error && <div className="text-sm text-red-500">{error}</div>}
 
@@ -235,4 +237,4 @@ export function AgentForm({
       </div>
     </form>
   );
-} 
+}

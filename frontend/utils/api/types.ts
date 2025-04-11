@@ -72,13 +72,13 @@ export interface Agent extends TemplateEntity {
   role: string;
   goal: string;
   backstory?: string | null;
-  memory_enabled: boolean | null;
-  verbose: boolean | null;
-  allow_delegation: boolean | null;
-  max_iterations: number | null;
-  max_rpm: number | null;
-  tools: Json | null;
-  llm_config: Json | null;
+  // memory_enabled: boolean | null;
+  // verbose: boolean | null;
+  // allow_delegation: boolean | null;
+  // max_iterations: number | null;
+  // max_rpm: number | null;
+  // tools: Json | null;
+  // llm_config: Json | null;
 }
 
 export interface AgentCreateDto {
@@ -86,15 +86,15 @@ export interface AgentCreateDto {
   role: string;
   goal: string;
   backstory?: string | null;
-  memory_enabled?: boolean | null;
-  verbose?: boolean | null;
-  allow_delegation?: boolean | null;
-  max_iterations?: number | null;
-  max_rpm?: number | null;
-  tools?: Json | null;
-  llm_config?: Json | null;
-  is_template?: boolean | null;
-  is_builtin?: boolean | null;
+  // memory_enabled?: boolean | null;
+  // verbose?: boolean | null;
+  // allow_delegation?: boolean | null;
+  // max_iterations?: number | null;
+  // max_rpm?: number | null;
+  // tools?: Json | null;
+  // llm_config?: Json | null;
+  // is_template?: boolean | null;
+  // is_builtin?: boolean | null;
 }
 
 export type AgentUpdateDto = Partial<

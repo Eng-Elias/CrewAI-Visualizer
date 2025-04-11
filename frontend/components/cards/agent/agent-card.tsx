@@ -1,12 +1,12 @@
 import { ReactNode } from "react";
 import { BaseCard } from "@/components/cards/base-card";
 import { CardField } from "@/components/cards/card-field";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
 import { Agent } from "@/utils/api/types";
 import { EntityFieldControl } from "@/lib/types/field-control";
 import { useAuth } from "@/lib/auth/provider";
+// import { Badge } from "@/components/ui/badge";
 
 export interface AgentCardProps {
   agent: Agent;
@@ -63,7 +63,7 @@ export function AgentCard({
           />
         )}
 
-        {agent.tools && Object.keys(agent.tools).length > 0 && (
+        {/* {agent.tools && Object.keys(agent.tools).length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium">Tools</h4>
             <div className="flex flex-wrap gap-2">
@@ -74,7 +74,7 @@ export function AgentCard({
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </BaseCard>
   );

@@ -9,15 +9,15 @@ class AgentBase(BaseModel):
     role: str
     goal: str
     backstory: Optional[str] = None
-    memory_enabled: bool = True
-    verbose: bool = False
-    allow_delegation: bool = False
-    max_iterations: int = 1
+    memory_enabled: Optional[bool] = True
+    verbose: Optional[bool] = False
+    allow_delegation: Optional[bool] = False
+    max_iterations: Optional[int] = 10
     max_rpm: Optional[int] = None
     llm_config: Optional[Dict[str, Any]] = Field(default_factory=dict)
     tools: Optional[Dict[str, Any]] = Field(default_factory=dict)
-    is_template: bool = False
-    is_builtin: bool = False
+    is_template: Optional[bool] = False
+    is_builtin: Optional[bool] = False
     template_id: Optional[int] = None
     template_version: Optional[int] = None
     user_id: Optional[str] = None

@@ -64,7 +64,7 @@ export function AgentView({
             )}
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          {/* <div className="grid gap-4 md:grid-cols-2">
             <CardField
               label="Memory Enabled"
               value={agent.memory_enabled ? "Yes" : "No"}
@@ -97,7 +97,7 @@ export function AgentView({
                 field="max_rpm"
               />
             )}
-          </div>
+          </div> */}
         </div>
       </BaseCard>
 
@@ -116,7 +116,7 @@ export function AgentView({
               section="TEMPLATE"
               field="is_builtin"
             />
-            {agent.template_id && (
+            {/* {agent.template_id && (
               <CardField
                 label="Template ID"
                 value={String(agent.template_id)}
@@ -131,7 +131,7 @@ export function AgentView({
                 section="TEMPLATE"
                 field="template_version"
               />
-            )}
+            )} */}
           </div>
         </BaseCard>
       )}
